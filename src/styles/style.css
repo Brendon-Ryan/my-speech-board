@@ -1,0 +1,112 @@
+/* General Styles */
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f0f8ff; /* Light blue background */
+    color: #333;
+    text-align: center;
+}
+
+h1 {
+    color: #2c3e50; /* Dark blue */
+}
+
+h2 {
+    color: #16a085; /* Green */
+}
+
+h3 {
+    color: #333;
+}
+
+.container {
+    width: 80%;
+    margin: auto;
+    overflow: hidden;
+}
+
+.header {
+    background: #35424a;
+    color: #ffffff;
+    padding: 20px 0;
+    text-align: center;
+}
+
+.footer {
+    background: #35424a;
+    color: #ffffff;
+    text-align: center;
+    padding: 10px 0;
+    position: relative;
+    bottom: 0;
+    width: 100%;
+}
+
+.button {
+    display: inline-block;
+    font-size: 18px;
+    color: #ffffff;
+    background: #e8491d;
+    padding: 10px 20px;
+    text-decoration: none;
+    border-radius: 5px;
+}
+
+.button:hover {
+    background: #333;
+}
+
+/* Word Board Table */
+#word-table {
+    margin: 20px auto;
+    border-collapse: collapse;
+    width: 60%;
+}
+
+#word-table td {
+    padding: 10px;
+    text-align: center;
+}
+
+.word-btn {
+    background-color: #3498db; /* Blue */
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.word-btn:hover {
+    background-color: #1abc9c; /* Green */
+}
+
+/* Input Section */
+.input-section {
+    margin-top: 20px;
+}
+
+#word-input {
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    width: 200px;
+}
+
+#add-word-btn {
+    background-color: #16a085; /* Green */
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#add-word-btn:hover {
+    background-color: #3498db; /* Blue */
+}

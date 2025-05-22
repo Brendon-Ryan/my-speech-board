@@ -1,0 +1,26 @@
+trigger:
+- main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+steps:
+- task: NodeTool@0
+  inputs:
+    versionSpec: '14.x'
+  displayName: 'Install Node.js'
+
+- script: |
+    npm install
+  displayName: 'Install npm packages'
+
+- script: |
+    npm run build
+  displayName: 'Build the application'
+
+- task: AzureWebApp@1
+  inputs:
+    azureSubscription: 'YOUR_AZURE_SUBSCRIPTION'
+    appName: 'YOUR_APP_NAME'
+    package: '$(System.DefaultWorkingDirectory)/**/*.zip'
+    deploymentMethod: 'zipDeploy'

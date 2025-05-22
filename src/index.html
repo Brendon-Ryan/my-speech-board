@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Azure Web App</title>
+    <link rel="stylesheet" href="styles/style.css">
+</head>
+<body>
+    <h1>Welcome to Azure Web App</h1>
+    <p>This is a basic web application running on Azure.</p>
+
+    <!-- Word Board Section -->
+    <div id="word-board">
+        <h2>Word Board</h2>
+        <table id="word-table">
+            <tr>
+                <td><button class="word-btn">Now</button></td>
+                <td><button class="word-btn">Later</button></td>
+                <td><button class="word-btn">Food</button></td>
+            </tr>
+            <tr>
+                <td><button class="word-btn">Drink</button></td>
+                <td><button class="word-btn">TV</button></td>
+            </tr>
+        </table>
+        <div class="input-section">
+            <input type="text" id="word-input" placeholder="Enter a word" />
+            <button id="add-word-btn">Add Word</button>
+        </div>
+    </div>
+
+    <script src="scripts/app.js"></script>
+</body>
+</html>
