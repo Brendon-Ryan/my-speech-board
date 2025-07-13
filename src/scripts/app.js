@@ -221,21 +221,68 @@ wordInput.addEventListener('keydown', (e) => {
     }
 });
 
+// --- Edit Mode Toggle ---
+let editMode = false;
+
+// Add Edit Mode and Save buttons to the UI
+const editModeBtn = document.createElement('button');
+editModeBtn.id = 'edit-mode-btn';
+editModeBtn.textContent = 'Enable Edit Mode';
+editModeBtn.style.position = 'absolute';
+editModeBtn.style.top = '20px';
+editModeBtn.style.left = '30px';
+editModeBtn.style.zIndex = '1001';
+document.body.appendChild(editModeBtn);
+
+const saveBtn = document.createElement('button');
+saveBtn.id = 'save-btn';
+saveBtn.textContent = 'Save';
+saveBtn.style.position = 'absolute';
+saveBtn.style.top = '20px';
+saveBtn.style.left = '170px';
+saveBtn.style.zIndex = '1001';
+document.body.appendChild(saveBtn);
+
+saveBtn.addEventListener('click', () => {
+    // Save functionality to be implemented
+});
+
+editModeBtn.addEventListener('click', () => {
+    editMode = !editMode;
+    editModeBtn.textContent = editMode ? 'Disable Edit Mode' : 'Enable Edit Mode';
+    document.body.classList.toggle('edit-mode', editMode);
+    enableDragAndDropOnAllTables();
+});
+
 // --- Drag and Drop for Word Buttons ---
 function enableDragAndDropOnTable(table) {
     if (!table) return;
-    // Make all word buttons draggable
+    // Make all word buttons draggable only in edit mode
     table.querySelectorAll('.word-btn').forEach(btn => {
-        btn.setAttribute('draggable', 'true');
-        btn.addEventListener('dragstart', handleDragStart);
-        btn.addEventListener('dragend', handleDragEnd);
+        if (editMode) {
+            btn.setAttribute('draggable', 'true');
+            btn.addEventListener('dragstart', handleDragStart);
+            btn.addEventListener('dragend', handleDragEnd);
+        } else {
+            btn.removeAttribute('draggable');
+            btn.removeEventListener('dragstart', handleDragStart);
+            btn.removeEventListener('dragend', handleDragEnd);
+        }
     });
-    // Make all table cells droppable
+    // Make all table cells droppable only in edit mode
     table.querySelectorAll('td').forEach(td => {
-        td.addEventListener('dragover', handleDragOver);
-        td.addEventListener('drop', handleDrop);
-        td.addEventListener('dragenter', handleDragEnter);
-        td.addEventListener('dragleave', handleDragLeave);
+        if (editMode) {
+            td.addEventListener('dragover', handleDragOver);
+            td.addEventListener('drop', handleDrop);
+            td.addEventListener('dragenter', handleDragEnter);
+            td.addEventListener('dragleave', handleDragLeave);
+        } else {
+            td.removeEventListener('dragover', handleDragOver);
+            td.removeEventListener('drop', handleDrop);
+            td.removeEventListener('dragenter', handleDragEnter);
+            td.removeEventListener('dragleave', handleDragLeave);
+            td.classList.remove('drag-over');
+        }
     });
 }
 
