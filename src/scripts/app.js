@@ -251,23 +251,30 @@ editModeBtn.addEventListener('click', () => {
     editMode = !editMode;
     editModeBtn.textContent = editMode ? 'Disable Edit Mode' : 'Enable Edit Mode';
     document.body.classList.toggle('edit-mode', editMode);
-    enableDragAndDropOnAllTables();
-    // Force a redraw to ensure empty cells are visible immediately
+    // First, ensure all rows have 8 cells and empty-drop-spot classes are set
     document.querySelectorAll('.word-table').forEach(table => {
         if (editMode) {
             Array.from(table.rows).forEach(row => {
                 while (row.cells.length < 8) {
-                    row.insertCell();
+                    const newCell = row.insertCell();
+                    newCell.classList.add('empty-drop-spot');
                 }
             });
-            // Add empty-drop-spot class to new empty cells
+            // Add empty-drop-spot class to all empty cells
             table.querySelectorAll('td').forEach(td => {
                 if (td.children.length === 0) {
                     td.classList.add('empty-drop-spot');
+                } else {
+                    td.classList.remove('empty-drop-spot');
                 }
             });
+        } else {
+            // Remove empty-drop-spot class when leaving edit mode
+            table.querySelectorAll('td').forEach(td => td.classList.remove('empty-drop-spot'));
         }
     });
+    // Now enable drag and drop (must be after cell creation for listeners to attach)
+    enableDragAndDropOnAllTables();
 });
 
 // --- Drag and Drop for Word Buttons ---
