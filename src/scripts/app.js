@@ -211,6 +211,7 @@ addWordBtn.addEventListener('click', () => {
     cell.appendChild(btn);
     setButtonActivation(btn, word); // Ensure new button is interactive
     wordInput.value = '';
+    enableDragAndDropOnAllTables(); // Re-enable drag and drop after adding new word
 });
 
 // Allow Enter key to add word
@@ -218,4 +219,72 @@ wordInput.addEventListener('keydown', (e) => {
     if (e.key === 'Enter') {
         addWordBtn.click();
     }
+});
+
+// --- Drag and Drop for Word Buttons ---
+function enableDragAndDropOnTable(table) {
+    if (!table) return;
+    // Make all word buttons draggable
+    table.querySelectorAll('.word-btn').forEach(btn => {
+        btn.setAttribute('draggable', 'true');
+        btn.addEventListener('dragstart', handleDragStart);
+        btn.addEventListener('dragend', handleDragEnd);
+    });
+    // Make all table cells droppable
+    table.querySelectorAll('td').forEach(td => {
+        td.addEventListener('dragover', handleDragOver);
+        td.addEventListener('drop', handleDrop);
+        td.addEventListener('dragenter', handleDragEnter);
+        td.addEventListener('dragleave', handleDragLeave);
+    });
+}
+
+let draggedBtn = null;
+function handleDragStart(e) {
+    draggedBtn = this;
+    setTimeout(() => this.classList.add('dragging'), 0);
+    e.dataTransfer.effectAllowed = 'move';
+}
+function handleDragEnd() {
+    this.classList.remove('dragging');
+    draggedBtn = null;
+}
+function handleDragOver(e) {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    this.classList.add('drag-over');
+}
+function handleDrop(e) {
+    e.preventDefault();
+    this.classList.remove('drag-over');
+    if (!draggedBtn) return;
+    const targetCell = this;
+    const sourceCell = draggedBtn.parentNode;
+    if (targetCell === sourceCell) return;
+    // If dropping onto an empty cell, just move the button
+    if (targetCell.children.length === 0) {
+        targetCell.appendChild(draggedBtn);
+    } else {
+        // If dropping onto a cell with a button, swap them
+        const targetBtn = targetCell.querySelector('.word-btn');
+        sourceCell.appendChild(targetBtn);
+        targetCell.appendChild(draggedBtn);
+    }
+    updateAllButtonActivation();
+    enableDragAndDropOnAllTables();
+}
+function handleDragEnter(e) {
+    e.preventDefault();
+    this.classList.add('drag-over');
+}
+function handleDragLeave(e) {
+    this.classList.remove('drag-over');
+}
+
+function enableDragAndDropOnAllTables() {
+    document.querySelectorAll('.word-table').forEach(enableDragAndDropOnTable);
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    enableDragAndDropOnAllTables();
 });
