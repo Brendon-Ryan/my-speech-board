@@ -493,3 +493,14 @@ body.achromatopsia-scheme .word-btn:hover {
     background: #e0f7fa !important;
     outline: 2px dashed #1abc9c;
 }
+
+body.edit-mode td.empty-drop-spot {
+    background: #fffbe6;
+    outline: 2px dashed #f39c12;
+    min-height: 40px;
+    transition: background 0.2s, outline 0.2s;
+}
+body.edit-mode td.empty-drop-spot.drag-over {
+    background: #ffe0b2 !important;
+    outline: 2px solid #f39c12;
+}

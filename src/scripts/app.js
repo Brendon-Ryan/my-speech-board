@@ -252,6 +252,22 @@ editModeBtn.addEventListener('click', () => {
     editModeBtn.textContent = editMode ? 'Disable Edit Mode' : 'Enable Edit Mode';
     document.body.classList.toggle('edit-mode', editMode);
     enableDragAndDropOnAllTables();
+    // Force a redraw to ensure empty cells are visible immediately
+    document.querySelectorAll('.word-table').forEach(table => {
+        if (editMode) {
+            Array.from(table.rows).forEach(row => {
+                while (row.cells.length < 8) {
+                    row.insertCell();
+                }
+            });
+            // Add empty-drop-spot class to new empty cells
+            table.querySelectorAll('td').forEach(td => {
+                if (td.children.length === 0) {
+                    td.classList.add('empty-drop-spot');
+                }
+            });
+        }
+    });
 });
 
 // --- Drag and Drop for Word Buttons ---
@@ -261,6 +277,9 @@ function enableDragAndDropOnTable(table) {
     table.querySelectorAll('.word-btn').forEach(btn => {
         if (editMode) {
             btn.setAttribute('draggable', 'true');
+            // Remove previous listeners to avoid duplicates
+            btn.removeEventListener('dragstart', handleDragStart);
+            btn.removeEventListener('dragend', handleDragEnd);
             btn.addEventListener('dragstart', handleDragStart);
             btn.addEventListener('dragend', handleDragEnd);
         } else {
@@ -272,18 +291,38 @@ function enableDragAndDropOnTable(table) {
     // Make all table cells droppable only in edit mode
     table.querySelectorAll('td').forEach(td => {
         if (editMode) {
+            // Remove previous listeners to avoid duplicates
+            td.removeEventListener('dragover', handleDragOver);
+            td.removeEventListener('drop', handleDrop);
+            td.removeEventListener('dragenter', handleDragEnter);
+            td.removeEventListener('dragleave', handleDragLeave);
             td.addEventListener('dragover', handleDragOver);
             td.addEventListener('drop', handleDrop);
             td.addEventListener('dragenter', handleDragEnter);
             td.addEventListener('dragleave', handleDragLeave);
+            // Add a class to visually indicate empty drop spots in edit mode
+            if (td.children.length === 0) {
+                td.classList.add('empty-drop-spot');
+            } else {
+                td.classList.remove('empty-drop-spot');
+            }
         } else {
             td.removeEventListener('dragover', handleDragOver);
             td.removeEventListener('drop', handleDrop);
             td.removeEventListener('dragenter', handleDragEnter);
             td.removeEventListener('dragleave', handleDragLeave);
             td.classList.remove('drag-over');
+            td.classList.remove('empty-drop-spot');
         }
     });
+    // In edit mode, ensure all rows have 8 cells (so there are empty cells to drop into)
+    if (editMode) {
+        Array.from(table.rows).forEach(row => {
+            while (row.cells.length < 8) {
+                row.insertCell();
+            }
+        });
+    }
 }
 
 let draggedBtn = null;
@@ -311,6 +350,12 @@ function handleDrop(e) {
     // If dropping onto an empty cell, just move the button
     if (targetCell.children.length === 0) {
         targetCell.appendChild(draggedBtn);
+        // Remove empty-drop-spot class since it's no longer empty
+        targetCell.classList.remove('empty-drop-spot');
+        // If source cell is now empty, add empty-drop-spot class
+        if (sourceCell.children.length === 0) {
+            sourceCell.classList.add('empty-drop-spot');
+        }
     } else {
         // If dropping onto a cell with a button, swap them
         const targetBtn = targetCell.querySelector('.word-btn');
