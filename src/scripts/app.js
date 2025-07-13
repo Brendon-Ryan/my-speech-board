@@ -182,3 +182,40 @@ if (tabButtons.length > 0 && tabContents.length > 0) {
         });
     });
 }
+
+// Add a new word to the current tab
+const addWordBtn = document.getElementById('add-word-btn');
+const wordInput = document.getElementById('word-input');
+
+addWordBtn.addEventListener('click', () => {
+    const word = wordInput.value.trim();
+    if (!word) return;
+    const activeTab = document.querySelector('.tab-btn.active').dataset.tab;
+    const tabContent = document.getElementById(`tab-${activeTab}`);
+    let table = tabContent.querySelector('.word-table');
+    if (!table) {
+        // If no table exists, create one
+        table = document.createElement('table');
+        table.className = 'word-table';
+        tabContent.appendChild(table);
+    }
+    // Add to last row if it has < 8 cells, else create new row
+    let lastRow = table.rows[table.rows.length - 1];
+    if (!lastRow || lastRow.cells.length >= 8) {
+        lastRow = table.insertRow();
+    }
+    const cell = lastRow.insertCell();
+    const btn = document.createElement('button');
+    btn.className = 'word-btn';
+    btn.textContent = word;
+    cell.appendChild(btn);
+    setButtonActivation(btn, word); // Ensure new button is interactive
+    wordInput.value = '';
+});
+
+// Allow Enter key to add word
+wordInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+        addWordBtn.click();
+    }
+});
