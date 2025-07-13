@@ -415,28 +415,160 @@ iconsBtn.addEventListener('click', () => {
             let icon = '';
             // Simple mapping for demonstration; expand as needed
             switch (label) {
+                // General
                 case 'yes': icon = '👍'; break;
                 case 'no': icon = '👎'; break;
                 case 'hello': icon = '👋'; break;
                 case 'goodbye': icon = '👋'; break;
-                case 'eat': icon = '🍽️'; break;
-                case 'drink': icon = '🥤'; break;
-                case 'bathroom': icon = '🚻'; break;
-                case 'help': icon = '🆘'; break;
                 case 'stop': icon = '✋'; break;
                 case 'go': icon = '🏃'; break;
+                case 'help': icon = '🆘'; break;
+                case 'love': icon = '❤️'; break;
+                // Food & Drink
+                case 'eat': icon = '🍽️'; break;
+                case 'food': icon = '🍲'; break;
+                case 'snack': icon = '🍪'; break;
+                case 'breakfast': icon = '🥞'; break;
+                case 'lunch': icon = '🥪'; break;
+                case 'dinner': icon = '🍝'; break;
+                case 'fruit': icon = '🍎'; break;
+                case 'apple': icon = '🍏'; break;
+                case 'banana': icon = '🍌'; break;
+                case 'orange': icon = '🍊'; break;
+                case 'grape': icon = '🍇'; break;
+                case 'strawberry': icon = '🍓'; break;
+                case 'vegetable': icon = '🥦'; break;
+                case 'carrot': icon = '🥕'; break;
+                case 'broccoli': icon = '🥦'; break;
+                case 'potato': icon = '🥔'; break;
+                case 'rice': icon = '🍚'; break;
+                case 'bread': icon = '🍞'; break;
+                case 'cheese': icon = '🧀'; break;
+                case 'egg': icon = '🥚'; break;
+                case 'meat': icon = '🥩'; break;
+                case 'chicken': icon = '🍗'; break;
+                case 'fish': icon = '🐟'; break;
+                case 'pizza': icon = '🍕'; break;
+                case 'burger': icon = '🍔'; break;
+                case 'sandwich': icon = '🥪'; break;
+                case 'soup': icon = '🥣'; break;
+                case 'salad': icon = '🥗'; break;
+                case 'ice cream': icon = '🍦'; break;
+                case 'cookie': icon = '🍪'; break;
+                case 'cake': icon = '🍰'; break;
+                case 'candy': icon = '🍬'; break;
+                case 'drink': icon = '🥤'; break;
+                case 'water': icon = '💧'; break;
+                case 'milk': icon = '🥛'; break;
+                case 'juice': icon = '🧃'; break;
+                case 'tea': icon = '🍵'; break;
+                case 'coffee': icon = '☕'; break;
+                // Bathroom & Hygiene
+                case 'bathroom': icon = '🚻'; break;
+                case 'toilet': icon = '🚽'; break;
+                case 'wash': icon = '🧼'; break;
+                case 'shower': icon = '🚿'; break;
+                case 'brush': icon = '🪥'; break;
+                case 'soap': icon = '🧴'; break;
+                // Emotions
                 case 'happy': icon = '😊'; break;
                 case 'sad': icon = '😢'; break;
                 case 'angry': icon = '😠'; break;
                 case 'tired': icon = '😴'; break;
+                case 'scared': icon = '😱'; break;
+                case 'excited': icon = '🤩'; break;
+                case 'bored': icon = '🥱'; break;
+                case 'sick': icon = '🤒'; break;
+                // Activities
                 case 'play': icon = '🎲'; break;
+                case 'read': icon = '📖'; break;
+                case 'write': icon = '✍️'; break;
+                case 'draw': icon = '🎨'; break;
+                case 'sing': icon = '🎤'; break;
+                case 'dance': icon = '💃'; break;
+                case 'run': icon = '🏃'; break;
+                case 'walk': icon = '🚶'; break;
+                case 'jump': icon = '🤸'; break;
+                case 'swim': icon = '🏊'; break;
+                // People & Places
                 case 'home': icon = '🏠'; break;
                 case 'school': icon = '🏫'; break;
                 case 'friend': icon = '🧑‍🤝‍🧑'; break;
                 case 'family': icon = '👨‍👩‍👧‍👦'; break;
-                case 'love': icon = '❤️'; break;
+                case 'teacher': icon = '🧑‍🏫'; break;
+                case 'mom': icon = '👩'; break;
+                case 'dad': icon = '👨'; break;
+                case 'sister': icon = '👧'; break;
+                case 'brother': icon = '👦'; break;
+                case 'grandma': icon = '👵'; break;
+                case 'grandpa': icon = '👴'; break;
+                // Colors
+                case 'red': icon = '🟥'; break;
+                case 'blue': icon = '🟦'; break;
+                case 'green': icon = '🟩'; break;
+                case 'yellow': icon = '🟨'; break;
+                case 'orange': icon = '🟧'; break;
+                case 'purple': icon = '🟪'; break;
+                case 'pink': icon = '🩷'; break;
+                case 'black': icon = '⬛'; break;
+                case 'white': icon = '⬜'; break;
+                case 'brown': icon = '🟫'; break;
+                case 'gray': icon = '⬜'; break;
+                // Numbers
+                case 'one': icon = '1️⃣'; break;
+                case 'two': icon = '2️⃣'; break;
+                case 'three': icon = '3️⃣'; break;
+                case 'four': icon = '4️⃣'; break;
+                case 'five': icon = '5️⃣'; break;
+                case 'six': icon = '6️⃣'; break;
+                case 'seven': icon = '7️⃣'; break;
+                case 'eight': icon = '8️⃣'; break;
+                case 'nine': icon = '9️⃣'; break;
+                case 'ten': icon = '🔟'; break;
+                // Days/Time
+                case 'day': icon = '🌞'; break;
+                case 'night': icon = '🌜'; break;
+                case 'morning': icon = '🌅'; break;
+                case 'afternoon': icon = '🏙️'; break;
+                case 'evening': icon = '🌇'; break;
+                case 'today': icon = '📅'; break;
+                case 'tomorrow': icon = '⏭️'; break;
+                case 'yesterday': icon = '⏮️'; break;
+                // Weather
+                case 'sun': icon = '☀️'; break;
+                case 'rain': icon = '🌧️'; break;
+                case 'cloud': icon = '☁️'; break;
+                case 'snow': icon = '❄️'; break;
+                case 'wind': icon = '💨'; break;
+                case 'hot': icon = '🥵'; break;
+                case 'cold': icon = '🥶'; break;
+                // Transport
+                case 'car': icon = '🚗'; break;
+                case 'bus': icon = '🚌'; break;
+                case 'train': icon = '🚆'; break;
+                case 'bike': icon = '🚲'; break;
+                case 'plane': icon = '✈️'; break;
+                case 'boat': icon = '⛵'; break;
+                // Technology
+                case 'phone': icon = '📱'; break;
+                case 'computer': icon = '💻'; break;
+                case 'tv': icon = '📺'; break;
+                case 'camera': icon = '📷'; break;
+                // Animals
+                case 'dog': icon = '🐶'; break;
+                case 'cat': icon = '🐱'; break;
+                case 'bird': icon = '🐦'; break;
+                case 'fish': icon = '🐟'; break;
+                case 'horse': icon = '🐴'; break;
+                case 'cow': icon = '🐮'; break;
+                case 'pig': icon = '🐷'; break;
+                case 'sheep': icon = '🐑'; break;
+                case 'chicken': icon = '🐔'; break;
+                case 'duck': icon = '🦆'; break;
+                case 'rabbit': icon = '🐰'; break;
+                case 'frog': icon = '🐸'; break;
+                // Default fallback
                 default:
-                    // Use the first letter as a fallback visual
                     icon = label.charAt(0).toUpperCase();
             }
             btn.innerHTML = `<span style="font-size:1.5em;">${icon}</span>`;
