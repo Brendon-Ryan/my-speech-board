@@ -104,7 +104,12 @@ testButton.addEventListener('click', () => {
 
 // Set default color scheme on load
 function applyColorScheme(scheme) {
-    document.body.classList.remove('default-scheme', 'dark-scheme', 'pastel-scheme', 'high-contrast-scheme', 'sunset-scheme');
+    document.body.classList.remove(
+        'default-scheme', 'dark-scheme', 'pastel-scheme', 'high-contrast-scheme', 'sunset-scheme',
+        'ocean-breeze-scheme', 'lavender-dream-scheme', 'green-scheme',
+        'colorblind-scheme', 'protanopia-scheme', 'protanomaly-scheme', 'deuteranopia-scheme',
+        'deuteranomaly-scheme', 'tritanopia-scheme', 'tritanomaly-scheme', 'achromatopsia-scheme'
+    );
     switch (scheme) {
         case 'dark':
             document.body.classList.add('dark-scheme');
@@ -117,6 +122,15 @@ function applyColorScheme(scheme) {
             break;
         case 'sunset':
             document.body.classList.add('sunset-scheme');
+            break;
+        case 'ocean-breeze':
+            document.body.classList.add('ocean-breeze-scheme');
+            break;
+        case 'lavender-dream':
+            document.body.classList.add('lavender-dream-scheme');
+            break;
+        case 'green':
+            document.body.classList.add('green-scheme');
             break;
         case 'colorblind':
             document.body.classList.add('colorblind-scheme');
