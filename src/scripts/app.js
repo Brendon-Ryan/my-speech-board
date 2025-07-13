@@ -363,6 +363,97 @@ iconsBtn.style.zIndex = '1001';
 iconsBtn.style.display = 'none';
 document.body.appendChild(iconsBtn);
 
+// Add Film TV Search Button
+const tvSearchBtn = document.createElement('button');
+tvSearchBtn.id = 'tv-search-btn';
+tvSearchBtn.title = 'Film/TV Search';
+tvSearchBtn.style.position = 'absolute';
+tvSearchBtn.style.top = '320px'; // Move down further
+tvSearchBtn.style.left = '30px';
+tvSearchBtn.style.zIndex = '1001';
+tvSearchBtn.style.background = '#fff';
+tvSearchBtn.style.border = '2px solid #2980b9';
+tvSearchBtn.style.borderRadius = '8px';
+tvSearchBtn.style.cursor = 'pointer';
+tvSearchBtn.style.boxShadow = '0 2px 8px rgba(44,62,80,0.08)';
+tvSearchBtn.style.transition = 'background 0.2s, border 0.2s';
+tvSearchBtn.style.display = 'flex';
+tvSearchBtn.style.alignItems = 'center';
+tvSearchBtn.style.justifyContent = 'center';
+tvSearchBtn.style.padding = '0'; // Remove extra padding
+tvSearchBtn.style.width = '90px';
+tvSearchBtn.style.height = '90px';
+tvSearchBtn.innerHTML = '<span style="font-size:4.2em;line-height:1;display:flex;align-items:center;justify-content:center;width:100%;height:100%;max-width:100%;max-height:100%;overflow:hidden;">📺</span>';
+tvSearchBtn.addEventListener('mouseenter', () => {
+    tvSearchBtn.style.background = '#eaf6ff';
+});
+tvSearchBtn.addEventListener('mouseleave', () => {
+    tvSearchBtn.style.background = '#fff';
+});
+document.body.appendChild(tvSearchBtn);
+setButtonActivation(tvSearchBtn, 'TV'); // Enable activation logic
+
+// Add Person Speaking Button above TV Search Button
+const speakPersonBtn = document.createElement('button');
+speakPersonBtn.id = 'speak-person-btn';
+speakPersonBtn.title = 'Speak';
+speakPersonBtn.style.position = 'absolute';
+speakPersonBtn.style.top = '220px'; // Move down further
+speakPersonBtn.style.left = '30px';
+speakPersonBtn.style.zIndex = '1001';
+speakPersonBtn.style.background = '#fff';
+speakPersonBtn.style.border = '2px solid #2980b9';
+speakPersonBtn.style.borderRadius = '8px';
+speakPersonBtn.style.cursor = 'pointer';
+speakPersonBtn.style.boxShadow = '0 2px 8px rgba(44,62,80,0.08)';
+speakPersonBtn.style.transition = 'background 0.2s, border 0.2s';
+speakPersonBtn.style.display = 'flex';
+speakPersonBtn.style.alignItems = 'center';
+speakPersonBtn.style.justifyContent = 'center';
+speakPersonBtn.style.padding = '0';
+speakPersonBtn.style.width = '90px';
+speakPersonBtn.style.height = '90px';
+speakPersonBtn.innerHTML = '<span style="font-size:4.2em;line-height:1;display:flex;align-items:center;justify-content:center;width:100%;height:100%;max-width:100%;max-height:100%;overflow:hidden;">🗣️</span>';
+speakPersonBtn.addEventListener('mouseenter', () => {
+    speakPersonBtn.style.background = '#eaf6ff';
+});
+speakPersonBtn.addEventListener('mouseleave', () => {
+    speakPersonBtn.style.background = '#fff';
+});
+document.body.appendChild(speakPersonBtn);
+setButtonActivation(speakPersonBtn, 'Speak'); // Enable activation logic
+
+// Add Game Button below TV Search Button
+const gameBtn = document.createElement('button');
+gameBtn.id = 'game-btn';
+gameBtn.title = 'Games';
+gameBtn.style.position = 'absolute';
+gameBtn.style.top = '420px'; // Move down further
+gameBtn.style.left = '30px';
+gameBtn.style.zIndex = '1001';
+gameBtn.style.background = '#fff';
+gameBtn.style.border = '2px solid #2980b9';
+gameBtn.style.borderRadius = '8px';
+gameBtn.style.cursor = 'pointer';
+gameBtn.style.boxShadow = '0 2px 8px rgba(44,62,80,0.08)';
+gameBtn.style.transition = 'background 0.2s, border 0.2s';
+gameBtn.style.display = 'flex';
+gameBtn.style.alignItems = 'center';
+gameBtn.style.justifyContent = 'center';
+gameBtn.style.padding = '0';
+gameBtn.style.width = '90px';
+gameBtn.style.height = '90px';
+gameBtn.innerHTML = '<span style="font-size:4.2em;line-height:1;display:flex;align-items:center;justify-content:center;width:100%;height:100%;max-width:100%;max-height:100%;overflow:hidden;">🎮</span>';
+gameBtn.addEventListener('mouseenter', () => {
+    gameBtn.style.background = '#eaf6ff';
+});
+gameBtn.addEventListener('mouseleave', () => {
+    gameBtn.style.background = '#fff';
+});
+document.body.appendChild(gameBtn);
+setButtonActivation(gameBtn, 'Games'); // Enable activation logic
+
+// --- Save and Edit Mode Functionality ---
 saveBtn.addEventListener('click', () => {
     // Save functionality to be implemented
 });
@@ -703,3 +794,56 @@ if (voiceTestBtn) {
         speakWord('I am your selected voice');
     });
 }
+
+// Update the tabs at the top for TV mode
+tvSearchBtn.addEventListener('click', () => {
+    const tabBar = document.querySelector('.tab-bar');
+    if (tabBar) {
+        tabBar.innerHTML = '';
+        const tabNames = [
+            { label: 'Favourites', id: 'favourites' },
+            { label: 'Popular Now', id: 'popular' },
+            { label: 'Movies', id: 'movies' },
+            { label: 'TV Shows', id: 'tvshows' },
+            { label: 'Search', id: 'search' }
+        ];
+        tabNames.forEach((tab, idx) => {
+            const btn = document.createElement('button');
+            btn.className = 'tab-btn';
+            btn.setAttribute('data-tab', tab.id);
+            btn.textContent = tab.label;
+            if (idx === 0) btn.classList.add('active');
+            tabBar.appendChild(btn);
+        });
+        // Hide all tab contents and show the first one (or create if missing)
+        document.querySelectorAll('.tab-content').forEach(tc => tc.style.display = 'none');
+        let firstTabPanel = document.getElementById('tab-favourites');
+        if (!firstTabPanel) {
+            firstTabPanel = document.createElement('div');
+            firstTabPanel.className = 'tab-content';
+            firstTabPanel.id = 'tab-favourites';
+            tabBar.parentNode.appendChild(firstTabPanel);
+        }
+        firstTabPanel.style.display = '';
+        // Re-activate tab button logic
+        const newTabButtons = document.querySelectorAll('.tab-btn');
+        newTabButtons.forEach(btn => {
+            const tabId = btn.getAttribute('data-tab');
+            if (activationMode === 'hover') {
+                let hoverTimeout;
+                btn.addEventListener('mouseenter', () => {
+                    hoverTimeout = setTimeout(() => {
+                        switchTab(tabId);
+                    }, hoverTime);
+                });
+                btn.addEventListener('mouseleave', () => {
+                    clearTimeout(hoverTimeout);
+                });
+            } else {
+                btn.addEventListener('click', () => {
+                    switchTab(tabId);
+                });
+            }
+        });
+    }
+});
