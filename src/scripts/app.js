@@ -114,6 +114,30 @@ function applyColorScheme(scheme) {
         case 'sunset':
             document.body.classList.add('sunset-scheme');
             break;
+        case 'colorblind':
+            document.body.classList.add('colorblind-scheme');
+            break;
+        case 'protanopia':
+            document.body.classList.add('protanopia-scheme');
+            break;
+        case 'protanomaly':
+            document.body.classList.add('protanomaly-scheme');
+            break;
+        case 'deuteranopia':
+            document.body.classList.add('deuteranopia-scheme');
+            break;
+        case 'deuteranomaly':
+            document.body.classList.add('deuteranomaly-scheme');
+            break;
+        case 'tritanopia':
+            document.body.classList.add('tritanopia-scheme');
+            break;
+        case 'tritanomaly':
+            document.body.classList.add('tritanomaly-scheme');
+            break;
+        case 'achromatopsia':
+            document.body.classList.add('achromatopsia-scheme');
+            break;
         default:
             document.body.classList.add('default-scheme');
     }

@@ -232,6 +232,180 @@ body.sunset-scheme .word-table {
     color: #ff5e62;
     box-shadow: 0 2px 12px rgba(255,94,98,0.12);
 }
+body.protanopia-scheme {
+    background-color: #f7f7f7;
+    color: #222;
+}
+body.protanopia-scheme .word-table {
+    background: #fff;
+    color: #222;
+}
+body.protanopia-scheme .tab-btn {
+    background: #005fa3;
+    color: #fff;
+}
+body.protanopia-scheme .tab-btn.active, body.protanopia-scheme .tab-btn:hover {
+    background: #7a7a7a;
+    color: #fff;
+}
+body.protanopia-scheme .word-btn {
+    background-color: #005fa3;
+    color: #fff;
+}
+body.protanopia-scheme .word-btn:hover {
+    background-color: #7a7a7a;
+    color: #fff;
+}
+
+body.protanomaly-scheme {
+    background-color: #f7f7f7;
+    color: #222;
+}
+body.protanomaly-scheme .word-table {
+    background: #fff;
+    color: #222;
+}
+body.protanomaly-scheme .tab-btn {
+    background: #4a90e2;
+    color: #fff;
+}
+body.protanomaly-scheme .tab-btn.active, body.protanomaly-scheme .tab-btn:hover {
+    background: #bcbcbc;
+    color: #fff;
+}
+body.protanomaly-scheme .word-btn {
+    background-color: #4a90e2;
+    color: #fff;
+}
+body.protanomaly-scheme .word-btn:hover {
+    background-color: #bcbcbc;
+    color: #fff;
+}
+
+body.deuteranopia-scheme {
+    background-color: #f7f7f7;
+    color: #222;
+}
+body.deuteranopia-scheme .word-table {
+    background: #fff;
+    color: #222;
+}
+body.deuteranopia-scheme .tab-btn {
+    background: #0072b2;
+    color: #fff;
+}
+body.deuteranopia-scheme .tab-btn.active, body.deuteranopia-scheme .tab-btn:hover {
+    background: #e69f00;
+    color: #fff;
+}
+body.deuteranopia-scheme .word-btn {
+    background-color: #0072b2;
+    color: #fff;
+}
+body.deuteranopia-scheme .word-btn:hover {
+    background-color: #e69f00;
+    color: #fff;
+}
+
+body.deuteranomaly-scheme {
+    background-color: #f7f7f7;
+    color: #222;
+}
+body.deuteranomaly-scheme .word-table {
+    background: #fff;
+    color: #222;
+}
+body.deuteranomaly-scheme .tab-btn {
+    background: #56b4e9;
+    color: #fff;
+}
+body.deuteranomaly-scheme .tab-btn.active, body.deuteranomaly-scheme .tab-btn:hover {
+    background: #f0e442;
+    color: #222;
+}
+body.deuteranomaly-scheme .word-btn {
+    background-color: #56b4e9;
+    color: #fff;
+}
+body.deuteranomaly-scheme .word-btn:hover {
+    background-color: #f0e442;
+    color: #222;
+}
+
+body.tritanopia-scheme {
+    background-color: #f7f7f7;
+    color: #222;
+}
+body.tritanopia-scheme .word-table {
+    background: #fff;
+    color: #222;
+}
+body.tritanopia-scheme .tab-btn {
+    background: #e69f00;
+    color: #fff;
+}
+body.tritanopia-scheme .tab-btn.active, body.tritanopia-scheme .tab-btn:hover {
+    background: #56b4e9;
+    color: #fff;
+}
+body.tritanopia-scheme .word-btn {
+    background-color: #e69f00;
+    color: #fff;
+}
+body.tritanopia-scheme .word-btn:hover {
+    background-color: #56b4e9;
+    color: #fff;
+}
+
+body.tritanomaly-scheme {
+    background-color: #f7f7f7;
+    color: #222;
+}
+body.tritanomaly-scheme .word-table {
+    background: #fff;
+    color: #222;
+}
+body.tritanomaly-scheme .tab-btn {
+    background: #bcbcbc;
+    color: #222;
+}
+body.tritanomaly-scheme .tab-btn.active, body.tritanomaly-scheme .tab-btn:hover {
+    background: #0072b2;
+    color: #fff;
+}
+body.tritanomaly-scheme .word-btn {
+    background-color: #bcbcbc;
+    color: #222;
+}
+body.tritanomaly-scheme .word-btn:hover {
+    background-color: #0072b2;
+    color: #fff;
+}
+
+body.achromatopsia-scheme {
+    background-color: #e0e0e0;
+    color: #222;
+}
+body.achromatopsia-scheme .word-table {
+    background: #fff;
+    color: #222;
+}
+body.achromatopsia-scheme .tab-btn {
+    background: #888;
+    color: #fff;
+}
+body.achromatopsia-scheme .tab-btn.active, body.achromatopsia-scheme .tab-btn:hover {
+    background: #222;
+    color: #fff;
+}
+body.achromatopsia-scheme .word-btn {
+    background-color: #888;
+    color: #fff;
+}
+body.achromatopsia-scheme .word-btn:hover {
+    background-color: #222;
+    color: #fff;
+}
 
 /* Tabs Styles */
 .tab-container {
