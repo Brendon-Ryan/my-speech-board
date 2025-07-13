@@ -45,23 +45,66 @@
         </div>
     </div>
 
-    <!-- Word Board Section -->
+    <!-- Word Board Section with Tabs -->
     <div id="word-board">
         <h2>Word Board</h2>
-        <table id="word-table">
-            <tr>
-                <td><button class="word-btn">Now</button></td>
-                <td><button class="word-btn">Later</button></td>
-                <td><button class="word-btn">Food</button></td>
-            </tr>
-            <tr>
-                <td><button class="word-btn">Drink</button></td>
-                <td><button class="word-btn">TV</button></td>
-            </tr>
-        </table>
-        <div class="input-section">
-            <input type="text" id="word-input" placeholder="Enter a word" />
-            <button id="add-word-btn">Add Word</button>
+        <div class="tab-container">
+            <button class="tab-btn active" data-tab="basic">Basic</button>
+            <button class="tab-btn" data-tab="needs">Needs</button>
+            <button class="tab-btn" data-tab="feelings">Feelings</button>
+            <button class="tab-btn" data-tab="activities">Activities</button>
+        </div>
+        <div class="tab-content" id="tab-basic">
+            <table id="word-table-basic" class="word-table">
+                <tr>
+                    <td><button class="word-btn">Now</button></td>
+                    <td><button class="word-btn">Later</button></td>
+                    <td><button class="word-btn">Food</button></td>
+                </tr>
+                <tr>
+                    <td><button class="word-btn">Drink</button></td>
+                    <td><button class="word-btn">TV</button></td>
+                </tr>
+            </table>
+        </div>
+        <div class="tab-content" id="tab-needs" style="display:none;">
+            <table class="word-table">
+                <tr>
+                    <td><button class="word-btn">Bathroom</button></td>
+                    <td><button class="word-btn">Help</button></td>
+                    <td><button class="word-btn">Medicine</button></td>
+                </tr>
+                <tr>
+                    <td><button class="word-btn">Rest</button></td>
+                    <td><button class="word-btn">Water</button></td>
+                </tr>
+            </table>
+        </div>
+        <div class="tab-content" id="tab-feelings" style="display:none;">
+            <table class="word-table">
+                <tr>
+                    <td><button class="word-btn">Happy</button></td>
+                    <td><button class="word-btn">Sad</button></td>
+                    <td><button class="word-btn">Tired</button></td>
+                </tr>
+                <tr>
+                    <td><button class="word-btn">Angry</button></td>
+                    <td><button class="word-btn">Excited</button></td>
+                </tr>
+            </table>
+        </div>
+        <div class="tab-content" id="tab-activities" style="display:none;">
+            <table class="word-table">
+                <tr>
+                    <td><button class="word-btn">Walk</button></td>
+                    <td><button class="word-btn">Read</button></td>
+                    <td><button class="word-btn">Music</button></td>
+                </tr>
+                <tr>
+                    <td><button class="word-btn">Game</button></td>
+                    <td><button class="word-btn">Outside</button></td>
+                </tr>
+            </table>
         </div>
     </div>
 

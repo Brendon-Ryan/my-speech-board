@@ -1,7 +1,4 @@
 // Select elements
-const wordInput = document.getElementById('word-input');
-const addWordBtn = document.getElementById('add-word-btn');
-const wordList = document.getElementById('word-list');
 const configBtn = document.getElementById('config-btn');
 const configModal = document.getElementById('config-modal');
 const closeConfig = document.getElementById('close-config');
@@ -90,37 +87,6 @@ function updateAllButtonActivation() {
 // Initial activation for existing buttons
 updateAllButtonActivation();
 
-// Add event listener to the "Add Word" button
-addWordBtn.addEventListener('click', () => {
-    const word = wordInput.value.trim();
-
-    if (word) {
-        // Find the table
-        const wordTable = document.getElementById('word-table');
-
-        // Create a new table row if the last row has 3 buttons
-        let lastRow = wordTable.rows[wordTable.rows.length - 1];
-        if (!lastRow || lastRow.cells.length === 3) {
-            lastRow = wordTable.insertRow();
-        }
-
-        // Add a new cell with the button
-        const cell = lastRow.insertCell();
-        const button = document.createElement('button');
-        button.textContent = word;
-        button.className = 'word-btn';
-
-        // Set activation mode for new button
-        setButtonActivation(button, word);
-
-        // Append the button to the cell
-        cell.appendChild(button);
-
-        // Clear the input field
-        wordInput.value = '';
-    }
-});
-
 speakWord('Test');
 
 const testButton = document.createElement('button');
@@ -170,3 +136,25 @@ colorSchemeSelect.addEventListener('change', (e) => {
 });
 // Set initial color scheme
 applyColorScheme('default');
+
+// Tab functionality for communication themes
+const tabButtons = document.querySelectorAll('.tab-btn');
+const tabContents = document.querySelectorAll('.tab-content');
+
+if (tabButtons.length > 0 && tabContents.length > 0) {
+    tabButtons.forEach(btn => {
+        btn.addEventListener('click', function() {
+            // Remove active from all buttons
+            tabButtons.forEach(b => b.classList.remove('active'));
+            // Hide all tab contents
+            tabContents.forEach(tc => tc.style.display = 'none');
+            // Activate this tab
+            btn.classList.add('active');
+            const tabId = 'tab-' + btn.getAttribute('data-tab');
+            const tabPanel = document.getElementById(tabId);
+            if (tabPanel) tabPanel.style.display = '';
+            // Re-activate word buttons in the new tab
+            updateAllButtonActivation();
+        });
+    });
+}
