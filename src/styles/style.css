@@ -69,18 +69,22 @@ h3 {
 }
 
 .word-btn {
-    background-color: #3498db; /* Blue */
+    background-color: #3498db;
     color: white;
     border: none;
     padding: 10px 20px;
     font-size: 16px;
     border-radius: 5px;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    transition: background-color 0.3s, color 0.3s, box-shadow 0.3s;
+    margin: 4px 0;
+    box-shadow: 0 1px 4px rgba(52,152,219,0.08);
 }
 
 .word-btn:hover {
-    background-color: #1abc9c; /* Green */
+    background-color: #1abc9c;
+    color: #fff;
+    box-shadow: 0 2px 8px rgba(26,188,156,0.12);
 }
 
 /* Input Section */
@@ -196,40 +200,68 @@ body.dark-scheme {
     background-color: #23272f;
     color: #f5f5f5;
 }
+body.dark-scheme .word-table {
+    background: #2c3e50;
+    color: #f5f5f5;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.18);
+}
 body.pastel-scheme {
     background-color: #ffe4ec;
     color: #5a4e7c;
+}
+body.pastel-scheme .word-table {
+    background: #fff0f6;
+    color: #5a4e7c;
+    box-shadow: 0 2px 12px rgba(90,78,124,0.08);
 }
 body.high-contrast-scheme {
     background-color: #000;
     color: #fff;
 }
+body.high-contrast-scheme .word-table {
+    background: #111;
+    color: #fff;
+    box-shadow: 0 2px 12px rgba(255,255,255,0.08);
+}
 body.sunset-scheme {
     background: linear-gradient(135deg, #ff9966 0%, #ff5e62 100%);
     color: #fff8e7;
 }
-
-/* Adjust word board and modal for dark backgrounds */
-body.dark-scheme #word-board,
-body.high-contrast-scheme #word-board,
-body.sunset-scheme #word-board {
-    background: rgba(30,30,30,0.7);
-    border-radius: 10px;
-    padding: 10px;
-}
-body.pastel-scheme #word-board {
-    background: #fff0f6;
-    border-radius: 10px;
-    padding: 10px;
+body.sunset-scheme .word-table {
+    background: rgba(255,255,255,0.85);
+    color: #ff5e62;
+    box-shadow: 0 2px 12px rgba(255,94,98,0.12);
 }
 
-body.dark-scheme .modal-content,
-body.high-contrast-scheme .modal-content,
-body.sunset-scheme .modal-content {
-    background: #23272f;
+/* Tabs Styles */
+.tab-container {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+.tab-btn {
+    background: #3498db;
+    color: #fff;
+    border: none;
+    padding: 10px 24px;
+    border-radius: 8px 8px 0 0;
+    font-size: 17px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.3s, color 0.3s;
+    box-shadow: 0 2px 6px rgba(52,152,219,0.08);
+    letter-spacing: 0.5px;
+}
+.tab-btn.active, .tab-btn:hover {
+    background: #1abc9c;
     color: #fff;
 }
-body.pastel-scheme .modal-content {
-    background: #fff0f6;
-    color: #5a4e7c;
+.word-table {
+    margin-left: auto;
+    margin-right: auto;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 12px rgba(44,62,80,0.07);
+    padding: 10px 0;
 }
