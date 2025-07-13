@@ -59,11 +59,12 @@ function clearButtonActivation(button) {
 function setButtonActivation(button, word) {
     // Remove all listeners by replacing the node
     const newButton = button.cloneNode(true);
+    let speechLabel = newButton.getAttribute('data-speech-label') || word;
     if (activationMode === 'hover') {
         let hoverTimeout;
         newButton.addEventListener('mouseenter', () => {
             hoverTimeout = setTimeout(() => {
-                speakWord(word);
+                speakWord(speechLabel);
             }, hoverTime);
         });
         newButton.addEventListener('mouseleave', () => {
@@ -71,7 +72,7 @@ function setButtonActivation(button, word) {
         });
     } else {
         newButton.addEventListener('click', () => {
-            speakWord(word);
+            speakWord(speechLabel);
         });
     }
     button.parentNode.replaceChild(newButton, button);
@@ -398,4 +399,58 @@ function enableDragAndDropOnAllTables() {
 
 document.addEventListener('DOMContentLoaded', () => {
     enableDragAndDropOnAllTables();
+});
+
+// When the Icons button is clicked, toggle between icons and text labels for word buttons
+let iconsMode = false;
+iconsBtn.addEventListener('click', () => {
+    iconsMode = !iconsMode;
+    document.querySelectorAll('.word-btn').forEach(btn => {
+        if (iconsMode) {
+            // Store original label if not already stored
+            if (!btn.hasAttribute('data-original-label')) {
+                btn.setAttribute('data-original-label', btn.textContent);
+            }
+            const label = btn.getAttribute('data-original-label').trim().toLowerCase();
+            let icon = '';
+            // Simple mapping for demonstration; expand as needed
+            switch (label) {
+                case 'yes': icon = '👍'; break;
+                case 'no': icon = '👎'; break;
+                case 'hello': icon = '👋'; break;
+                case 'goodbye': icon = '👋'; break;
+                case 'eat': icon = '🍽️'; break;
+                case 'drink': icon = '🥤'; break;
+                case 'bathroom': icon = '🚻'; break;
+                case 'help': icon = '🆘'; break;
+                case 'stop': icon = '✋'; break;
+                case 'go': icon = '🏃'; break;
+                case 'happy': icon = '😊'; break;
+                case 'sad': icon = '😢'; break;
+                case 'angry': icon = '😠'; break;
+                case 'tired': icon = '😴'; break;
+                case 'play': icon = '🎲'; break;
+                case 'home': icon = '🏠'; break;
+                case 'school': icon = '🏫'; break;
+                case 'friend': icon = '🧑‍🤝‍🧑'; break;
+                case 'family': icon = '👨‍👩‍👧‍👦'; break;
+                case 'love': icon = '❤️'; break;
+                default:
+                    // Use the first letter as a fallback visual
+                    icon = label.charAt(0).toUpperCase();
+            }
+            btn.innerHTML = `<span style="font-size:1.5em;">${icon}</span>`;
+            // Always keep the original label in a data attribute for speech
+            btn.setAttribute('data-speech-label', btn.getAttribute('data-original-label'));
+        } else {
+            // Restore original label
+            if (btn.hasAttribute('data-original-label')) {
+                btn.textContent = btn.getAttribute('data-original-label');
+                btn.removeAttribute('data-original-label');
+                btn.removeAttribute('data-speech-label');
+            }
+        }
+    });
+    // Re-activate word buttons after toggling icons/text
+    updateAllButtonActivation();
 });
