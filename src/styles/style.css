@@ -66,6 +66,9 @@ h3 {
 #word-table td {
     padding: 10px;
     text-align: center;
+    vertical-align: middle;
+    width: 1%; /* Ensures even distribution and prevents stretching */
+    min-width: 120px; /* Ensures all buttons have a minimum width */
 }
 
 .word-btn {
@@ -79,6 +82,9 @@ h3 {
     transition: background-color 0.3s, color 0.3s, box-shadow 0.3s;
     margin: 4px 0;
     box-shadow: 0 1px 4px rgba(52,152,219,0.08);
+    display: inline-block;
+    width: 100%; /* Make button fill the cell for even alignment */
+    box-sizing: border-box;
 }
 
 .word-btn:hover {

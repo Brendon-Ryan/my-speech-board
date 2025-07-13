@@ -57,61 +57,131 @@
     <div id="word-board">
         <h2>Word Board</h2>
         <div class="tab-container">
-            <button class="tab-btn active" data-tab="basic">Basic</button>
-            <button class="tab-btn" data-tab="needs">Needs</button>
+            <button class="tab-btn active" data-tab="core">Core</button>
+            <button class="tab-btn" data-tab="food">Food</button>
             <button class="tab-btn" data-tab="feelings">Feelings</button>
-            <button class="tab-btn" data-tab="activities">Activities</button>
+            <button class="tab-btn" data-tab="actions">Actions</button>
+            <button class="tab-btn" data-tab="places">Places</button>
+            <button class="tab-btn" data-tab="people">People</button>
+            <button class="tab-btn" data-tab="alphabet">Alphabet & Numbers</button>
+            <button class="tab-btn" data-tab="phrases">Phrases</button>
         </div>
-        <div class="tab-content" id="tab-basic">
-            <table id="word-table-basic" class="word-table">
+        <div class="tab-content" id="tab-core">
+            <table class="word-table" style="margin-left:auto; margin-right:auto;">
+                <tbody style="text-align:center;">
                 <tr>
-                    <td><button class="word-btn">Now</button></td>
-                    <td><button class="word-btn">Later</button></td>
-                    <td><button class="word-btn">Food</button></td>
+                    <td><button class="word-btn">I</button></td>
+                    <td><button class="word-btn">you</button></td>
+                    <td><button class="word-btn">want</button></td>
+                    <td><button class="word-btn">go</button></td>
+                    <td><button class="word-btn">stop</button></td>
+                    <td><button class="word-btn">more</button></td>
+                    <td><button class="word-btn">help</button></td>
+                    <td><button class="word-btn">like</button></td>
                 </tr>
                 <tr>
-                    <td><button class="word-btn">Drink</button></td>
-                    <td><button class="word-btn">TV</button></td>
+                    <td><button class="word-btn">not</button></td>
+                    <td><button class="word-btn">yes</button></td>
+                    <td><button class="word-btn">no</button></td>
+                    <td><button class="word-btn">it</button></td>
+                    <td><button class="word-btn">that</button></td>
+                    <td><button class="word-btn">here</button></td>
+                    <td><button class="word-btn">there</button></td>
                 </tr>
+                <tr>
+                    <td><button class="word-btn">what</button></td>
+                    <td><button class="word-btn">where</button></td>
+                    <td><button class="word-btn">who</button></td>
+                    <td><button class="word-btn">when</button></td>
+                    <td><button class="word-btn">why</button></td>
+                    <td><button class="word-btn">how</button></td>
+                </tr>
+                <tr>
+                    <td><button class="word-btn">do</button></td>
+                    <td><button class="word-btn">make</button></td>
+                    <td><button class="word-btn">eat</button></td>
+                    <td><button class="word-btn">drink</button></td>
+                    <td><button class="word-btn">play</button></td>
+                    <td><button class="word-btn">look</button></td>
+                    <td><button class="word-btn">come</button></td>
+                </tr>
+                <tr>
+                    <td><button class="word-btn">put</button></td>
+                    <td><button class="word-btn">get</button></td>
+                    <td><button class="word-btn">big</button></td>
+                    <td><button class="word-btn">little</button></td>
+                    <td><button class="word-btn">good</button></td>
+                    <td><button class="word-btn">bad</button></td>
+                </tr>
+                <tr>
+                    <td><button class="word-btn">happy</button></td>
+                    <td><button class="word-btn">sad</button></td>
+                    <td><button class="word-btn">fast</button></td>
+                    <td><button class="word-btn">slow</button></td>
+                </tr>
+                <tr>
+                    <td><button class="word-btn">red</button></td>
+                    <td><button class="word-btn">blue</button></td>
+                    <td><button class="word-btn">green</button></td>
+                    <td><button class="word-btn">yellow</button></td>
+                    <td><button class="word-btn">black</button></td>
+                    <td><button class="word-btn">white</button></td>
+                </tr>
+                <tr>
+                    <td><button class="word-btn">1</button></td>
+                    <td><button class="word-btn">2</button></td>
+                    <td><button class="word-btn">3</button></td>
+                    <td><button class="word-btn">4</button></td>
+                    <td><button class="word-btn">5</button></td>
+                    <td><button class="word-btn">6</button></td>
+                    <td><button class="word-btn">7</button></td>
+                    <td><button class="word-btn">8</button></td>
+                    <td><button class="word-btn">9</button></td>
+                    <td><button class="word-btn">10</button></td>
+                </tr>
+                </tbody>
             </table>
         </div>
-        <div class="tab-content" id="tab-needs" style="display:none;">
-            <table class="word-table">
-                <tr>
-                    <td><button class="word-btn">Bathroom</button></td>
-                    <td><button class="word-btn">Help</button></td>
-                    <td><button class="word-btn">Medicine</button></td>
-                </tr>
-                <tr>
-                    <td><button class="word-btn">Rest</button></td>
-                    <td><button class="word-btn">Water</button></td>
-                </tr>
-            </table>
+        <div class="tab-content" id="tab-food" style="display:none;">
+            <h3>Food</h3>
+            <table class="word-table"><tr><td><button class="word-btn">apple</button></td><td><button class="word-btn">banana</button></td><td><button class="word-btn">cookie</button></td><td><button class="word-btn">juice</button></td><td><button class="word-btn">water</button></td><td><button class="word-btn">milk</button></td></tr></table>
         </div>
         <div class="tab-content" id="tab-feelings" style="display:none;">
+            <h3>Feelings</h3>
+            <table class="word-table"><tr><td><button class="word-btn">tired</button></td><td><button class="word-btn">excited</button></td><td><button class="word-btn">angry</button></td><td><button class="word-btn">scared</button></td><td><button class="word-btn">bored</button></td></tr></table>
+        </div>
+        <div class="tab-content" id="tab-actions" style="display:none;">
+            <h3>Actions</h3>
+            <table class="word-table"><tr><td><button class="word-btn">run</button></td><td><button class="word-btn">jump</button></td><td><button class="word-btn">sleep</button></td><td><button class="word-btn">read</button></td><td><button class="word-btn">sing</button></td><td><button class="word-btn">dance</button></td></tr></table>
+        </div>
+        <div class="tab-content" id="tab-places" style="display:none;">
+            <h3>Places</h3>
+            <table class="word-table"><tr><td><button class="word-btn">home</button></td><td><button class="word-btn">school</button></td><td><button class="word-btn">bathroom</button></td><td><button class="word-btn">park</button></td><td><button class="word-btn">store</button></td></tr></table>
+        </div>
+        <div class="tab-content" id="tab-people" style="display:none;">
+            <h3>People</h3>
+            <table class="word-table"><tr><td><button class="word-btn">mom</button></td><td><button class="word-btn">dad</button></td><td><button class="word-btn">teacher</button></td><td><button class="word-btn">friend</button></td><td><button class="word-btn">doctor</button></td></tr></table>
+        </div>
+        <div class="tab-content" id="tab-alphabet" style="display:none;">
+            <h3>Alphabet</h3>
             <table class="word-table">
-                <tr>
-                    <td><button class="word-btn">Happy</button></td>
-                    <td><button class="word-btn">Sad</button></td>
-                    <td><button class="word-btn">Tired</button></td>
-                </tr>
-                <tr>
-                    <td><button class="word-btn">Angry</button></td>
-                    <td><button class="word-btn">Excited</button></td>
-                </tr>
+                <tr><td><button class="word-btn">A</button></td><td><button class="word-btn">B</button></td><td><button class="word-btn">C</button></td><td><button class="word-btn">D</button></td><td><button class="word-btn">E</button></td><td><button class="word-btn">F</button></td><td><button class="word-btn">G</button></td></tr>
+                <tr><td><button class="word-btn">H</button></td><td><button class="word-btn">I</button></td><td><button class="word-btn">J</button></td><td><button class="word-btn">K</button></td><td><button class="word-btn">L</button></td><td><button class="word-btn">M</button></td><td><button class="word-btn">N</button></td></tr>
+                <tr><td><button class="word-btn">O</button></td><td><button class="word-btn">P</button></td><td><button class="word-btn">Q</button></td><td><button class="word-btn">R</button></td><td><button class="word-btn">S</button></td><td><button class="word-btn">T</button></td><td><button class="word-btn">U</button></td></tr>
+                <tr><td><button class="word-btn">V</button></td><td><button class="word-btn">W</button></td><td><button class="word-btn">X</button></td><td><button class="word-btn">Y</button></td><td><button class="word-btn">Z</button></td></tr>
+            </table>
+            <h3>Numbers</h3>
+            <table class="word-table">
+                <tr><td><button class="word-btn">0</button></td><td><button class="word-btn">1</button></td><td><button class="word-btn">2</button></td><td><button class="word-btn">3</button></td><td><button class="word-btn">4</button></td><td><button class="word-btn">5</button></td><td><button class="word-btn">6</button></td><td><button class="word-btn">7</button></td><td><button class="word-btn">8</button></td><td><button class="word-btn">9</button></td></tr>
             </table>
         </div>
-        <div class="tab-content" id="tab-activities" style="display:none;">
+        <div class="tab-content" id="tab-phrases" style="display:none;">
             <table class="word-table">
-                <tr>
-                    <td><button class="word-btn">Walk</button></td>
-                    <td><button class="word-btn">Read</button></td>
-                    <td><button class="word-btn">Music</button></td>
-                </tr>
-                <tr>
-                    <td><button class="word-btn">Game</button></td>
-                    <td><button class="word-btn">Outside</button></td>
-                </tr>
+                <tr><td><button class="word-btn">I need help</button></td></tr>
+                <tr><td><button class="word-btn">I don’t like that</button></td></tr>
+                <tr><td><button class="word-btn">Can I have…</button></td></tr>
+                <tr><td><button class="word-btn">I feel…</button></td></tr>
+                <tr><td><button class="word-btn">Let’s go</button></td></tr>
             </table>
         </div>
     </div>
