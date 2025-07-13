@@ -10,6 +10,41 @@
     <h1>Welcome to Azure Web App</h1>
     <p>This is a basic web application running on Azure.</p>
 
+    <!-- Configuration Button -->
+    <button id="config-btn">⚙️ Configuration</button>
+
+    <!-- Configuration Modal -->
+    <div id="config-modal" class="modal" style="display:none;">
+        <div class="modal-content">
+            <span class="close" id="close-config">&times;</span>
+            <h2>Configuration</h2>
+            <label for="activation-mode">Activation Mode:</label>
+            <select id="activation-mode">
+                <option value="hover">Hover</option>
+                <option value="click">Click</option>
+            </select>
+            <div id="hover-time-section" style="margin-top: 16px;">
+                <label for="hover-time">Hover Time:</label>
+                <select id="hover-time">
+                    <option value="500">0.5 seconds</option>
+                    <option value="1000">1 second</option>
+                    <option value="2000">2 seconds</option>
+                    <option value="3000">3 seconds</option>
+                </select>
+            </div>
+            <div id="color-scheme-section" style="margin-top: 16px;">
+                <label for="color-scheme">Color Scheme:</label>
+                <select id="color-scheme">
+                    <option value="default">Default (Light Blue)</option>
+                    <option value="dark">Dark</option>
+                    <option value="pastel">Pastel</option>
+                    <option value="high-contrast">High Contrast</option>
+                    <option value="sunset">Sunset</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
     <!-- Word Board Section -->
     <div id="word-board">
         <h2>Word Board</h2>

@@ -110,3 +110,126 @@ h3 {
 #add-word-btn:hover {
     background-color: #3498db; /* Blue */
 }
+
+/* Voice Selection */
+.voice-selection {
+    margin: 20px auto;
+    width: 60%;
+    text-align: center;
+}
+
+#voice-select {
+    padding: 8px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-left: 10px;
+    min-width: 200px;
+}
+
+/* Configuration Modal Styles */
+#config-btn {
+    position: absolute;
+    top: 20px;
+    right: 30px;
+    background: #3498db;
+    color: white;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 5px;
+    font-size: 18px;
+    cursor: pointer;
+    z-index: 1001;
+}
+
+#config-btn:hover {
+    background: #1abc9c;
+}
+
+.modal {
+    display: block; /* Hidden by default, JS will toggle */
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.4);
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 10% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 300px;
+    border-radius: 8px;
+    text-align: left;
+    position: relative;
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+    position: absolute;
+    right: 16px;
+    top: 8px;
+}
+
+.close:hover,
+.close:focus {
+    color: #333;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+/* Color Schemes */
+body.default-scheme {
+    background-color: #f0f8ff;
+    color: #333;
+}
+body.dark-scheme {
+    background-color: #23272f;
+    color: #f5f5f5;
+}
+body.pastel-scheme {
+    background-color: #ffe4ec;
+    color: #5a4e7c;
+}
+body.high-contrast-scheme {
+    background-color: #000;
+    color: #fff;
+}
+body.sunset-scheme {
+    background: linear-gradient(135deg, #ff9966 0%, #ff5e62 100%);
+    color: #fff8e7;
+}
+
+/* Adjust word board and modal for dark backgrounds */
+body.dark-scheme #word-board,
+body.high-contrast-scheme #word-board,
+body.sunset-scheme #word-board {
+    background: rgba(30,30,30,0.7);
+    border-radius: 10px;
+    padding: 10px;
+}
+body.pastel-scheme #word-board {
+    background: #fff0f6;
+    border-radius: 10px;
+    padding: 10px;
+}
+
+body.dark-scheme .modal-content,
+body.high-contrast-scheme .modal-content,
+body.sunset-scheme .modal-content {
+    background: #23272f;
+    color: #fff;
+}
+body.pastel-scheme .modal-content {
+    background: #fff0f6;
+    color: #5a4e7c;
+}

@@ -2,6 +2,15 @@
 const wordInput = document.getElementById('word-input');
 const addWordBtn = document.getElementById('add-word-btn');
 const wordList = document.getElementById('word-list');
+const configBtn = document.getElementById('config-btn');
+const configModal = document.getElementById('config-modal');
+const closeConfig = document.getElementById('close-config');
+const activationModeSelect = document.getElementById('activation-mode');
+const hoverTimeSelect = document.getElementById('hover-time');
+const colorSchemeSelect = document.getElementById('color-scheme');
+
+let activationMode = 'hover'; // default
+let hoverTime = 1000; // default 1 second
 
 // Function to speak a word
 function speakWord(word) {
@@ -14,21 +23,72 @@ function speakWord(word) {
     }
 }
 
-// Add click functionality to buttons
-function addClickSpeech(button, word) {
-    console.log(`Attaching click event to button: ${word}`); // Debugging log
-    button.addEventListener('click', () => {
-        console.log(`Button clicked: ${word}`); // Debugging log
-        speakWord(word);
+// Show/hide hover time section based on mode
+function updateHoverTimeVisibility() {
+    const section = document.getElementById('hover-time-section');
+    section.style.display = (activationMode === 'hover') ? 'block' : 'none';
+}
+
+// Show modal
+configBtn.addEventListener('click', () => {
+    configModal.style.display = 'block';
+    updateHoverTimeVisibility();
+});
+// Hide modal
+closeConfig.addEventListener('click', () => {
+    configModal.style.display = 'none';
+});
+window.addEventListener('click', (event) => {
+    if (event.target === configModal) {
+        configModal.style.display = 'none';
+    }
+});
+// Change activation mode
+activationModeSelect.addEventListener('change', (e) => {
+    activationMode = e.target.value;
+    updateHoverTimeVisibility();
+    updateAllButtonActivation();
+});
+// Change hover time
+hoverTimeSelect.addEventListener('change', (e) => {
+    hoverTime = parseInt(e.target.value, 10);
+    updateAllButtonActivation();
+});
+
+// --- Activation logic for word buttons ---
+function clearButtonActivation(button) {
+    button.replaceWith(button.cloneNode(true)); // Remove all listeners
+}
+function setButtonActivation(button, word) {
+    // Remove all listeners by replacing the node
+    const newButton = button.cloneNode(true);
+    if (activationMode === 'hover') {
+        let hoverTimeout;
+        newButton.addEventListener('mouseenter', () => {
+            hoverTimeout = setTimeout(() => {
+                speakWord(word);
+            }, hoverTime);
+        });
+        newButton.addEventListener('mouseleave', () => {
+            clearTimeout(hoverTimeout);
+        });
+    } else {
+        newButton.addEventListener('click', () => {
+            speakWord(word);
+        });
+    }
+    button.parentNode.replaceChild(newButton, button);
+    return newButton;
+}
+function updateAllButtonActivation() {
+    const buttons = document.querySelectorAll('.word-btn');
+    buttons.forEach(button => {
+        setButtonActivation(button, button.textContent);
     });
 }
 
-// Initialize existing buttons
-const buttons = document.querySelectorAll('.word-btn');
-console.log('Buttons found:', buttons); // Debugging log
-buttons.forEach(button => {
-    addClickSpeech(button, button.textContent);
-});
+// Initial activation for existing buttons
+updateAllButtonActivation();
 
 // Add event listener to the "Add Word" button
 addWordBtn.addEventListener('click', () => {
@@ -50,8 +110,8 @@ addWordBtn.addEventListener('click', () => {
         button.textContent = word;
         button.className = 'word-btn';
 
-        // Add click functionality to the new button
-        addClickSpeech(button, word);
+        // Set activation mode for new button
+        setButtonActivation(button, word);
 
         // Append the button to the cell
         cell.appendChild(button);
@@ -71,3 +131,42 @@ testButton.addEventListener('click', () => {
     const utterance = new SpeechSynthesisUtterance('This is a test');
     window.speechSynthesis.speak(utterance);
 });
+
+// Set default color scheme on load
+function applyColorScheme(scheme) {
+    document.body.classList.remove('default-scheme', 'dark-scheme', 'pastel-scheme', 'high-contrast-scheme', 'sunset-scheme');
+    switch (scheme) {
+        case 'dark':
+            document.body.classList.add('dark-scheme');
+            break;
+        case 'pastel':
+            document.body.classList.add('pastel-scheme');
+            break;
+        case 'high-contrast':
+            document.body.classList.add('high-contrast-scheme');
+            break;
+        case 'sunset':
+            document.body.classList.add('sunset-scheme');
+            break;
+        default:
+            document.body.classList.add('default-scheme');
+    }
+}
+
+// Set initial color scheme based on select value
+function getInitialColorScheme() {
+    return colorSchemeSelect.value || 'default';
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    // Set the color scheme select to default if not set
+    colorSchemeSelect.value = 'default';
+    hoverTimeSelect.value = '1000'; // Set default hover time to 1s
+    applyColorScheme(getInitialColorScheme());
+});
+
+colorSchemeSelect.addEventListener('change', (e) => {
+    applyColorScheme(e.target.value);
+});
+// Set initial color scheme
+applyColorScheme('default');
