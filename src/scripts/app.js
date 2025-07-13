@@ -5,15 +5,18 @@ const closeConfig = document.getElementById('close-config');
 const activationModeSelect = document.getElementById('activation-mode');
 const hoverTimeSelect = document.getElementById('hover-time');
 const colorSchemeSelect = document.getElementById('color-scheme');
+const voiceSelect = document.getElementById('voice-select');
 
 let activationMode = 'hover'; // default
 let hoverTime = 1000; // default 1 second
+let selectedVoice = null;
 
 // Function to speak a word
 function speakWord(word) {
     console.log(`Attempting to speak: ${word}`); // Debugging log
     if ('speechSynthesis' in window) {
         const utterance = new SpeechSynthesisUtterance(word);
+        if (selectedVoice) utterance.voice = selectedVoice;
         window.speechSynthesis.speak(utterance);
     } else {
         console.error('Web Speech API is not supported in this browser.');
@@ -161,6 +164,47 @@ colorSchemeSelect.addEventListener('change', (e) => {
 });
 // Set initial color scheme
 applyColorScheme('default');
+
+// --- Voice Selection in Config Modal ---
+function populateVoices() {
+    if (!voiceSelect) return;
+    const voices = window.speechSynthesis.getVoices();
+    voiceSelect.innerHTML = '';
+    voices.forEach((voice, idx) => {
+        const option = document.createElement('option');
+        option.value = idx;
+        option.textContent = `${voice.name} (${voice.lang})${voice.default ? ' [default]' : ''}`;
+        voiceSelect.appendChild(option);
+    });
+    // Set selectedVoice to default
+    if (voices.length > 0) {
+        selectedVoice = voices[voiceSelect.selectedIndex || 0];
+    }
+}
+
+if (voiceSelect) {
+    function setSelectedVoice() {
+        const voices = window.speechSynthesis.getVoices();
+        selectedVoice = voices[voiceSelect.selectedIndex] || voices[0];
+    }
+    populateVoices();
+    window.speechSynthesis.onvoiceschanged = () => {
+        populateVoices();
+        setSelectedVoice();
+    };
+    voiceSelect.addEventListener('change', setSelectedVoice);
+    // Always update selectedVoice before speaking
+    document.addEventListener('mouseenter', function(e) {
+        if (e.target && e.target.classList && e.target.classList.contains('word-btn')) {
+            setSelectedVoice();
+        }
+    }, true);
+    document.addEventListener('click', function(e) {
+        if (e.target && e.target.classList && e.target.classList.contains('word-btn')) {
+            setSelectedVoice();
+        }
+    }, true);
+}
 
 // Tab functionality for communication themes
 const tabButtons = document.querySelectorAll('.tab-btn');
@@ -637,3 +681,11 @@ iconsBtn.addEventListener('click', () => {
     // Re-activate word buttons after toggling icons/text
     updateAllButtonActivation();
 });
+
+// Voice test button functionality
+const voiceTestBtn = document.getElementById('voice-test-btn');
+if (voiceTestBtn) {
+    voiceTestBtn.addEventListener('click', () => {
+        speakWord('I am your selected voice');
+    });
+}
