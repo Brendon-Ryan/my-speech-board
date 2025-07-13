@@ -504,3 +504,20 @@ body.edit-mode td.empty-drop-spot.drag-over {
     background: #ffe0b2 !important;
     outline: 2px solid #f39c12;
 }
+
+/* Icons Button Styles */
+#icons-btn {
+    background: #2980b9;
+    color: #fff;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.3s;
+    margin-top: 10px;
+    display: none;
+}
+#icons-btn:hover {
+    background: #1abc9c;
+}

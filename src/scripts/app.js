@@ -224,7 +224,7 @@ wordInput.addEventListener('keydown', (e) => {
 // --- Edit Mode Toggle ---
 let editMode = false;
 
-// Add Edit Mode and Save buttons to the UI
+// Add Edit Mode, Save, and Icons buttons to the UI
 const editModeBtn = document.createElement('button');
 editModeBtn.id = 'edit-mode-btn';
 editModeBtn.textContent = 'Enable Edit Mode';
@@ -243,6 +243,16 @@ saveBtn.style.left = '170px';
 saveBtn.style.zIndex = '1001';
 document.body.appendChild(saveBtn);
 
+const iconsBtn = document.createElement('button');
+iconsBtn.id = 'icons-btn';
+iconsBtn.textContent = 'Icons';
+iconsBtn.style.position = 'absolute';
+iconsBtn.style.top = '60px';
+iconsBtn.style.left = '30px';
+iconsBtn.style.zIndex = '1001';
+iconsBtn.style.display = 'none';
+document.body.appendChild(iconsBtn);
+
 saveBtn.addEventListener('click', () => {
     // Save functionality to be implemented
 });
@@ -251,6 +261,8 @@ editModeBtn.addEventListener('click', () => {
     editMode = !editMode;
     editModeBtn.textContent = editMode ? 'Disable Edit Mode' : 'Enable Edit Mode';
     document.body.classList.toggle('edit-mode', editMode);
+    // Show or hide the Icons button based on edit mode
+    iconsBtn.style.display = editMode ? 'block' : 'none';
     // First, ensure all rows have 10 cells and empty-drop-spot classes are set
     document.querySelectorAll('.word-table').forEach(table => {
         if (editMode) {
