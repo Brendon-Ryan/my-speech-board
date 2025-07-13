@@ -168,21 +168,72 @@ const tabContents = document.querySelectorAll('.tab-content');
 
 if (tabButtons.length > 0 && tabContents.length > 0) {
     tabButtons.forEach(btn => {
-        btn.addEventListener('click', function() {
-            // Remove active from all buttons
-            tabButtons.forEach(b => b.classList.remove('active'));
-            // Hide all tab contents
-            tabContents.forEach(tc => tc.style.display = 'none');
-            // Activate this tab
-            btn.classList.add('active');
-            const tabId = 'tab-' + btn.getAttribute('data-tab');
-            const tabPanel = document.getElementById(tabId);
-            if (tabPanel) tabPanel.style.display = '';
-            // Re-activate word buttons in the new tab
-            updateAllButtonActivation();
-        });
+        // Remove previous listeners to avoid duplicates
+        btn.replaceWith(btn.cloneNode(true));
+    });
+    // Re-select after replace
+    const newTabButtons = document.querySelectorAll('.tab-btn');
+    newTabButtons.forEach(btn => {
+        const tabId = btn.getAttribute('data-tab');
+        if (activationMode === 'hover') {
+            let hoverTimeout;
+            btn.addEventListener('mouseenter', () => {
+                hoverTimeout = setTimeout(() => {
+                    switchTab(tabId);
+                }, hoverTime);
+            });
+            btn.addEventListener('mouseleave', () => {
+                clearTimeout(hoverTimeout);
+            });
+        } else {
+            btn.addEventListener('click', () => {
+                switchTab(tabId);
+            });
+        }
     });
 }
+
+function switchTab(tabId) {
+    // Remove active from all buttons
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    // Hide all tab contents
+    document.querySelectorAll('.tab-content').forEach(tc => tc.style.display = 'none');
+    // Activate this tab
+    const btn = document.querySelector('.tab-btn[data-tab="' + tabId + '"]');
+    if (btn) btn.classList.add('active');
+    const tabPanel = document.getElementById('tab-' + tabId);
+    if (tabPanel) tabPanel.style.display = '';
+    // Re-activate word buttons in the new tab
+    updateAllButtonActivation();
+}
+
+// When activation mode changes, re-apply tab button activation
+activationModeSelect.addEventListener('change', () => {
+    if (tabButtons.length > 0 && tabContents.length > 0) {
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.replaceWith(btn.cloneNode(true));
+        });
+        const newTabButtons = document.querySelectorAll('.tab-btn');
+        newTabButtons.forEach(btn => {
+            const tabId = btn.getAttribute('data-tab');
+            if (activationMode === 'hover') {
+                let hoverTimeout;
+                btn.addEventListener('mouseenter', () => {
+                    hoverTimeout = setTimeout(() => {
+                        switchTab(tabId);
+                    }, hoverTime);
+                });
+                btn.addEventListener('mouseleave', () => {
+                    clearTimeout(hoverTimeout);
+                });
+            } else {
+                btn.addEventListener('click', () => {
+                    switchTab(tabId);
+                });
+            }
+        });
+    }
+});
 
 // Add a new word to the current tab
 const addWordBtn = document.getElementById('add-word-btn');
