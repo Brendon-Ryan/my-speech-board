@@ -363,10 +363,10 @@ iconsBtn.style.zIndex = '1001';
 iconsBtn.style.display = 'none';
 document.body.appendChild(iconsBtn);
 
-// Add Film TV Search Button
+// Add Film and TV Search Button
 const tvSearchBtn = document.createElement('button');
 tvSearchBtn.id = 'tv-search-btn';
-tvSearchBtn.title = 'Film/TV Search';
+tvSearchBtn.title = 'Film and TV Search';
 tvSearchBtn.style.position = 'absolute';
 tvSearchBtn.style.top = '320px'; // Move down further
 tvSearchBtn.style.left = '30px';
@@ -383,7 +383,7 @@ tvSearchBtn.style.justifyContent = 'center';
 tvSearchBtn.style.padding = '0'; // Remove extra padding
 tvSearchBtn.style.width = '90px';
 tvSearchBtn.style.height = '90px';
-tvSearchBtn.innerHTML = '<span style="font-size:4.2em;line-height:1;display:flex;align-items:center;justify-content:center;width:100%;height:100%;max-width:100%;max-height:100%;overflow:hidden;">📺</span>';
+tvSearchBtn.innerHTML = '<span style="font-size:4.2em;line-height:1;display:flex;align-items:center;justify-content:center;width:100%;height:100%;max-width:100%;max-height:100%;overflow:hidden;">🎬</span>';
 tvSearchBtn.addEventListener('mouseenter', () => {
     tvSearchBtn.style.background = '#eaf6ff';
 });
@@ -391,12 +391,12 @@ tvSearchBtn.addEventListener('mouseleave', () => {
     tvSearchBtn.style.background = '#fff';
 });
 document.body.appendChild(tvSearchBtn);
-setButtonActivation(tvSearchBtn, 'TV'); // Enable activation logic
+setButtonActivation(tvSearchBtn, 'Film and TV'); // Enable activation logic
 
-// Add Person Speaking Button above TV Search Button
+// Add Speech Button above Film and TV Search Button
 const speakPersonBtn = document.createElement('button');
 speakPersonBtn.id = 'speak-person-btn';
-speakPersonBtn.title = 'Speak';
+speakPersonBtn.title = 'Speech';
 speakPersonBtn.style.position = 'absolute';
 speakPersonBtn.style.top = '220px'; // Move down further
 speakPersonBtn.style.left = '30px';
@@ -421,7 +421,7 @@ speakPersonBtn.addEventListener('mouseleave', () => {
     speakPersonBtn.style.background = '#fff';
 });
 document.body.appendChild(speakPersonBtn);
-setButtonActivation(speakPersonBtn, 'Speak'); // Enable activation logic
+setButtonActivation(speakPersonBtn, 'Speech'); // Enable activation logic
 
 // Add Game Button below TV Search Button
 const gameBtn = document.createElement('button');
@@ -799,14 +799,17 @@ if (voiceTestBtn) {
 tvSearchBtn.addEventListener('click', () => {
     const tabBar = document.querySelector('.tab-bar');
     if (tabBar) {
+        // Remove ALL .tab-btn and .tab-content elements from the DOM
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.parentNode && btn.parentNode.removeChild(btn));
+        document.querySelectorAll('.tab-content').forEach(tc => tc.parentNode && tc.parentNode.removeChild(tc));
+        // Clear tabBar
         tabBar.innerHTML = '';
+        // Add only Movies and TV Shows tabs
         const tabNames = [
-            { label: 'Favourites', id: 'favourites' },
-            { label: 'Popular Now', id: 'popular' },
             { label: 'Movies', id: 'movies' },
-            { label: 'TV Shows', id: 'tvshows' },
-            { label: 'Search', id: 'search' }
+            { label: 'TV Shows', id: 'tvshows' }
         ];
+        // Add new tab buttons
         tabNames.forEach((tab, idx) => {
             const btn = document.createElement('button');
             btn.className = 'tab-btn';
@@ -815,18 +818,17 @@ tvSearchBtn.addEventListener('click', () => {
             if (idx === 0) btn.classList.add('active');
             tabBar.appendChild(btn);
         });
-        // Hide all tab contents and show the first one (or create if missing)
-        document.querySelectorAll('.tab-content').forEach(tc => tc.style.display = 'none');
-        let firstTabPanel = document.getElementById('tab-favourites');
-        if (!firstTabPanel) {
-            firstTabPanel = document.createElement('div');
-            firstTabPanel.className = 'tab-content';
-            firstTabPanel.id = 'tab-favourites';
-            tabBar.parentNode.appendChild(firstTabPanel);
-        }
-        firstTabPanel.style.display = '';
+        // Add new tab content panels as siblings immediately after the tab bar
+        let nextElem = tabBar.nextSibling;
+        tabNames.forEach((tab, idx) => {
+            const tabPanel = document.createElement('div');
+            tabPanel.className = 'tab-content';
+            tabPanel.id = 'tab-' + tab.id;
+            if (idx !== 0) tabPanel.style.display = 'none';
+            tabBar.parentNode.insertBefore(tabPanel, nextElem);
+        });
         // Re-activate tab button logic
-        const newTabButtons = document.querySelectorAll('.tab-btn');
+        const newTabButtons = tabBar.querySelectorAll('.tab-btn');
         newTabButtons.forEach(btn => {
             const tabId = btn.getAttribute('data-tab');
             if (activationMode === 'hover') {
