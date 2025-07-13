@@ -199,9 +199,9 @@ addWordBtn.addEventListener('click', () => {
         table.className = 'word-table';
         tabContent.appendChild(table);
     }
-    // Add to last row if it has < 8 cells, else create new row
+    // Add to last row if it has < 10 cells, else create new row
     let lastRow = table.rows[table.rows.length - 1];
-    if (!lastRow || lastRow.cells.length >= 8) {
+    if (!lastRow || lastRow.cells.length >= 10) {
         lastRow = table.insertRow();
     }
     const cell = lastRow.insertCell();
@@ -251,11 +251,11 @@ editModeBtn.addEventListener('click', () => {
     editMode = !editMode;
     editModeBtn.textContent = editMode ? 'Disable Edit Mode' : 'Enable Edit Mode';
     document.body.classList.toggle('edit-mode', editMode);
-    // First, ensure all rows have 8 cells and empty-drop-spot classes are set
+    // First, ensure all rows have 10 cells and empty-drop-spot classes are set
     document.querySelectorAll('.word-table').forEach(table => {
         if (editMode) {
             Array.from(table.rows).forEach(row => {
-                while (row.cells.length < 8) {
+                while (row.cells.length < 10) {
                     const newCell = row.insertCell();
                     newCell.classList.add('empty-drop-spot');
                 }
@@ -322,10 +322,10 @@ function enableDragAndDropOnTable(table) {
             td.classList.remove('empty-drop-spot');
         }
     });
-    // In edit mode, ensure all rows have 8 cells (so there are empty cells to drop into)
+    // In edit mode, ensure all rows have 10 cells (so there are empty cells to drop into)
     if (editMode) {
         Array.from(table.rows).forEach(row => {
-            while (row.cells.length < 8) {
+            while (row.cells.length < 10) {
                 row.insertCell();
             }
         });
