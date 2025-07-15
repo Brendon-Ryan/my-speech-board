@@ -263,9 +263,47 @@ function switchTab(tabId) {
     if (tabPanel) tabPanel.style.display = '';
     // Re-activate word buttons in the new tab
     updateAllButtonActivation();
+    // Re-bind QWERTY keyboard activation if present
+    if (tabId === 'search') {
+        bindQwertyKeyboardActivation();
+    }
 }
 
-// When activation mode changes, re-apply tab button activation
+// Helper to (re)bind QWERTY keyboard activation to match activationMode
+function bindQwertyKeyboardActivation() {
+    const qwertyTabPanel = document.getElementById('tab-search');
+    if (!qwertyTabPanel) return;
+    const searchInput = qwertyTabPanel.querySelector('.search-input');
+    qwertyTabPanel.querySelectorAll('.qwerty-key').forEach(keyBtn => {
+        // Remove all previous listeners by replacing the node
+        const key = keyBtn.textContent === '␣' ? 'Space' : (keyBtn.textContent === '⌫' ? 'Backspace' : keyBtn.textContent);
+        if (key === 'SEARCH') return;
+        const newBtn = keyBtn.cloneNode(true);
+        const activateKey = () => {
+            if (key === 'Space') {
+                searchInput.value += ' ';
+            } else if (key === 'Backspace') {
+                searchInput.value = searchInput.value.slice(0, -1);
+            } else {
+                searchInput.value += key;
+            }
+            searchInput.focus();
+        };
+        if (activationMode === 'hover') {
+            let hoverTimeout;
+            newBtn.addEventListener('mouseenter', () => {
+                hoverTimeout = setTimeout(activateKey, hoverTime);
+            });
+            newBtn.addEventListener('mouseleave', () => {
+                clearTimeout(hoverTimeout);
+            });
+        } else {
+            newBtn.addEventListener('click', activateKey);
+        }
+        keyBtn.parentNode.replaceChild(newBtn, keyBtn);
+    });
+}
+// When activation mode changes, re-apply tab button activation and QWERTY keyboard activation
 activationModeSelect.addEventListener('change', () => {
     if (tabButtons.length > 0 && tabContents.length > 0) {
         document.querySelectorAll('.tab-btn').forEach(btn => {
@@ -291,6 +329,8 @@ activationModeSelect.addEventListener('change', () => {
             }
         });
     }
+    // Also re-bind QWERTY keyboard activation if present
+    bindQwertyKeyboardActivation();
 });
 
 // Add a new word to the current tab
@@ -363,95 +403,234 @@ iconsBtn.style.zIndex = '1001';
 iconsBtn.style.display = 'none';
 document.body.appendChild(iconsBtn);
 
-// Add Film and TV Search Button
-const tvSearchBtn = document.createElement('button');
-tvSearchBtn.id = 'tv-search-btn';
-tvSearchBtn.title = 'Film and TV Search';
-tvSearchBtn.style.position = 'absolute';
-tvSearchBtn.style.top = '320px'; // Move down further
-tvSearchBtn.style.left = '30px';
-tvSearchBtn.style.zIndex = '1001';
-tvSearchBtn.style.background = '#fff';
-tvSearchBtn.style.border = '2px solid #2980b9';
-tvSearchBtn.style.borderRadius = '8px';
-tvSearchBtn.style.cursor = 'pointer';
-tvSearchBtn.style.boxShadow = '0 2px 8px rgba(44,62,80,0.08)';
-tvSearchBtn.style.transition = 'background 0.2s, border 0.2s';
-tvSearchBtn.style.display = 'flex';
-tvSearchBtn.style.alignItems = 'center';
-tvSearchBtn.style.justifyContent = 'center';
-tvSearchBtn.style.padding = '0'; // Remove extra padding
-tvSearchBtn.style.width = '90px';
-tvSearchBtn.style.height = '90px';
-tvSearchBtn.innerHTML = '<span style="font-size:4.2em;line-height:1;display:flex;align-items:center;justify-content:center;width:100%;height:100%;max-width:100%;max-height:100%;overflow:hidden;">🎬</span>';
-tvSearchBtn.addEventListener('mouseenter', () => {
-    tvSearchBtn.style.background = '#eaf6ff';
+// Add Film/TV button on the left
+const filmBtn = document.createElement('button');
+filmBtn.id = 'film-btn';
+filmBtn.title = 'Film / TV';
+filmBtn.style.position = 'absolute';
+filmBtn.style.top = '300px';
+filmBtn.style.left = '30px';
+filmBtn.style.zIndex = '1001';
+filmBtn.style.background = '#fff';
+filmBtn.style.border = '2px solid #2980b9';
+filmBtn.style.borderRadius = '8px';
+filmBtn.style.cursor = 'pointer';
+filmBtn.style.boxShadow = '0 2px 8px rgba(44,62,80,0.08)';
+filmBtn.style.transition = 'background 0.2s, border 0.2s';
+filmBtn.style.display = 'flex';
+filmBtn.style.alignItems = 'center';
+filmBtn.style.justifyContent = 'center';
+filmBtn.style.padding = '0';
+filmBtn.style.width = '90px';
+filmBtn.style.height = '90px';
+filmBtn.innerHTML = '<span style="font-size:4.2em;line-height:1;display:flex;align-items:center;justify-content:center;width:100%;height:100%;max-width:100%;max-height:100%;overflow:hidden;">🎬</span>';
+filmBtn.addEventListener('mouseenter', () => {
+    filmBtn.style.background = '#eaf6ff';
 });
-tvSearchBtn.addEventListener('mouseleave', () => {
-    tvSearchBtn.style.background = '#fff';
+filmBtn.addEventListener('mouseleave', () => {
+    filmBtn.style.background = '#fff';
 });
-document.body.appendChild(tvSearchBtn);
-setButtonActivation(tvSearchBtn, 'Film and TV'); // Enable activation logic
+document.body.appendChild(filmBtn);
 
-// Add Speech Button above Film and TV Search Button
-const speakPersonBtn = document.createElement('button');
-speakPersonBtn.id = 'speak-person-btn';
-speakPersonBtn.title = 'Speech';
-speakPersonBtn.style.position = 'absolute';
-speakPersonBtn.style.top = '220px'; // Move down further
-speakPersonBtn.style.left = '30px';
-speakPersonBtn.style.zIndex = '1001';
-speakPersonBtn.style.background = '#fff';
-speakPersonBtn.style.border = '2px solid #2980b9';
-speakPersonBtn.style.borderRadius = '8px';
-speakPersonBtn.style.cursor = 'pointer';
-speakPersonBtn.style.boxShadow = '0 2px 8px rgba(44,62,80,0.08)';
-speakPersonBtn.style.transition = 'background 0.2s, border 0.2s';
-speakPersonBtn.style.display = 'flex';
-speakPersonBtn.style.alignItems = 'center';
-speakPersonBtn.style.justifyContent = 'center';
-speakPersonBtn.style.padding = '0';
-speakPersonBtn.style.width = '90px';
-speakPersonBtn.style.height = '90px';
-speakPersonBtn.innerHTML = '<span style="font-size:4.2em;line-height:1;display:flex;align-items:center;justify-content:center;width:100%;height:100%;max-width:100%;max-height:100%;overflow:hidden;">🗣️</span>';
-speakPersonBtn.addEventListener('mouseenter', () => {
-    speakPersonBtn.style.background = '#eaf6ff';
-});
-speakPersonBtn.addEventListener('mouseleave', () => {
-    speakPersonBtn.style.background = '#fff';
-});
-document.body.appendChild(speakPersonBtn);
-setButtonActivation(speakPersonBtn, 'Speech'); // Enable activation logic
+// Remove all main tabs when Film/TV button is clicked
+filmBtn.addEventListener('click', () => {
+    // Remove all existing tab buttons and tab content panels
+    document.querySelectorAll('.tab-btn').forEach(btn => btn.parentNode && btn.parentNode.removeChild(btn));
+    document.querySelectorAll('.tab-content').forEach(tc => tc.parentNode && tc.parentNode.removeChild(tc));
 
-// Add Game Button below TV Search Button
-const gameBtn = document.createElement('button');
-gameBtn.id = 'game-btn';
-gameBtn.title = 'Games';
-gameBtn.style.position = 'absolute';
-gameBtn.style.top = '420px'; // Move down further
-gameBtn.style.left = '30px';
-gameBtn.style.zIndex = '1001';
-gameBtn.style.background = '#fff';
-gameBtn.style.border = '2px solid #2980b9';
-gameBtn.style.borderRadius = '8px';
-gameBtn.style.cursor = 'pointer';
-gameBtn.style.boxShadow = '0 2px 8px rgba(44,62,80,0.08)';
-gameBtn.style.transition = 'background 0.2s, border 0.2s';
-gameBtn.style.display = 'flex';
-gameBtn.style.alignItems = 'center';
-gameBtn.style.justifyContent = 'center';
-gameBtn.style.padding = '0';
-gameBtn.style.width = '90px';
-gameBtn.style.height = '90px';
-gameBtn.innerHTML = '<span style="font-size:4.2em;line-height:1;display:flex;align-items:center;justify-content:center;width:100%;height:100%;max-width:100%;max-height:100%;overflow:hidden;">🎮</span>';
-gameBtn.addEventListener('mouseenter', () => {
-    gameBtn.style.background = '#eaf6ff';
+    // Hide Add New Word UI (button and input)
+    const addWordBtn = document.getElementById('add-word-btn');
+    if (addWordBtn) addWordBtn.style.display = 'none';
+    const wordInput = document.getElementById('word-input');
+    if (wordInput) wordInput.style.display = 'none';
+
+    // Ensure tab bar exists, or create it after the Word Board
+    let tabBar = document.querySelector('.tab-bar');
+    if (!tabBar) {
+        // Find the Word Board element (assume it has id 'word-board' or class 'word-board')
+        let wordBoard = document.getElementById('word-board');
+        if (!wordBoard) {
+            wordBoard = document.querySelector('.word-board');
+        }
+        tabBar = document.createElement('div');
+        tabBar.className = 'tab-bar';
+        if (wordBoard && wordBoard.parentNode) {
+            if (wordBoard.nextSibling) {
+                wordBoard.parentNode.insertBefore(tabBar, wordBoard.nextSibling);
+            } else {
+                wordBoard.parentNode.appendChild(tabBar);
+            }
+        } else if (document.body.firstChild) {
+            document.body.insertBefore(tabBar, document.body.firstChild);
+        } else {
+            document.body.appendChild(tabBar);
+        }
+    } else {
+        tabBar.innerHTML = '';
+    }
+
+    // Define new tabs
+    const newTabs = [
+        { label: 'Popular', id: 'popular' },
+        { label: 'Movies', id: 'movies' },
+        { label: 'TV Shows', id: 'tvshows' },
+        { label: 'Genres', id: 'genres' },
+        { label: 'Search', id: 'search' }
+    ];
+    // Add new tab buttons
+    newTabs.forEach((tab, idx) => {
+        const btn = document.createElement('button');
+        btn.className = 'tab-btn';
+        btn.setAttribute('data-tab', tab.id);
+        btn.textContent = tab.label;
+        if (idx === 0) btn.classList.add('active');
+        tabBar.appendChild(btn);
+    });
+    // Add new tab content panels as siblings immediately after the tab bar
+    let nextElem = tabBar.nextSibling;
+    newTabs.forEach((tab, idx) => {
+        const tabPanel = document.createElement('div');
+        tabPanel.className = 'tab-content';
+        tabPanel.id = 'tab-' + tab.id;
+        if (idx !== 0) tabPanel.style.display = 'none';
+        // If this is the Search tab, add a QWERTY keyboard styled like the word board buttons
+        if (tab.id === 'search') {
+            const keyboardRows = [
+                ['Q','W','E','R','T','Y','U','I','O','P'],
+                ['A','S','D','F','G','H','J','K','L'],
+                ['Z','X','C','V','B','N','M'],
+                ['Space','Backspace','SEARCH']
+            ];
+            const keyboard = document.createElement('div');
+            keyboard.className = 'qwerty-keyboard';
+            keyboard.style.display = 'flex';
+            keyboard.style.flexDirection = 'column';
+            keyboard.style.alignItems = 'center';
+            keyboard.style.margin = '30px 0';
+            // Input field for composing text
+            const searchInput = document.createElement('input');
+            searchInput.type = 'text';
+            searchInput.className = 'search-input';
+            searchInput.style.fontSize = '2em';
+            searchInput.style.marginBottom = '20px';
+            searchInput.style.width = '80%';
+            searchInput.style.maxWidth = '500px';
+            searchInput.style.textAlign = 'center';
+            keyboard.appendChild(searchInput);
+            // Keyboard rows
+            keyboardRows.forEach(row => {
+                const rowDiv = document.createElement('div');
+                rowDiv.style.display = 'flex';
+                rowDiv.style.justifyContent = 'center';
+                rowDiv.style.marginBottom = '10px';
+                row.forEach(key => {
+                    const keyBtn = document.createElement('button');
+                    keyBtn.className = 'word-btn qwerty-key';
+                    if (key === 'Space') {
+                        keyBtn.textContent = '␣';
+                        keyBtn.style.minWidth = '120px';
+                    } else if (key === 'Backspace') {
+                        keyBtn.textContent = '⌫';
+                    } else if (key === 'SEARCH') {
+                        keyBtn.textContent = 'SEARCH';
+                        keyBtn.addEventListener('click', () => {
+                            // Replace this with your search logic
+                            if (searchInput.value.trim()) {
+                                // For now, just log the value
+                                console.log('Search:', searchInput.value.trim());
+                            }
+                            searchInput.focus();
+                        });
+                        keyBtn.style.margin = '0 4px';
+                        rowDiv.appendChild(keyBtn);
+                        return;
+                    } else {
+                        keyBtn.textContent = key;
+                    }
+                    keyBtn.style.margin = '0 4px';
+                    // Activation for QWERTY keys: match activationMode (hover or click)
+                    const activateKey = () => {
+                        if (key === 'Space') {
+                            searchInput.value += ' ';
+                        } else if (key === 'Backspace') {
+                            searchInput.value = searchInput.value.slice(0, -1);
+                        } else {
+                            searchInput.value += key;
+                        }
+                        searchInput.focus();
+                    };
+                    if (activationMode === 'hover') {
+                        let hoverTimeout;
+                        keyBtn.addEventListener('mouseenter', () => {
+                            hoverTimeout = setTimeout(activateKey, hoverTime);
+                        });
+                        keyBtn.addEventListener('mouseleave', () => {
+                            clearTimeout(hoverTimeout);
+                        });
+                    } else {
+                        keyBtn.addEventListener('click', activateKey);
+                    }
+                    rowDiv.appendChild(keyBtn);
+                });
+                keyboard.appendChild(rowDiv);
+            });
+            // Optionally, add a Speak button below
+            const speakBtn = document.createElement('button');
+            speakBtn.textContent = 'Speak';
+            speakBtn.className = 'word-btn';
+            speakBtn.style.marginTop = '15px';
+            speakBtn.style.fontSize = '1.2em';
+            speakBtn.addEventListener('click', () => {
+                if (searchInput.value.trim()) speakWord(searchInput.value.trim());
+            });
+            keyboard.appendChild(speakBtn);
+            tabPanel.appendChild(keyboard);
+        }
+        // If this is the Genres tab, add genre buttons styled like word buttons
+        if (tab.id === 'genres') {
+            const genres = [
+                'Action', 'Adventure', 'Animation', 'Comedy', 'Crime', 'Documentary',
+                'Drama', 'Family', 'Fantasy', 'History', 'Horror', 'Music',
+                'Mystery', 'Romance', 'Science Fiction', 'TV Movie', 'Thriller', 'War', 'Western'
+            ];
+            const genresTable = document.createElement('table');
+            genresTable.className = 'word-table';
+            let row = null;
+            genres.forEach((genre, i) => {
+                if (i % 5 === 0) row = genresTable.insertRow();
+                const cell = row.insertCell();
+                const btn = document.createElement('button');
+                btn.className = 'word-btn';
+                btn.textContent = genre;
+                cell.appendChild(btn);
+                setButtonActivation(btn, genre);
+            });
+            tabPanel.appendChild(genresTable);
+        }
+        tabBar.parentNode.insertBefore(tabPanel, nextElem);
+    });
+    // Re-activate tab button logic
+    const newTabButtons = tabBar.querySelectorAll('.tab-btn');
+    newTabButtons.forEach(btn => {
+        const tabId = btn.getAttribute('data-tab');
+        if (activationMode === 'hover') {
+            let hoverTimeout;
+            btn.addEventListener('mouseenter', () => {
+                hoverTimeout = setTimeout(() => {
+                    switchTab(tabId);
+                }, hoverTime);
+            });
+            btn.addEventListener('mouseleave', () => {
+                clearTimeout(hoverTimeout);
+            });
+        } else {
+            btn.addEventListener('click', () => {
+                switchTab(tabId);
+            });
+        }
+    });
 });
-gameBtn.addEventListener('mouseleave', () => {
-    gameBtn.style.background = '#fff';
-});
-document.body.appendChild(gameBtn);
-setButtonActivation(gameBtn, 'Games'); // Enable activation logic
+
 
 // --- Save and Edit Mode Functionality ---
 saveBtn.addEventListener('click', () => {
