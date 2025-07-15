@@ -531,13 +531,13 @@ function createStreamingBtn({ id, title, top, logoUrl, borderColor, bgColor, hov
     btn.style.alignItems = 'center';
     btn.style.justifyContent = 'center';
     btn.style.padding = '0';
-    btn.style.width = '90px';
-    btn.style.height = '90px';
+    btn.style.width = '60px';
+    btn.style.height = '60px';
     btn.style.opacity = '1';
     if (fullLogo) {
         btn.innerHTML = `<img src="${logoUrl}" alt="${logoAlt}" style="width:100%;height:100%;object-fit:contain;display:block;">`;
     } else {
-        btn.innerHTML = `<img src="${logoUrl}" alt="${logoAlt}" style="width:60px;height:60px;object-fit:contain;display:block;">`;
+        btn.innerHTML = `<img src="${logoUrl}" alt="${logoAlt}" style="width:40px;height:40px;object-fit:contain;display:block;">`;
     }
     btn.addEventListener('mouseenter', () => {
         btn.style.background = hoverBg;
@@ -572,10 +572,20 @@ streamingLabel.style.color = '#222';
 streamingLabel.style.display = 'none'; // hidden by default, shown with buttons
 document.body.appendChild(streamingLabel);
 
+// 2-column layout for streaming buttons
+const streamingBtnPositions = [
+    { top: 170, right: 30 },   // Netflix (col 1)
+    { top: 170, right: 100 },  // Stan (col 2)
+    { top: 240, right: 30 },   // Disney+ (col 1)
+    { top: 240, right: 100 },  // Prime (col 2)
+    { top: 310, right: 30 },   // Paramount+ (col 1)
+    { top: 310, right: 100 }   // Binge (col 2)
+];
+
 const netflixBtn = createStreamingBtn({
     id: 'netflix-btn',
     title: 'Netflix',
-    top: '170px',
+    top: streamingBtnPositions[0].top + 'px',
     logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/0/08/Netflix_2015_logo.svg',
     borderColor: '#e50914',
     bgColor: '#141414',
@@ -585,7 +595,7 @@ const netflixBtn = createStreamingBtn({
 const stanBtn = createStreamingBtn({
     id: 'stan-btn',
     title: 'Stan',
-    top: '260px',
+    top: streamingBtnPositions[1].top + 'px',
     logoUrl: 'scripts/stan-logo.png', // Path relative to index.html
     borderColor: '#0a6cff',
     bgColor: '#fff',
@@ -596,7 +606,7 @@ const stanBtn = createStreamingBtn({
 const disneyBtn = createStreamingBtn({
     id: 'disney-btn',
     title: 'Disney+',
-    top: '350px',
+    top: streamingBtnPositions[2].top + 'px',
     logoUrl: 'scripts/disney-logo.png', // Path relative to index.html
     borderColor: '#113ccf',
     bgColor: '#fff',
@@ -607,7 +617,7 @@ const disneyBtn = createStreamingBtn({
 const primeBtn = createStreamingBtn({
     id: 'prime-btn',
     title: 'Prime',
-    top: '440px',
+    top: streamingBtnPositions[3].top + 'px',
     logoUrl: 'scripts/prime-video-logo.png', // Path relative to index.html
     borderColor: '#00a8e1',
     bgColor: '#fff',
@@ -618,7 +628,7 @@ const primeBtn = createStreamingBtn({
 const paramountBtn = createStreamingBtn({
     id: 'paramount-btn',
     title: 'Paramount+',
-    top: '530px',
+    top: streamingBtnPositions[4].top + 'px',
     logoUrl: 'scripts/paramount-plus-logo.png', // Path relative to index.html
     borderColor: '#0064d2',
     bgColor: '#fff',
@@ -629,7 +639,7 @@ const paramountBtn = createStreamingBtn({
 const bingeBtn = createStreamingBtn({
     id: 'binge-btn',
     title: 'Binge',
-    top: '620px',
+    top: streamingBtnPositions[5].top + 'px',
     logoUrl: 'scripts/binge_logo.png', // Path relative to index.html
     borderColor: '#e6007a',
     bgColor: '#fff',
@@ -637,6 +647,13 @@ const bingeBtn = createStreamingBtn({
     logoAlt: 'Binge Logo',
     fullLogo: true
 });
+// Set right position for each button
+netflixBtn.style.right = streamingBtnPositions[0].right + 'px';
+stanBtn.style.right = streamingBtnPositions[1].right + 'px';
+disneyBtn.style.right = streamingBtnPositions[2].right + 'px';
+primeBtn.style.right = streamingBtnPositions[3].right + 'px';
+paramountBtn.style.right = streamingBtnPositions[4].right + 'px';
+bingeBtn.style.right = streamingBtnPositions[5].right + 'px';
 
 // Remove all main tabs when Film/TV button is clicked
 filmBtn.addEventListener('click', () => {
