@@ -1,3 +1,16 @@
+// Restore Speech button functionality for static HTML button
+const speechBtn = document.getElementById('speech-btn');
+if (speechBtn) {
+    speechBtn.addEventListener('mouseenter', () => {
+        speechBtn.style.background = '#eafbe7';
+    });
+    speechBtn.addEventListener('mouseleave', () => {
+        speechBtn.style.background = '#fff';
+    });
+    speechBtn.addEventListener('click', () => {
+        window.location.reload();
+    });
+}
 // Select elements
 const configBtn = document.getElementById('config-btn');
 const configModal = document.getElementById('config-modal');
