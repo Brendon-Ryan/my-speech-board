@@ -495,134 +495,154 @@ filmBtn.addEventListener('click', () => {
         if (idx !== 0) tabPanel.style.display = 'none';
         // If this is the Movies tab, add popular movie buttons
         if (tab.id === 'movies') {
-            // Movie data: title and poster URL (public domain or Wikipedia/official posters)
             const movies = [
-                {
-                    title: 'Barbie',
-                    poster: 'https://upload.wikimedia.org/wikipedia/en/0/0b/Barbie_2023_poster.jpg'
-                },
-                {
-                    title: 'Oppenheimer',
-                    poster: 'https://upload.wikimedia.org/wikipedia/en/7/7a/Oppenheimer_%28film%29.jpg'
-                },
-                {
-                    title: 'Spider-Man: Across the Spider-Verse',
-                    poster: 'https://upload.wikimedia.org/wikipedia/en/f/f3/Spider-Man_Across_the_Spider-Verse_poster.jpg'
-                },
-                {
-                    title: 'The Super Mario Bros. Movie',
-                    poster: 'https://upload.wikimedia.org/wikipedia/en/4/44/The_Super_Mario_Bros._Movie_poster.jpg'
-                },
-                {
-                    title: 'Guardians of the Galaxy Vol. 3',
-                    poster: 'https://upload.wikimedia.org/wikipedia/en/3/3c/Guardians_of_the_Galaxy_Vol._3_poster.jpg'
-                },
-                {
-                    title: 'Elemental',
-                    poster: 'https://upload.wikimedia.org/wikipedia/en/5/5f/Elemental_%282023_film%29.png'
-                },
-                {
-                    title: 'Wonka',
-                    poster: 'https://upload.wikimedia.org/wikipedia/en/6/6e/Wonka_film_poster.jpg'
-                },
-                {
-                    title: 'The Little Mermaid',
-                    poster: 'https://upload.wikimedia.org/wikipedia/en/6/6e/The_Little_Mermaid_%282023_film%29.png'
-                },
-                {
-                    title: 'Mission: Impossible – Dead Reckoning',
-                    poster: 'https://upload.wikimedia.org/wikipedia/en/2/2e/Mission_Impossible_Dead_Reckoning_Part_One_poster.jpg'
-                },
-                {
-                    title: 'John Wick: Chapter 4',
-                    poster: 'https://upload.wikimedia.org/wikipedia/en/6/60/John_Wick_-_Chapter_4_promotional_poster.jpg'
-                },
-                {
-                    title: 'Indiana Jones and the Dial of Destiny',
-                    poster: 'https://upload.wikimedia.org/wikipedia/en/8/80/Indiana_Jones_and_the_Dial_of_Destiny_poster.jpg'
-                },
-                {
-                    title: 'The Marvels',
-                    poster: 'https://upload.wikimedia.org/wikipedia/en/6/60/The_Marvels_poster.jpg'
-                },
-                {
-                    title: 'The Hunger Games: The Ballad of Songbirds & Snakes',
-                    poster: 'https://upload.wikimedia.org/wikipedia/en/6/6b/The_Hunger_Games_The_Ballad_of_Songbirds_%26_Snakes_poster.jpg'
-                },
-                {
-                    title: 'Fast X',
-                    poster: 'https://upload.wikimedia.org/wikipedia/en/0/0c/Fast_X_poster.jpg'
-                },
-                {
-                    title: 'The Flash',
-                    poster: 'https://upload.wikimedia.org/wikipedia/en/e/e7/The_Flash_%282023_film%29_poster.jpg'
-                },
-                {
-                    title: 'Transformers: Rise of the Beasts',
-                    poster: 'https://upload.wikimedia.org/wikipedia/en/5/5c/Transformers_-_Rise_of_the_Beasts_poster.jpg'
-                },
-                {
-                    title: 'Ant-Man and the Wasp: Quantumania',
-                    poster: 'https://upload.wikimedia.org/wikipedia/en/4/4d/Ant-Man_and_the_Wasp_Quantumania_poster.jpg'
-                },
-                {
-                    title: 'Creed III',
-                    poster: 'https://upload.wikimedia.org/wikipedia/en/9/9a/Creed_III_poster.jpg'
-                },
-                {
-                    title: 'Dungeons & Dragons: Honor Among Thieves',
-                    poster: 'https://upload.wikimedia.org/wikipedia/en/7/7b/Dungeons_%26_Dragons_Honor_Among_Thieves_poster.jpg'
-                },
-                {
-                    title: 'Puss in Boots: The Last Wish',
-                    poster: 'https://upload.wikimedia.org/wikipedia/en/6/6c/Puss_in_Boots_The_Last_Wish_poster.jpg'
-                }
+                { title: 'Barbie', poster: 'https://upload.wikimedia.org/wikipedia/en/0/0b/Barbie_2023_poster.jpg' },
+                { title: 'Oppenheimer', poster: 'https://upload.wikimedia.org/wikipedia/en/7/7a/Oppenheimer_%28film%29.jpg' },
+                { title: 'Spider-Man: Across the Spider-Verse', poster: 'https://upload.wikimedia.org/wikipedia/en/f/f3/Spider-Man_Across_the_Spider-Verse_poster.jpg' },
+                { title: 'The Super Mario Bros. Movie', poster: 'https://upload.wikimedia.org/wikipedia/en/4/44/The_Super_Mario_Bros._Movie_poster.jpg' },
+                { title: 'Guardians of the Galaxy Vol. 3', poster: 'https://upload.wikimedia.org/wikipedia/en/3/3c/Guardians_of_the_Galaxy_Vol_3_poster.jpg' },
+                { title: 'Elemental', poster: 'https://upload.wikimedia.org/wikipedia/en/5/5f/Elemental_%282023_film%29.png' },
+                { title: 'Wonka', poster: 'https://upload.wikimedia.org/wikipedia/en/6/6e/Wonka_film_poster.jpg' },
+                { title: 'The Little Mermaid', poster: 'https://upload.wikimedia.org/wikipedia/en/6/6e/The_Little_Mermaid_2023_poster.jpg' },
+                { title: 'Mission: Impossible – Dead Reckoning', poster: 'https://upload.wikimedia.org/wikipedia/en/2/2e/Mission_Impossible_Dead_Reckoning_Part_One_poster.jpg' },
+                { title: 'John Wick: Chapter 4', poster: 'https://upload.wikimedia.org/wikipedia/en/6/60/John_Wick_Chap_4_poster.jpg' },
+                { title: 'Indiana Jones and the Dial of Destiny', poster: 'https://upload.wikimedia.org/wikipedia/en/8/80/Indiana_Jones_and_the_Dial_of_Destiny_poster.jpg' },
+                { title: 'The Marvels', poster: 'https://upload.wikimedia.org/wikipedia/en/6/60/The_Marvels_poster.jpg' },
+                { title: 'The Hunger Games: The Ballad of Songbirds & Snakes', poster: 'https://upload.wikimedia.org/wikipedia/en/6/6b/The_Hunger_Games_The_Ballad_of_Songbirds_and_Snakes_poster.jpg' },
+                { title: 'Fast X', poster: 'https://upload.wikimedia.org/wikipedia/en/0/0c/Fast_X_poster.jpg' },
+                { title: 'The Flash', poster: 'https://upload.wikimedia.org/wikipedia/en/e/e7/The_Flash_%282023_film%29_poster.jpg' },
+                { title: 'Transformers: Rise of the Beasts', poster: 'https://upload.wikimedia.org/wikipedia/en/5/5c/Transformers_Rise_of_the_Beasts_poster.jpg' },
+                { title: 'Ant-Man and the Wasp: Quantumania', poster: 'https://upload.wikimedia.org/wikipedia/en/4/4d/Ant-Man_and_the_Wasp_Quantumania_poster.jpg' },
+                { title: 'Creed III', poster: 'https://upload.wikimedia.org/wikipedia/en/9/9a/Creed_III_poster.jpg' },
+                { title: 'Dungeons & Dragons: Honor Among Thieves', poster: 'https://upload.wikimedia.org/wikipedia/en/7/7b/Dungeons_%26_Dragons_Honor_Among_Thieves_poster.jpg' },
+                { title: 'Puss in Boots: The Last Wish', poster: 'https://upload.wikimedia.org/wikipedia/en/6/6c/Puss_in_Boots_The_Last_Wish_poster.jpg' }
             ];
             const moviesTable = document.createElement('table');
             moviesTable.className = 'word-table';
-            let row = null;
-            movies.forEach((movie, i) => {
-                if (i % 4 === 0) row = moviesTable.insertRow();
-                const cell = row.insertCell();
-                const btn = document.createElement('button');
-                btn.className = 'word-btn movie-btn';
-                btn.style.display = 'flex';
-                btn.style.flexDirection = 'column';
-                btn.style.alignItems = 'center';
-                btn.style.justifyContent = 'center';
-                btn.style.padding = '8px 6px 4px 6px';
-                btn.style.minWidth = '120px';
-                btn.style.maxWidth = '140px';
-                btn.style.height = '180px';
-                btn.style.overflow = 'hidden';
-                btn.style.background = '#fff';
-                btn.style.border = '2px solid #2980b9';
-                btn.style.borderRadius = '10px';
-                btn.style.boxShadow = '0 2px 8px rgba(44,62,80,0.08)';
-                btn.style.margin = '8px 4px';
-                // Poster image
-                const img = document.createElement('img');
-                img.src = movie.poster;
-                img.alt = movie.title + ' poster';
-                img.style.width = '90px';
-                img.style.height = '120px';
-                img.style.objectFit = 'cover';
-                img.style.borderRadius = '6px';
-                img.style.marginBottom = '8px';
-                btn.appendChild(img);
-                // Movie title
-                const titleSpan = document.createElement('span');
-                titleSpan.textContent = movie.title;
-                titleSpan.style.fontSize = '1em';
-                titleSpan.style.textAlign = 'center';
-                titleSpan.style.marginTop = '2px';
-                titleSpan.style.lineHeight = '1.1';
-                titleSpan.style.display = 'block';
-                btn.appendChild(titleSpan);
-                cell.appendChild(btn);
-                setButtonActivation(btn, movie.title);
+            // Arrange 20 movies into 3 rows: 7, 7, 6
+            const rowSizes = [7, 7, 6];
+            let movieIdx = 0;
+            rowSizes.forEach(rowSize => {
+                const row = moviesTable.insertRow();
+                for (let j = 0; j < rowSize && movieIdx < movies.length; j++, movieIdx++) {
+                    const movie = movies[movieIdx];
+                    const cell = row.insertCell();
+                    const btn = document.createElement('button');
+                    btn.className = 'word-btn movie-btn';
+                    btn.style.display = 'flex';
+                    btn.style.flexDirection = 'column';
+                    btn.style.alignItems = 'center';
+                    btn.style.justifyContent = 'center';
+                    btn.style.padding = '6px 4px 2px 4px';
+                    btn.style.minWidth = '100px';
+                    btn.style.maxWidth = '110px';
+                    btn.style.height = '150px';
+                    btn.style.overflow = 'hidden';
+                    btn.style.background = '#fff';
+                    btn.style.border = '2px solid #2980b9';
+                    btn.style.borderRadius = '10px';
+                    btn.style.boxShadow = '0 2px 8px rgba(44,62,80,0.08)';
+                    btn.style.margin = '8px 2px';
+                    // Poster image
+                    const img = document.createElement('img');
+                    img.src = movie.poster;
+                    img.alt = movie.title + ' poster';
+                    img.style.width = '70px';
+                    img.style.height = '90px';
+                    img.style.objectFit = 'cover';
+                    img.style.borderRadius = '6px';
+                    img.style.marginBottom = '6px';
+                    btn.appendChild(img);
+                    // Movie title
+                    const titleSpan = document.createElement('span');
+                    titleSpan.textContent = movie.title;
+                    titleSpan.style.fontSize = '0.95em';
+                    titleSpan.style.textAlign = 'center';
+                    titleSpan.style.marginTop = '2px';
+                    titleSpan.style.lineHeight = '1.1';
+                    titleSpan.style.display = 'block';
+                    btn.appendChild(titleSpan);
+                    cell.appendChild(btn);
+                    setButtonActivation(btn, movie.title);
+                }
             });
             tabPanel.appendChild(moviesTable);
+        }
+
+        // If this is the TV Shows tab, add popular TV show buttons with posters
+        if (tab.id === 'tvshows') {
+            const shows = [
+                { title: 'Stranger Things', poster: 'https://upload.wikimedia.org/wikipedia/en/f/f7/Stranger_Things_season_4.jpg' },
+                { title: 'The Mandalorian', poster: 'https://upload.wikimedia.org/wikipedia/en/6/6c/The_Mandalorian_season_2_poster.jpg' },
+                { title: 'Succession', poster: 'https://upload.wikimedia.org/wikipedia/en/6/6b/Succession_Season_4.jpg' },
+                { title: 'The Last of Us', poster: 'https://upload.wikimedia.org/wikipedia/en/7/7e/The_Last_of_Us_%28TV_series%29.jpg' },
+                { title: 'Ted Lasso', poster: 'https://upload.wikimedia.org/wikipedia/en/7/7a/Ted_Lasso_season_3.jpg' },
+                { title: 'Wednesday', poster: 'https://upload.wikimedia.org/wikipedia/en/7/7e/Wednesday_Netflix_poster.png' },
+                { title: 'The Bear', poster: 'https://upload.wikimedia.org/wikipedia/en/2/2e/The_Bear_TV_series_poster.jpg' },
+                { title: 'Better Call Saul', poster: 'https://upload.wikimedia.org/wikipedia/en/6/6b/Better_Call_Saul_Season_6.jpg' },
+                { title: 'House of the Dragon', poster: 'https://upload.wikimedia.org/wikipedia/en/9/90/House_of_the_Dragon_season_1.jpg' },
+                { title: 'The Boys', poster: 'https://upload.wikimedia.org/wikipedia/en/9/9a/The_Boys_season_3.jpg' },
+                { title: 'The Crown', poster: 'https://upload.wikimedia.org/wikipedia/en/2/2e/The_Crown_Season_5.jpg' },
+                { title: 'Only Murders in the Building', poster: 'https://upload.wikimedia.org/wikipedia/en/2/2d/Only_Murders_in_the_Building_season_3.jpg' },
+                { title: 'Loki', poster: 'https://upload.wikimedia.org/wikipedia/en/6/6a/Loki_season_2.jpg' },
+                { title: 'The Witcher', poster: 'https://upload.wikimedia.org/wikipedia/en/9/9c/The_Witcher_season_3.jpg' },
+                { title: 'Severance', poster: 'https://upload.wikimedia.org/wikipedia/en/2/2e/Severance_TV_series.jpg' },
+                { title: 'The White Lotus', poster: 'https://upload.wikimedia.org/wikipedia/en/2/2e/The_White_Lotus_season_2.jpg' },
+                { title: 'Yellowjackets', poster: 'https://upload.wikimedia.org/wikipedia/en/2/2e/Yellowjackets_TV_series.jpg' },
+                { title: 'Barry', poster: 'https://upload.wikimedia.org/wikipedia/en/2/2e/Barry_Season_4.jpg' },
+                { title: 'Andor', poster: 'https://upload.wikimedia.org/wikipedia/en/2/2e/Andor_TV_series.jpg' },
+                { title: 'The Morning Show', poster: 'https://upload.wikimedia.org/wikipedia/en/2/2e/The_Morning_Show_Season_3.jpg' }
+            ];
+            const showsTable = document.createElement('table');
+            showsTable.className = 'word-table';
+            // Arrange 20 shows into 3 rows: 7, 7, 6
+            const rowSizes = [7, 7, 6];
+            let showIdx = 0;
+            rowSizes.forEach(rowSize => {
+                const row = showsTable.insertRow();
+                for (let j = 0; j < rowSize && showIdx < shows.length; j++, showIdx++) {
+                    const show = shows[showIdx];
+                    const cell = row.insertCell();
+                    const btn = document.createElement('button');
+                    btn.className = 'word-btn tvshow-btn';
+                    btn.style.display = 'flex';
+                    btn.style.flexDirection = 'column';
+                    btn.style.alignItems = 'center';
+                    btn.style.justifyContent = 'center';
+                    btn.style.padding = '6px 4px 2px 4px';
+                    btn.style.minWidth = '100px';
+                    btn.style.maxWidth = '110px';
+                    btn.style.height = '150px';
+                    btn.style.overflow = 'hidden';
+                    btn.style.background = '#fff';
+                    btn.style.border = '2px solid #2980b9';
+                    btn.style.borderRadius = '10px';
+                    btn.style.boxShadow = '0 2px 8px rgba(44,62,80,0.08)';
+                    btn.style.margin = '8px 2px';
+                    // Poster image
+                    const img = document.createElement('img');
+                    img.src = show.poster;
+                    img.alt = show.title + ' poster';
+                    img.style.width = '70px';
+                    img.style.height = '90px';
+                    img.style.objectFit = 'cover';
+                    img.style.borderRadius = '6px';
+                    img.style.marginBottom = '6px';
+                    btn.appendChild(img);
+                    // Show title
+                    const titleSpan = document.createElement('span');
+                    titleSpan.textContent = show.title;
+                    titleSpan.style.fontSize = '0.95em';
+                    titleSpan.style.textAlign = 'center';
+                    titleSpan.style.marginTop = '2px';
+                    titleSpan.style.lineHeight = '1.1';
+                    titleSpan.style.display = 'block';
+                    btn.appendChild(titleSpan);
+                    cell.appendChild(btn);
+                    setButtonActivation(btn, show.title);
+                }
+            });
+            tabPanel.appendChild(showsTable);
         }
         // If this is the Search tab, add a QWERTY keyboard styled like the word board buttons
         if (tab.id === 'search') {
