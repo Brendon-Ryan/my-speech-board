@@ -529,13 +529,9 @@ filmBtn.addEventListener('click', () => {
                     const cell = row.insertCell();
                     const btn = document.createElement('button');
                     btn.className = 'word-btn movie-btn';
-                    btn.style.display = 'flex';
-                    btn.style.flexDirection = 'column';
-                    btn.style.alignItems = 'center';
-                    btn.style.justifyContent = 'center';
-                    btn.style.padding = '6px 4px 2px 4px';
-                    btn.style.minWidth = '100px';
-                    btn.style.maxWidth = '110px';
+                    btn.style.display = 'block';
+                    btn.style.padding = '0';
+                    btn.style.width = '110px';
                     btn.style.height = '150px';
                     btn.style.overflow = 'hidden';
                     btn.style.background = '#fff';
@@ -543,23 +539,31 @@ filmBtn.addEventListener('click', () => {
                     btn.style.borderRadius = '10px';
                     btn.style.boxShadow = '0 2px 8px rgba(44,62,80,0.08)';
                     btn.style.margin = '8px 2px';
-                    // Poster image
+                    btn.style.position = 'relative';
+                    // Poster image fills the button
                     const img = document.createElement('img');
                     img.src = movie.poster;
                     img.alt = movie.title + ' poster';
-                    img.style.width = '70px';
-                    img.style.height = '90px';
+                    img.style.width = '100%';
+                    img.style.height = '100%';
                     img.style.objectFit = 'cover';
-                    img.style.borderRadius = '6px';
-                    img.style.marginBottom = '6px';
+                    img.style.borderRadius = '10px';
+                    img.style.display = 'block';
                     btn.appendChild(img);
-                    // Movie title
+                    // Movie title overlay (optional, can be removed if not needed)
                     const titleSpan = document.createElement('span');
                     titleSpan.textContent = movie.title;
+                    titleSpan.style.position = 'absolute';
+                    titleSpan.style.left = '0';
+                    titleSpan.style.right = '0';
+                    titleSpan.style.bottom = '0';
+                    titleSpan.style.background = 'rgba(0,0,0,0.55)';
+                    titleSpan.style.color = '#fff';
                     titleSpan.style.fontSize = '0.95em';
                     titleSpan.style.textAlign = 'center';
-                    titleSpan.style.marginTop = '2px';
+                    titleSpan.style.padding = '4px 2px 2px 2px';
                     titleSpan.style.lineHeight = '1.1';
+                    titleSpan.style.borderRadius = '0 0 10px 10px';
                     titleSpan.style.display = 'block';
                     btn.appendChild(titleSpan);
                     cell.appendChild(btn);
@@ -605,13 +609,9 @@ filmBtn.addEventListener('click', () => {
                     const cell = row.insertCell();
                     const btn = document.createElement('button');
                     btn.className = 'word-btn tvshow-btn';
-                    btn.style.display = 'flex';
-                    btn.style.flexDirection = 'column';
-                    btn.style.alignItems = 'center';
-                    btn.style.justifyContent = 'center';
-                    btn.style.padding = '6px 4px 2px 4px';
-                    btn.style.minWidth = '100px';
-                    btn.style.maxWidth = '110px';
+                    btn.style.display = 'block';
+                    btn.style.padding = '0';
+                    btn.style.width = '110px';
                     btn.style.height = '150px';
                     btn.style.overflow = 'hidden';
                     btn.style.background = '#fff';
@@ -619,23 +619,31 @@ filmBtn.addEventListener('click', () => {
                     btn.style.borderRadius = '10px';
                     btn.style.boxShadow = '0 2px 8px rgba(44,62,80,0.08)';
                     btn.style.margin = '8px 2px';
-                    // Poster image
+                    btn.style.position = 'relative';
+                    // Poster image fills the button
                     const img = document.createElement('img');
                     img.src = show.poster;
                     img.alt = show.title + ' poster';
-                    img.style.width = '70px';
-                    img.style.height = '90px';
+                    img.style.width = '100%';
+                    img.style.height = '100%';
                     img.style.objectFit = 'cover';
-                    img.style.borderRadius = '6px';
-                    img.style.marginBottom = '6px';
+                    img.style.borderRadius = '10px';
+                    img.style.display = 'block';
                     btn.appendChild(img);
-                    // Show title
+                    // Show title overlay (optional, can be removed if not needed)
                     const titleSpan = document.createElement('span');
                     titleSpan.textContent = show.title;
+                    titleSpan.style.position = 'absolute';
+                    titleSpan.style.left = '0';
+                    titleSpan.style.right = '0';
+                    titleSpan.style.bottom = '0';
+                    titleSpan.style.background = 'rgba(0,0,0,0.55)';
+                    titleSpan.style.color = '#fff';
                     titleSpan.style.fontSize = '0.95em';
                     titleSpan.style.textAlign = 'center';
-                    titleSpan.style.marginTop = '2px';
+                    titleSpan.style.padding = '4px 2px 2px 2px';
                     titleSpan.style.lineHeight = '1.1';
+                    titleSpan.style.borderRadius = '0 0 10px 10px';
                     titleSpan.style.display = 'block';
                     btn.appendChild(titleSpan);
                     cell.appendChild(btn);
