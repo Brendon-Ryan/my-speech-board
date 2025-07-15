@@ -495,27 +495,88 @@ filmBtn.addEventListener('click', () => {
         if (idx !== 0) tabPanel.style.display = 'none';
         // If this is the Movies tab, add popular movie buttons
         if (tab.id === 'movies') {
+            // Movie data: title and poster URL (public domain or Wikipedia/official posters)
             const movies = [
-                'Barbie',
-                'Oppenheimer',
-                'Spider-Man: Across the Spider-Verse',
-                'The Super Mario Bros. Movie',
-                'Guardians of the Galaxy Vol. 3',
-                'Elemental',
-                'Wonka',
-                'The Little Mermaid',
-                'Mission: Impossible – Dead Reckoning',
-                'John Wick: Chapter 4',
-                'Indiana Jones and the Dial of Destiny',
-                'The Marvels',
-                'The Hunger Games: The Ballad of Songbirds & Snakes',
-                'Fast X',
-                'The Flash',
-                'Transformers: Rise of the Beasts',
-                'Ant-Man and the Wasp: Quantumania',
-                'Creed III',
-                'Dungeons & Dragons: Honor Among Thieves',
-                'Puss in Boots: The Last Wish'
+                {
+                    title: 'Barbie',
+                    poster: 'https://upload.wikimedia.org/wikipedia/en/0/0b/Barbie_2023_poster.jpg'
+                },
+                {
+                    title: 'Oppenheimer',
+                    poster: 'https://upload.wikimedia.org/wikipedia/en/7/7a/Oppenheimer_%28film%29.jpg'
+                },
+                {
+                    title: 'Spider-Man: Across the Spider-Verse',
+                    poster: 'https://upload.wikimedia.org/wikipedia/en/f/f3/Spider-Man_Across_the_Spider-Verse_poster.jpg'
+                },
+                {
+                    title: 'The Super Mario Bros. Movie',
+                    poster: 'https://upload.wikimedia.org/wikipedia/en/4/44/The_Super_Mario_Bros._Movie_poster.jpg'
+                },
+                {
+                    title: 'Guardians of the Galaxy Vol. 3',
+                    poster: 'https://upload.wikimedia.org/wikipedia/en/3/3c/Guardians_of_the_Galaxy_Vol._3_poster.jpg'
+                },
+                {
+                    title: 'Elemental',
+                    poster: 'https://upload.wikimedia.org/wikipedia/en/5/5f/Elemental_%282023_film%29.png'
+                },
+                {
+                    title: 'Wonka',
+                    poster: 'https://upload.wikimedia.org/wikipedia/en/6/6e/Wonka_film_poster.jpg'
+                },
+                {
+                    title: 'The Little Mermaid',
+                    poster: 'https://upload.wikimedia.org/wikipedia/en/6/6e/The_Little_Mermaid_%282023_film%29.png'
+                },
+                {
+                    title: 'Mission: Impossible – Dead Reckoning',
+                    poster: 'https://upload.wikimedia.org/wikipedia/en/2/2e/Mission_Impossible_Dead_Reckoning_Part_One_poster.jpg'
+                },
+                {
+                    title: 'John Wick: Chapter 4',
+                    poster: 'https://upload.wikimedia.org/wikipedia/en/6/60/John_Wick_-_Chapter_4_promotional_poster.jpg'
+                },
+                {
+                    title: 'Indiana Jones and the Dial of Destiny',
+                    poster: 'https://upload.wikimedia.org/wikipedia/en/8/80/Indiana_Jones_and_the_Dial_of_Destiny_poster.jpg'
+                },
+                {
+                    title: 'The Marvels',
+                    poster: 'https://upload.wikimedia.org/wikipedia/en/6/60/The_Marvels_poster.jpg'
+                },
+                {
+                    title: 'The Hunger Games: The Ballad of Songbirds & Snakes',
+                    poster: 'https://upload.wikimedia.org/wikipedia/en/6/6b/The_Hunger_Games_The_Ballad_of_Songbirds_%26_Snakes_poster.jpg'
+                },
+                {
+                    title: 'Fast X',
+                    poster: 'https://upload.wikimedia.org/wikipedia/en/0/0c/Fast_X_poster.jpg'
+                },
+                {
+                    title: 'The Flash',
+                    poster: 'https://upload.wikimedia.org/wikipedia/en/e/e7/The_Flash_%282023_film%29_poster.jpg'
+                },
+                {
+                    title: 'Transformers: Rise of the Beasts',
+                    poster: 'https://upload.wikimedia.org/wikipedia/en/5/5c/Transformers_-_Rise_of_the_Beasts_poster.jpg'
+                },
+                {
+                    title: 'Ant-Man and the Wasp: Quantumania',
+                    poster: 'https://upload.wikimedia.org/wikipedia/en/4/4d/Ant-Man_and_the_Wasp_Quantumania_poster.jpg'
+                },
+                {
+                    title: 'Creed III',
+                    poster: 'https://upload.wikimedia.org/wikipedia/en/9/9a/Creed_III_poster.jpg'
+                },
+                {
+                    title: 'Dungeons & Dragons: Honor Among Thieves',
+                    poster: 'https://upload.wikimedia.org/wikipedia/en/7/7b/Dungeons_%26_Dragons_Honor_Among_Thieves_poster.jpg'
+                },
+                {
+                    title: 'Puss in Boots: The Last Wish',
+                    poster: 'https://upload.wikimedia.org/wikipedia/en/6/6c/Puss_in_Boots_The_Last_Wish_poster.jpg'
+                }
             ];
             const moviesTable = document.createElement('table');
             moviesTable.className = 'word-table';
@@ -524,10 +585,42 @@ filmBtn.addEventListener('click', () => {
                 if (i % 4 === 0) row = moviesTable.insertRow();
                 const cell = row.insertCell();
                 const btn = document.createElement('button');
-                btn.className = 'word-btn';
-                btn.textContent = movie;
+                btn.className = 'word-btn movie-btn';
+                btn.style.display = 'flex';
+                btn.style.flexDirection = 'column';
+                btn.style.alignItems = 'center';
+                btn.style.justifyContent = 'center';
+                btn.style.padding = '8px 6px 4px 6px';
+                btn.style.minWidth = '120px';
+                btn.style.maxWidth = '140px';
+                btn.style.height = '180px';
+                btn.style.overflow = 'hidden';
+                btn.style.background = '#fff';
+                btn.style.border = '2px solid #2980b9';
+                btn.style.borderRadius = '10px';
+                btn.style.boxShadow = '0 2px 8px rgba(44,62,80,0.08)';
+                btn.style.margin = '8px 4px';
+                // Poster image
+                const img = document.createElement('img');
+                img.src = movie.poster;
+                img.alt = movie.title + ' poster';
+                img.style.width = '90px';
+                img.style.height = '120px';
+                img.style.objectFit = 'cover';
+                img.style.borderRadius = '6px';
+                img.style.marginBottom = '8px';
+                btn.appendChild(img);
+                // Movie title
+                const titleSpan = document.createElement('span');
+                titleSpan.textContent = movie.title;
+                titleSpan.style.fontSize = '1em';
+                titleSpan.style.textAlign = 'center';
+                titleSpan.style.marginTop = '2px';
+                titleSpan.style.lineHeight = '1.1';
+                titleSpan.style.display = 'block';
+                btn.appendChild(titleSpan);
                 cell.appendChild(btn);
-                setButtonActivation(btn, movie);
+                setButtonActivation(btn, movie.title);
             });
             tabPanel.appendChild(moviesTable);
         }
