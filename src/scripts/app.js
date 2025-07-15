@@ -493,6 +493,44 @@ filmBtn.addEventListener('click', () => {
         tabPanel.className = 'tab-content';
         tabPanel.id = 'tab-' + tab.id;
         if (idx !== 0) tabPanel.style.display = 'none';
+        // If this is the Movies tab, add popular movie buttons
+        if (tab.id === 'movies') {
+            const movies = [
+                'Barbie',
+                'Oppenheimer',
+                'Spider-Man: Across the Spider-Verse',
+                'The Super Mario Bros. Movie',
+                'Guardians of the Galaxy Vol. 3',
+                'Elemental',
+                'Wonka',
+                'The Little Mermaid',
+                'Mission: Impossible – Dead Reckoning',
+                'John Wick: Chapter 4',
+                'Indiana Jones and the Dial of Destiny',
+                'The Marvels',
+                'The Hunger Games: The Ballad of Songbirds & Snakes',
+                'Fast X',
+                'The Flash',
+                'Transformers: Rise of the Beasts',
+                'Ant-Man and the Wasp: Quantumania',
+                'Creed III',
+                'Dungeons & Dragons: Honor Among Thieves',
+                'Puss in Boots: The Last Wish'
+            ];
+            const moviesTable = document.createElement('table');
+            moviesTable.className = 'word-table';
+            let row = null;
+            movies.forEach((movie, i) => {
+                if (i % 4 === 0) row = moviesTable.insertRow();
+                const cell = row.insertCell();
+                const btn = document.createElement('button');
+                btn.className = 'word-btn';
+                btn.textContent = movie;
+                cell.appendChild(btn);
+                setButtonActivation(btn, movie);
+            });
+            tabPanel.appendChild(moviesTable);
+        }
         // If this is the Search tab, add a QWERTY keyboard styled like the word board buttons
         if (tab.id === 'search') {
             const keyboardRows = [
