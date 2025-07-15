@@ -515,12 +515,17 @@ filmBtn.addEventListener('click', () => {
                 { title: 'Ant-Man and the Wasp: Quantumania', poster: 'https://upload.wikimedia.org/wikipedia/en/4/4d/Ant-Man_and_the_Wasp_Quantumania_poster.jpg' },
                 { title: 'Creed III', poster: 'https://upload.wikimedia.org/wikipedia/en/9/9a/Creed_III_poster.jpg' },
                 { title: 'Dungeons & Dragons: Honor Among Thieves', poster: 'https://upload.wikimedia.org/wikipedia/en/7/7b/Dungeons_%26_Dragons_Honor_Among_Thieves_poster.jpg' },
-                { title: 'Puss in Boots: The Last Wish', poster: 'https://upload.wikimedia.org/wikipedia/en/6/6c/Puss_in_Boots_The_Last_Wish_poster.jpg' }
+                { title: 'Puss in Boots: The Last Wish', poster: 'https://upload.wikimedia.org/wikipedia/en/6/6c/Puss_in_Boots_The_Last_Wish_poster.jpg' },
+                // New movies to fill 8x3 grid
+                { title: 'Elemental (2023)', poster: 'https://upload.wikimedia.org/wikipedia/en/5/5f/Elemental_%282023_film%29.png' },
+                { title: 'Napoleon', poster: 'https://upload.wikimedia.org/wikipedia/en/2/2b/Napoleon_2023_poster.jpg' },
+                { title: 'Killers of the Flower Moon', poster: 'https://upload.wikimedia.org/wikipedia/en/5/5c/Killers_of_the_Flower_Moon_poster.jpg' },
+                { title: 'Migration', poster: 'https://upload.wikimedia.org/wikipedia/en/2/2d/Migration_2023_poster.jpg' }
             ];
             const moviesTable = document.createElement('table');
             moviesTable.className = 'word-table';
-            // Arrange 20 movies into 3 rows: 7, 7, 6
-            const rowSizes = [7, 7, 6];
+            // Arrange 24 movies into 3 rows: 8, 8, 8
+            const rowSizes = [8, 8, 8];
             let movieIdx = 0;
             rowSizes.forEach(rowSize => {
                 const row = moviesTable.insertRow();
@@ -550,7 +555,7 @@ filmBtn.addEventListener('click', () => {
                     img.style.borderRadius = '10px';
                     img.style.display = 'block';
                     btn.appendChild(img);
-                    // Movie title overlay (optional, can be removed if not needed)
+                    // Movie title overlay
                     const titleSpan = document.createElement('span');
                     titleSpan.textContent = movie.title;
                     titleSpan.style.position = 'absolute';
@@ -595,12 +600,17 @@ filmBtn.addEventListener('click', () => {
                 { title: 'Yellowjackets', poster: 'https://upload.wikimedia.org/wikipedia/en/2/2e/Yellowjackets_TV_series.jpg' },
                 { title: 'Barry', poster: 'https://upload.wikimedia.org/wikipedia/en/2/2e/Barry_Season_4.jpg' },
                 { title: 'Andor', poster: 'https://upload.wikimedia.org/wikipedia/en/2/2e/Andor_TV_series.jpg' },
-                { title: 'The Morning Show', poster: 'https://upload.wikimedia.org/wikipedia/en/2/2e/The_Morning_Show_Season_3.jpg' }
+                { title: 'The Morning Show', poster: 'https://upload.wikimedia.org/wikipedia/en/2/2e/The_Morning_Show_Season_3.jpg' },
+                // New TV shows to fill 8x3 grid
+                { title: 'Silo', poster: 'https://upload.wikimedia.org/wikipedia/en/2/2e/Silo_TV_series_poster.jpg' },
+                { title: 'Foundation', poster: 'https://upload.wikimedia.org/wikipedia/en/2/2e/Foundation_TV_series_poster.jpg' },
+                { title: 'The Diplomat', poster: 'https://upload.wikimedia.org/wikipedia/en/2/2e/The_Diplomat_TV_series_poster.jpg' },
+                { title: 'Bluey', poster: 'https://upload.wikimedia.org/wikipedia/en/2/2e/Bluey_TV_series_poster.jpg' }
             ];
             const showsTable = document.createElement('table');
             showsTable.className = 'word-table';
-            // Arrange 20 shows into 3 rows: 7, 7, 6
-            const rowSizes = [7, 7, 6];
+            // Arrange 24 shows into 3 rows: 8, 8, 8
+            const rowSizes = [8, 8, 8];
             let showIdx = 0;
             rowSizes.forEach(rowSize => {
                 const row = showsTable.insertRow();
@@ -630,7 +640,7 @@ filmBtn.addEventListener('click', () => {
                     img.style.borderRadius = '10px';
                     img.style.display = 'block';
                     btn.appendChild(img);
-                    // Show title overlay (optional, can be removed if not needed)
+                    // Show title overlay
                     const titleSpan = document.createElement('span');
                     titleSpan.textContent = show.title;
                     titleSpan.style.position = 'absolute';
