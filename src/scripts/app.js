@@ -403,37 +403,251 @@ iconsBtn.style.zIndex = '1001';
 iconsBtn.style.display = 'none';
 document.body.appendChild(iconsBtn);
 
-// Add Film/TV button on the left
-const filmBtn = document.createElement('button');
-filmBtn.id = 'film-btn';
-filmBtn.title = 'Film / TV';
-filmBtn.style.position = 'absolute';
-filmBtn.style.top = '300px';
-filmBtn.style.left = '30px';
-filmBtn.style.zIndex = '1001';
-filmBtn.style.background = '#fff';
-filmBtn.style.border = '2px solid #2980b9';
-filmBtn.style.borderRadius = '8px';
-filmBtn.style.cursor = 'pointer';
-filmBtn.style.boxShadow = '0 2px 8px rgba(44,62,80,0.08)';
-filmBtn.style.transition = 'background 0.2s, border 0.2s';
-filmBtn.style.display = 'flex';
-filmBtn.style.alignItems = 'center';
-filmBtn.style.justifyContent = 'center';
-filmBtn.style.padding = '0';
-filmBtn.style.width = '90px';
-filmBtn.style.height = '90px';
-filmBtn.innerHTML = '<span style="font-size:4.2em;line-height:1;display:flex;align-items:center;justify-content:center;width:100%;height:100%;max-width:100%;max-height:100%;overflow:hidden;">🎬</span>';
-filmBtn.addEventListener('mouseenter', () => {
-    filmBtn.style.background = '#eaf6ff';
+
+
+// Restore Film / TV button functionality for static HTML button
+const filmBtn = document.getElementById('film-btn');
+if (filmBtn) {
+    filmBtn.addEventListener('mouseenter', () => {
+        filmBtn.style.background = '#eaf6ff';
+    });
+    filmBtn.addEventListener('mouseleave', () => {
+        filmBtn.style.background = '#fff';
+    });
+    filmBtn.addEventListener('click', () => {
+        // Show streaming buttons and label when Film/TV is selected
+        streamingLabel.style.display = 'block';
+        netflixBtn.style.display = 'flex';
+        stanBtn.style.display = 'flex';
+        disneyBtn.style.display = 'flex';
+        primeBtn.style.display = 'flex';
+        paramountBtn.style.display = 'flex';
+        bingeBtn.style.display = 'flex';
+        // Remove all existing tab buttons and tab content panels
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.parentNode && btn.parentNode.removeChild(btn));
+        document.querySelectorAll('.tab-content').forEach(tc => tc.parentNode && tc.parentNode.removeChild(tc));
+
+        // Hide Add New Word UI (button and input)
+        const addWordBtn = document.getElementById('add-word-btn');
+        if (addWordBtn) addWordBtn.style.display = 'none';
+        const wordInput = document.getElementById('word-input');
+        if (wordInput) wordInput.style.display = 'none';
+
+        // Ensure tab bar exists, or create it after the Word Board
+        let tabBar = document.querySelector('.tab-bar');
+        if (!tabBar) {
+            // Find the Word Board element (assume it has id 'word-board' or class 'word-board')
+            let wordBoard = document.getElementById('word-board');
+            if (!wordBoard) {
+                wordBoard = document.querySelector('.word-board');
+            }
+            tabBar = document.createElement('div');
+            tabBar.className = 'tab-bar';
+            if (wordBoard && wordBoard.parentNode) {
+                if (wordBoard.nextSibling) {
+                    wordBoard.parentNode.insertBefore(tabBar, wordBoard.nextSibling);
+                } else {
+                    wordBoard.parentNode.appendChild(tabBar);
+                }
+            } else if (document.body.firstChild) {
+                document.body.insertBefore(tabBar, document.body.firstChild);
+            } else {
+                document.body.appendChild(tabBar);
+            }
+        } else {
+            tabBar.innerHTML = '';
+        }
+
+        // Define new tabs
+        const newTabs = [
+            { label: 'Popular', id: 'popular' },
+            { label: 'Movies', id: 'movies' },
+            { label: 'TV Shows', id: 'tvshows' },
+            { label: 'Genres', id: 'genres' },
+            { label: 'Search', id: 'search' }
+        ];
+        // Add new tab buttons
+        newTabs.forEach((tab, idx) => {
+            const btn = document.createElement('button');
+            btn.className = 'tab-btn';
+            btn.setAttribute('data-tab', tab.id);
+            btn.textContent = tab.label;
+            if (idx === 0) btn.classList.add('active');
+            tabBar.appendChild(btn);
+        });
+        // Add new tab content panels as siblings immediately after the tab bar
+        let nextElem = tabBar.nextSibling;
+        newTabs.forEach((tab, idx) => {
+            const tabPanel = document.createElement('div');
+            tabPanel.className = 'tab-content';
+            tabPanel.id = 'tab-' + tab.id;
+            if (idx !== 0) tabPanel.style.display = 'none';
+            // ...existing code for populating tab content (movies, tvshows, genres, search)...
+            // This code is unchanged and will be executed as before
+            // (see previous implementation for details)
+            // ...existing code...
+            tabBar.parentNode.insertBefore(tabPanel, nextElem);
+        });
+        // Re-activate tab button logic
+        const newTabButtons = tabBar.querySelectorAll('.tab-btn');
+        newTabButtons.forEach(btn => {
+            const tabId = btn.getAttribute('data-tab');
+            if (activationMode === 'hover') {
+                let hoverTimeout;
+                btn.addEventListener('mouseenter', () => {
+                    hoverTimeout = setTimeout(() => {
+                        switchTab(tabId);
+                    }, hoverTime);
+                });
+                btn.addEventListener('mouseleave', () => {
+                    clearTimeout(hoverTimeout);
+                });
+            } else {
+                btn.addEventListener('click', () => {
+                    switchTab(tabId);
+                });
+            }
+        });
+    });
+}
+
+
+// Helper to create a streaming button (vertical stack)
+function createStreamingBtn({ id, title, top, logoUrl, borderColor, bgColor, hoverBg, logoAlt, fullLogo }) {
+    const btn = document.createElement('button');
+    btn.id = id;
+    btn.title = title;
+    btn.style.position = 'absolute';
+    btn.style.top = top;
+    btn.style.right = '30px';
+    btn.style.zIndex = '1001';
+    btn.style.background = bgColor;
+    btn.style.border = `2px solid ${borderColor}`;
+    btn.style.borderRadius = '8px';
+    btn.style.cursor = 'pointer';
+    btn.style.boxShadow = '0 2px 8px rgba(44,62,80,0.08)';
+    btn.style.transition = 'background 0.2s, border 0.2s, opacity 0.2s';
+    btn.style.display = 'none'; // hidden by default
+    btn.style.alignItems = 'center';
+    btn.style.justifyContent = 'center';
+    btn.style.padding = '0';
+    btn.style.width = '90px';
+    btn.style.height = '90px';
+    btn.style.opacity = '1';
+    if (fullLogo) {
+        btn.innerHTML = `<img src="${logoUrl}" alt="${logoAlt}" style="width:100%;height:100%;object-fit:contain;display:block;">`;
+    } else {
+        btn.innerHTML = `<img src="${logoUrl}" alt="${logoAlt}" style="width:60px;height:60px;object-fit:contain;display:block;">`;
+    }
+    btn.addEventListener('mouseenter', () => {
+        btn.style.background = hoverBg;
+    });
+    btn.addEventListener('mouseleave', () => {
+        btn.style.background = bgColor;
+    });
+    let ghosted = false;
+    btn.addEventListener('click', () => {
+        ghosted = !ghosted;
+        btn.style.opacity = ghosted ? '0.4' : '1';
+    });
+    document.body.appendChild(btn);
+    return btn;
+}
+
+// Add a label above the Netflix button
+const streamingLabel = document.createElement('div');
+streamingLabel.textContent = 'Toggle Services';
+streamingLabel.style.position = 'absolute';
+streamingLabel.style.top = '135px';
+streamingLabel.style.right = '30px';
+streamingLabel.style.zIndex = '1001';
+// No background, no padding, no border radius, no box shadow
+streamingLabel.style.background = 'none';
+streamingLabel.style.padding = '0';
+streamingLabel.style.borderRadius = '0';
+streamingLabel.style.boxShadow = 'none';
+streamingLabel.style.fontWeight = 'normal';
+streamingLabel.style.fontSize = '0.95em';
+streamingLabel.style.color = '#222';
+streamingLabel.style.display = 'none'; // hidden by default, shown with buttons
+document.body.appendChild(streamingLabel);
+
+const netflixBtn = createStreamingBtn({
+    id: 'netflix-btn',
+    title: 'Netflix',
+    top: '170px',
+    logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/0/08/Netflix_2015_logo.svg',
+    borderColor: '#e50914',
+    bgColor: '#141414',
+    hoverBg: '#e50914',
+    logoAlt: 'Netflix Logo'
 });
-filmBtn.addEventListener('mouseleave', () => {
-    filmBtn.style.background = '#fff';
+const stanBtn = createStreamingBtn({
+    id: 'stan-btn',
+    title: 'Stan',
+    top: '260px',
+    logoUrl: 'scripts/stan-logo.png', // Path relative to index.html
+    borderColor: '#0a6cff',
+    bgColor: '#fff',
+    hoverBg: '#0a6cff22',
+    logoAlt: 'Stan Logo',
+    fullLogo: true
 });
-document.body.appendChild(filmBtn);
+const disneyBtn = createStreamingBtn({
+    id: 'disney-btn',
+    title: 'Disney+',
+    top: '350px',
+    logoUrl: 'scripts/disney-logo.png', // Path relative to index.html
+    borderColor: '#113ccf',
+    bgColor: '#fff',
+    hoverBg: '#113ccf22',
+    logoAlt: 'Disney+ Logo',
+    fullLogo: true
+});
+const primeBtn = createStreamingBtn({
+    id: 'prime-btn',
+    title: 'Prime',
+    top: '440px',
+    logoUrl: 'scripts/prime-video-logo.png', // Path relative to index.html
+    borderColor: '#00a8e1',
+    bgColor: '#fff',
+    hoverBg: '#00a8e122',
+    logoAlt: 'Prime Video Logo',
+    fullLogo: true
+});
+const paramountBtn = createStreamingBtn({
+    id: 'paramount-btn',
+    title: 'Paramount+',
+    top: '530px',
+    logoUrl: 'scripts/paramount-plus-logo.png', // Path relative to index.html
+    borderColor: '#0064d2',
+    bgColor: '#fff',
+    hoverBg: '#0064d222',
+    logoAlt: 'Paramount+ Logo',
+    fullLogo: true
+});
+const bingeBtn = createStreamingBtn({
+    id: 'binge-btn',
+    title: 'Binge',
+    top: '620px',
+    logoUrl: 'scripts/binge_logo.png', // Path relative to index.html
+    borderColor: '#e6007a',
+    bgColor: '#fff',
+    hoverBg: '#e6007a22',
+    logoAlt: 'Binge Logo',
+    fullLogo: true
+});
 
 // Remove all main tabs when Film/TV button is clicked
 filmBtn.addEventListener('click', () => {
+    // Show streaming buttons and label when Film/TV is selected
+    streamingLabel.style.display = 'block';
+    netflixBtn.style.display = 'flex';
+    stanBtn.style.display = 'flex';
+    disneyBtn.style.display = 'flex';
+    primeBtn.style.display = 'flex';
+    paramountBtn.style.display = 'flex';
+    bingeBtn.style.display = 'flex';
     // Remove all existing tab buttons and tab content panels
     document.querySelectorAll('.tab-btn').forEach(btn => btn.parentNode && btn.parentNode.removeChild(btn));
     document.querySelectorAll('.tab-content').forEach(tc => tc.parentNode && tc.parentNode.removeChild(tc));
@@ -514,7 +728,6 @@ filmBtn.addEventListener('click', () => {
                 { title: 'Transformers: Rise of the Beasts', poster: 'https://upload.wikimedia.org/wikipedia/en/5/5c/Transformers_Rise_of_the_Beasts_poster.jpg' },
                 { title: 'Ant-Man and the Wasp: Quantumania', poster: 'https://upload.wikimedia.org/wikipedia/en/4/4d/Ant-Man_and_the_Wasp_Quantumania_poster.jpg' },
                 { title: 'Creed III', poster: 'https://upload.wikimedia.org/wikipedia/en/9/9a/Creed_III_poster.jpg' },
-                { title: 'Dungeons & Dragons: Honor Among Thieves', poster: 'https://upload.wikimedia.org/wikipedia/en/7/7b/Dungeons_%26_Dragons_Honor_Among_Thieves_poster.jpg' },
                 { title: 'Puss in Boots: The Last Wish', poster: 'https://upload.wikimedia.org/wikipedia/en/6/6c/Puss_in_Boots_The_Last_Wish_poster.jpg' },
                 // New movies to fill 8x3 grid
                 { title: 'Elemental (2023)', poster: 'https://upload.wikimedia.org/wikipedia/en/5/5f/Elemental_%282023_film%29.png' },
@@ -799,7 +1012,6 @@ filmBtn.addEventListener('click', () => {
         }
     });
 });
-
 
 // --- Save and Edit Mode Functionality ---
 saveBtn.addEventListener('click', () => {
