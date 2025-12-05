@@ -180,6 +180,23 @@ body.edit-mode .word-btn:active {
     min-width: 200px;
 }
 
+/* Voice Selection within modal */
+.modal-content .voice-selection {
+    margin: 16px 0 0 0;
+    width: 100%;
+    text-align: left;
+}
+
+.modal-content #voice-select {
+    display: block;
+    width: 100%;
+    margin-left: 0;
+    margin-top: 4px;
+    min-width: unset;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
 /* Configuration Modal Styles */
 #config-btn {
     position: absolute;
