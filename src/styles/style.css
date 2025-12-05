@@ -543,20 +543,23 @@ body.edit-mode td.empty-drop-spot.drag-over {
     margin-left: 140px;
     margin-right: 180px;
     box-sizing: border-box;
-    overflow-x: auto;
+    overflow-x: hidden;
     max-width: calc(100vw - 320px);
 }
 
-/* Movie and TV show buttons - responsive sizing */
+/* Movie and TV show buttons - uniform sizing */
 .movie-btn,
 .tvshow-btn {
-    min-width: 70px !important;
-    max-width: 110px !important;
-    width: auto !important;
-    height: auto !important;
-    min-height: 100px !important;
-    aspect-ratio: 2/3;
-    flex-shrink: 1 !important;
+    width: 100px !important;
+    height: 140px !important;
+    min-width: 100px !important;
+    max-width: 100px !important;
+    min-height: 140px !important;
+    max-height: 140px !important;
+    flex-shrink: 0 !important;
+    flex-grow: 0 !important;
+    display: block !important;
+    overflow: hidden !important;
 }
 
 .movie-btn img,
@@ -574,22 +577,39 @@ body.edit-mode td.empty-drop-spot.drag-over {
     hyphens: auto !important;
     max-height: 3em !important;
     overflow: hidden !important;
-    font-size: 0.75em !important;
+    font-size: 0.7em !important;
 }
 
-/* Responsive word-table for movies/TV in film mode */
+/* Convert table to flex grid for movies/TV in film mode */
 .tab-content .word-table {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    justify-content: flex-start !important;
+    align-items: flex-start !important;
+    gap: 8px !important;
     width: 100%;
     max-width: 100%;
-    table-layout: fixed;
-    border-collapse: collapse;
+}
+
+.tab-content .word-table tbody {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    justify-content: flex-start !important;
+    align-items: flex-start !important;
+    gap: 8px !important;
+    width: 100%;
+}
+
+.tab-content .word-table tr {
+    display: contents !important;
 }
 
 .tab-content .word-table td {
-    padding: 2px;
-    vertical-align: top;
-    width: auto;
-    max-width: calc((100vw - 320px) / 8);
+    display: block !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    width: auto !important;
+    flex-shrink: 0 !important;
 }
 
 /* Media queries for smaller screens */
@@ -605,15 +625,14 @@ body.edit-mode td.empty-drop-spot.drag-over {
         max-width: calc(100vw - 310px);
     }
     
-    .tab-content .word-table td {
-        max-width: calc((100vw - 310px) / 8);
-    }
-    
     .movie-btn,
     .tvshow-btn {
-        min-width: 60px !important;
+        width: 90px !important;
+        height: 126px !important;
+        min-width: 90px !important;
         max-width: 90px !important;
-        min-height: 80px !important;
+        min-height: 126px !important;
+        max-height: 126px !important;
     }
 }
 
@@ -629,22 +648,19 @@ body.edit-mode td.empty-drop-spot.drag-over {
         max-width: calc(100vw - 310px);
     }
     
-    .tab-content .word-table td {
-        max-width: calc((100vw - 310px) / 8);
-        padding: 1px;
-    }
-    
     .movie-btn,
     .tvshow-btn {
-        min-width: 50px !important;
+        width: 80px !important;
+        height: 112px !important;
+        min-width: 80px !important;
         max-width: 80px !important;
-        min-height: 70px !important;
+        min-height: 112px !important;
+        max-height: 112px !important;
     }
     
     .movie-btn span,
     .tvshow-btn span {
-        font-size: 0.65em !important;
-        padding: 1px !important;
+        font-size: 0.6em !important;
     }
 }
 
@@ -660,24 +676,27 @@ body.edit-mode td.empty-drop-spot.drag-over {
         max-width: calc(100vw - 300px);
     }
     
-    .tab-content .word-table td {
-        max-width: calc((100vw - 300px) / 8);
-        padding: 1px;
-    }
-    
     .movie-btn,
     .tvshow-btn {
-        min-width: 40px !important;
+        width: 70px !important;
+        height: 98px !important;
+        min-width: 70px !important;
         max-width: 70px !important;
-        min-height: 60px !important;
+        min-height: 98px !important;
+        max-height: 98px !important;
     }
     
     .movie-btn span,
     .tvshow-btn span {
-        font-size: 0.55em !important;
-        padding: 1px !important;
+        font-size: 0.5em !important;
         line-height: 1.1 !important;
     }
+    
+    .tab-btn {
+        padding: 8px 12px;
+        font-size: 14px;
+    }
+}
     
     .tab-btn {
         padding: 8px 12px;
