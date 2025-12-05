@@ -532,6 +532,7 @@ body.edit-mode td.empty-drop-spot.drag-over {
     /* Add padding to account for side icons: left icons ~130px, right icons ~180px */
     padding-left: 140px;
     padding-right: 180px;
+    box-sizing: border-box;
 }
 
 /* Film/TV mode tab content responsive layout */
@@ -543,17 +544,19 @@ body.edit-mode td.empty-drop-spot.drag-over {
     margin-right: 180px;
     box-sizing: border-box;
     overflow-x: auto;
+    max-width: calc(100vw - 320px);
 }
 
 /* Movie and TV show buttons - responsive sizing */
 .movie-btn,
 .tvshow-btn {
-    min-width: 90px !important;
+    min-width: 70px !important;
     max-width: 110px !important;
-    width: 100% !important;
+    width: auto !important;
     height: auto !important;
-    min-height: 120px !important;
+    min-height: 100px !important;
     aspect-ratio: 2/3;
+    flex-shrink: 1 !important;
 }
 
 .movie-btn img,
@@ -571,6 +574,7 @@ body.edit-mode td.empty-drop-spot.drag-over {
     hyphens: auto !important;
     max-height: 3em !important;
     overflow: hidden !important;
+    font-size: 0.75em !important;
 }
 
 /* Responsive word-table for movies/TV in film mode */
@@ -578,11 +582,14 @@ body.edit-mode td.empty-drop-spot.drag-over {
     width: 100%;
     max-width: 100%;
     table-layout: fixed;
+    border-collapse: collapse;
 }
 
 .tab-content .word-table td {
-    padding: 4px;
+    padding: 2px;
     vertical-align: top;
+    width: auto;
+    max-width: calc((100vw - 320px) / 8);
 }
 
 /* Media queries for smaller screens */
@@ -595,13 +602,18 @@ body.edit-mode td.empty-drop-spot.drag-over {
     .tab-content {
         margin-left: 130px;
         margin-right: 180px;
+        max-width: calc(100vw - 310px);
+    }
+    
+    .tab-content .word-table td {
+        max-width: calc((100vw - 310px) / 8);
     }
     
     .movie-btn,
     .tvshow-btn {
-        min-width: 80px !important;
-        max-width: 100px !important;
-        min-height: 100px !important;
+        min-width: 60px !important;
+        max-width: 90px !important;
+        min-height: 80px !important;
     }
 }
 
@@ -614,19 +626,25 @@ body.edit-mode td.empty-drop-spot.drag-over {
     .tab-content {
         margin-left: 130px;
         margin-right: 180px;
+        max-width: calc(100vw - 310px);
+    }
+    
+    .tab-content .word-table td {
+        max-width: calc((100vw - 310px) / 8);
+        padding: 1px;
     }
     
     .movie-btn,
     .tvshow-btn {
-        min-width: 70px !important;
-        max-width: 90px !important;
-        min-height: 90px !important;
+        min-width: 50px !important;
+        max-width: 80px !important;
+        min-height: 70px !important;
     }
     
     .movie-btn span,
     .tvshow-btn span {
-        font-size: 0.8em !important;
-        padding: 2px 1px 1px 1px !important;
+        font-size: 0.65em !important;
+        padding: 1px !important;
     }
 }
 
@@ -639,19 +657,25 @@ body.edit-mode td.empty-drop-spot.drag-over {
     .tab-content {
         margin-left: 120px;
         margin-right: 180px;
+        max-width: calc(100vw - 300px);
+    }
+    
+    .tab-content .word-table td {
+        max-width: calc((100vw - 300px) / 8);
+        padding: 1px;
     }
     
     .movie-btn,
     .tvshow-btn {
-        min-width: 60px !important;
-        max-width: 80px !important;
-        min-height: 80px !important;
+        min-width: 40px !important;
+        max-width: 70px !important;
+        min-height: 60px !important;
     }
     
     .movie-btn span,
     .tvshow-btn span {
-        font-size: 0.7em !important;
-        padding: 2px 1px 1px 1px !important;
+        font-size: 0.55em !important;
+        padding: 1px !important;
         line-height: 1.1 !important;
     }
     
