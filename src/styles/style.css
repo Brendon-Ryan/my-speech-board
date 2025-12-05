@@ -566,11 +566,10 @@ body.edit-mode td.empty-drop-spot.drag-over {
 /* Movie and TV show title overlay - ensure text wraps properly */
 .movie-btn span,
 .tvshow-btn span {
-    word-wrap: break-word !important;
     overflow-wrap: break-word !important;
     white-space: normal !important;
     hyphens: auto !important;
-    max-height: 50% !important;
+    max-height: 3em !important;
     overflow: hidden !important;
 }
 
