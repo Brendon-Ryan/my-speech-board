@@ -563,6 +563,17 @@ body.edit-mode td.empty-drop-spot.drag-over {
     object-fit: cover !important;
 }
 
+/* Movie and TV show title overlay - ensure text wraps properly */
+.movie-btn span,
+.tvshow-btn span {
+    word-wrap: break-word !important;
+    overflow-wrap: break-word !important;
+    white-space: normal !important;
+    hyphens: auto !important;
+    max-height: 50% !important;
+    overflow: hidden !important;
+}
+
 /* Responsive word-table for movies/TV in film mode */
 .tab-content .word-table {
     width: 100%;
@@ -636,6 +647,13 @@ body.edit-mode td.empty-drop-spot.drag-over {
         min-width: 60px !important;
         max-width: 80px !important;
         min-height: 80px !important;
+    }
+    
+    .movie-btn span,
+    .tvshow-btn span {
+        font-size: 0.7em !important;
+        padding: 2px 1px 1px 1px !important;
+        line-height: 1.1 !important;
     }
     
     .tab-btn {
