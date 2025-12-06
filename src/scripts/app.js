@@ -1649,7 +1649,9 @@ if (voiceTestBtn) {
     });
 }
 
-// Update the tabs at the top for TV mode
+// Update the tabs at the top for TV mode (disabled - tvSearchBtn not defined)
+// This code would need the tvSearchBtn element to be created first
+/*
 tvSearchBtn.addEventListener('click', () => {
     const tabBar = document.querySelector('.tab-bar');
     if (tabBar) {
@@ -1703,3 +1705,4 @@ tvSearchBtn.addEventListener('click', () => {
         });
     }
 });
+*/
