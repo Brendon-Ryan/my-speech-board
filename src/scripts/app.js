@@ -375,6 +375,7 @@ addWordBtn.addEventListener('click', () => {
     setButtonActivation(btn, word); // Ensure new button is interactive
     wordInput.value = '';
     enableDragAndDropOnAllTables(); // Re-enable drag and drop after adding new word
+    enableTouchDragAndDropOnAllTables(); // Re-enable touch drag and drop
 });
 
 // Allow Enter key to add word
@@ -1155,6 +1156,7 @@ editModeBtn.addEventListener('click', () => {
     });
     // Now enable drag and drop (must be after cell creation for listeners to attach)
     enableDragAndDropOnAllTables();
+    enableTouchDragAndDropOnAllTables();
 });
 
 // --- Drag and Drop for Word Buttons ---
@@ -1278,6 +1280,7 @@ function handleDrop(e) {
     
     updateAllButtonActivation();
     enableDragAndDropOnAllTables();
+    enableTouchDragAndDropOnAllTables();
     
     return false;
 }
@@ -1301,8 +1304,147 @@ function enableDragAndDropOnAllTables() {
     document.querySelectorAll('.word-table').forEach(enableDragAndDropOnTable);
 }
 
+// Touch event support for mobile drag-and-drop
+let touchDraggedBtn = null;
+let touchStartX = 0;
+let touchStartY = 0;
+let clonedElement = null;
+
+function handleTouchStart(e) {
+    if (!editMode) return;
+    
+    touchDraggedBtn = this;
+    const touch = e.touches[0];
+    touchStartX = touch.clientX;
+    touchStartY = touch.clientY;
+    
+    // Create a clone for visual feedback
+    clonedElement = this.cloneNode(true);
+    clonedElement.style.position = 'fixed';
+    clonedElement.style.pointerEvents = 'none';
+    clonedElement.style.opacity = '0.7';
+    clonedElement.style.zIndex = '10000';
+    clonedElement.style.transform = 'rotate(3deg) scale(1.05)';
+    clonedElement.style.left = touch.clientX - (this.offsetWidth / 2) + 'px';
+    clonedElement.style.top = touch.clientY - (this.offsetHeight / 2) + 'px';
+    clonedElement.style.width = this.offsetWidth + 'px';
+    document.body.appendChild(clonedElement);
+    
+    this.classList.add('dragging');
+}
+
+function handleTouchMove(e) {
+    if (!touchDraggedBtn || !clonedElement) return;
+    
+    e.preventDefault(); // Prevent scrolling while dragging
+    
+    const touch = e.touches[0];
+    clonedElement.style.left = touch.clientX - (clonedElement.offsetWidth / 2) + 'px';
+    clonedElement.style.top = touch.clientY - (clonedElement.offsetHeight / 2) + 'px';
+    
+    // Find the element under the touch point
+    clonedElement.style.display = 'none';
+    const elementBelow = document.elementFromPoint(touch.clientX, touch.clientY);
+    clonedElement.style.display = '';
+    
+    // Remove drag-over from all cells
+    document.querySelectorAll('td.drag-over').forEach(td => {
+        td.classList.remove('drag-over');
+    });
+    
+    // Add drag-over to the cell under touch
+    if (elementBelow) {
+        const cell = elementBelow.closest('td');
+        if (cell && cell.closest('.word-table')) {
+            cell.classList.add('drag-over');
+        }
+    }
+}
+
+function handleTouchEnd(e) {
+    if (!touchDraggedBtn) return;
+    
+    const touch = e.changedTouches[0];
+    
+    // Find the element under the touch point
+    if (clonedElement) {
+        clonedElement.style.display = 'none';
+    }
+    const elementBelow = document.elementFromPoint(touch.clientX, touch.clientY);
+    
+    // Clean up
+    if (clonedElement) {
+        document.body.removeChild(clonedElement);
+        clonedElement = null;
+    }
+    
+    touchDraggedBtn.classList.remove('dragging');
+    
+    // Remove drag-over from all cells
+    document.querySelectorAll('td.drag-over').forEach(td => {
+        td.classList.remove('drag-over');
+    });
+    
+    if (elementBelow) {
+        const targetCell = elementBelow.closest('td');
+        if (targetCell && targetCell.closest('.word-table')) {
+            const sourceCell = touchDraggedBtn.parentNode;
+            
+            if (targetCell !== sourceCell) {
+                // If dropping onto an empty cell, just move the button
+                if (targetCell.children.length === 0) {
+                    targetCell.appendChild(touchDraggedBtn);
+                    targetCell.classList.remove('empty-drop-spot');
+                    if (sourceCell.children.length === 0) {
+                        sourceCell.classList.add('empty-drop-spot');
+                    }
+                } else {
+                    // If dropping onto a cell with a button, swap them
+                    const targetBtn = targetCell.querySelector('.word-btn');
+                    if (targetBtn) {
+                        sourceCell.appendChild(targetBtn);
+                        targetCell.appendChild(touchDraggedBtn);
+                    }
+                }
+                
+                // Mark that we have unsaved changes
+                hasUnsavedChanges = true;
+                
+                updateAllButtonActivation();
+                enableDragAndDropOnAllTables();
+            }
+        }
+    }
+    
+    touchDraggedBtn = null;
+}
+
+function enableTouchDragAndDropOnTable(table) {
+    if (!table) return;
+    
+    table.querySelectorAll('.word-btn').forEach(btn => {
+        if (editMode) {
+            btn.removeEventListener('touchstart', handleTouchStart, { passive: false });
+            btn.removeEventListener('touchmove', handleTouchMove, { passive: false });
+            btn.removeEventListener('touchend', handleTouchEnd, { passive: false });
+            btn.addEventListener('touchstart', handleTouchStart, { passive: false });
+            btn.addEventListener('touchmove', handleTouchMove, { passive: false });
+            btn.addEventListener('touchend', handleTouchEnd, { passive: false });
+        } else {
+            btn.removeEventListener('touchstart', handleTouchStart, { passive: false });
+            btn.removeEventListener('touchmove', handleTouchMove, { passive: false });
+            btn.removeEventListener('touchend', handleTouchEnd, { passive: false });
+        }
+    });
+}
+
+function enableTouchDragAndDropOnAllTables() {
+    document.querySelectorAll('.word-table').forEach(enableTouchDragAndDropOnTable);
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     enableDragAndDropOnAllTables();
+    enableTouchDragAndDropOnAllTables();
 });
 
 // When the Icons button is clicked, toggle between icons and text labels for word buttons
