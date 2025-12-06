@@ -531,6 +531,7 @@ body.edit-mode td.empty-drop-spot {
     outline: 2px dashed #f39c12;
     outline-offset: -2px;
     min-height: 50px;
+    min-width: 180px; /* Wider drop zone for easier drag targeting */
     transition: all 0.2s ease;
     position: relative;
 }
