@@ -1111,11 +1111,7 @@ function loadTilePositions() {
             });
             
             // Remove buttons from their current cells (but keep them in memory via buttonMap)
-            buttonsToMove.forEach(btn => {
-                if (btn.parentNode) {
-                    btn.parentNode.removeChild(btn);
-                }
-            });
+            buttonsToMove.forEach(btn => btn.remove());
             
             // Place buttons in their saved positions
             tiles.forEach(tileInfo => {

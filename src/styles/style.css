@@ -545,7 +545,6 @@ body.edit-mode td.empty-drop-spot::before {
     color: #f39c12;
     opacity: 0.3;
     pointer-events: none;
-    speak: never;
     -webkit-user-select: none;
     user-select: none;
 }
