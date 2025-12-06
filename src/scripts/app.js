@@ -1102,15 +1102,19 @@ function loadTilePositions() {
             
             const tiles = tileData[tabId];
             
-            // Create a map of current buttons by their text
+            // Create a map of current buttons by their text (store reference before removing from DOM)
             const buttonMap = new Map();
+            const buttonsToMove = [];
             table.querySelectorAll('.word-btn').forEach(btn => {
                 buttonMap.set(btn.textContent.trim(), btn);
+                buttonsToMove.push(btn);
             });
             
-            // Clear all cells first using modern replaceChildren()
-            table.querySelectorAll('td').forEach(cell => {
-                cell.replaceChildren();
+            // Remove buttons from their current cells (but keep them in memory via buttonMap)
+            buttonsToMove.forEach(btn => {
+                if (btn.parentNode) {
+                    btn.parentNode.removeChild(btn);
+                }
             });
             
             // Place buttons in their saved positions
@@ -1190,19 +1194,25 @@ editModeBtn.addEventListener('click', () => {
                 while (row.cells.length < 10) {
                     const newCell = row.insertCell();
                     newCell.classList.add('empty-drop-spot');
+                    newCell.setAttribute('aria-hidden', 'true');
                 }
             });
             // Add empty-drop-spot class to all empty cells
             table.querySelectorAll('td').forEach(td => {
                 if (td.children.length === 0) {
                     td.classList.add('empty-drop-spot');
+                    td.setAttribute('aria-hidden', 'true'); // Hide from screen readers
                 } else {
                     td.classList.remove('empty-drop-spot');
+                    td.removeAttribute('aria-hidden');
                 }
             });
         } else {
-            // Remove empty-drop-spot class when leaving edit mode
-            table.querySelectorAll('td').forEach(td => td.classList.remove('empty-drop-spot'));
+            // Remove empty-drop-spot class and aria-hidden when leaving edit mode
+            table.querySelectorAll('td').forEach(td => {
+                td.classList.remove('empty-drop-spot');
+                td.removeAttribute('aria-hidden');
+            });
         }
     });
     // Now enable drag and drop (must be after cell creation for listeners to attach)
@@ -1311,11 +1321,13 @@ function handleDrop(e) {
     // If dropping onto an empty cell, just move the button
     if (targetCell.children.length === 0) {
         targetCell.appendChild(draggedBtn);
-        // Remove empty-drop-spot class since it's no longer empty
+        // Remove empty-drop-spot class and aria-hidden since it's no longer empty
         targetCell.classList.remove('empty-drop-spot');
-        // If source cell is now empty, add empty-drop-spot class
+        targetCell.removeAttribute('aria-hidden');
+        // If source cell is now empty, add empty-drop-spot class and aria-hidden
         if (sourceCell.children.length === 0) {
             sourceCell.classList.add('empty-drop-spot');
+            sourceCell.setAttribute('aria-hidden', 'true');
         }
     } else {
         // If dropping onto a cell with a button, swap them
@@ -1446,8 +1458,10 @@ function handleTouchEnd(e) {
                 if (targetCell.children.length === 0) {
                     targetCell.appendChild(touchDraggedBtn);
                     targetCell.classList.remove('empty-drop-spot');
+                    targetCell.removeAttribute('aria-hidden');
                     if (sourceCell.children.length === 0) {
                         sourceCell.classList.add('empty-drop-spot');
+                        sourceCell.setAttribute('aria-hidden', 'true');
                     }
                 } else {
                     // If dropping onto a cell with a button, swap them
