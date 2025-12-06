@@ -1269,6 +1269,7 @@ function enableDragAndDropOnTable(table) {
 
 let draggedBtn = null;
 let dragCounter = 0; // Track drag enter/leave properly
+let dragPlaceholder = null; // Placeholder element to show during drag
 
 function handleDragStart(e) {
     draggedBtn = this;
@@ -1283,6 +1284,11 @@ function handleDragEnd() {
     document.querySelectorAll('td.drag-over').forEach(td => {
         td.classList.remove('drag-over');
     });
+    // Remove any placeholder
+    if (dragPlaceholder && dragPlaceholder.parentNode) {
+        dragPlaceholder.parentNode.removeChild(dragPlaceholder);
+    }
+    dragPlaceholder = null;
     draggedBtn = null;
     dragCounter = 0;
 }
@@ -1302,6 +1308,12 @@ function handleDrop(e) {
     e.preventDefault();
     
     this.classList.remove('drag-over');
+    
+    // Remove placeholder before dropping
+    if (dragPlaceholder && dragPlaceholder.parentNode) {
+        dragPlaceholder.parentNode.removeChild(dragPlaceholder);
+        dragPlaceholder = null;
+    }
     
     if (!draggedBtn) return;
     
@@ -1344,12 +1356,34 @@ function handleDragEnter(e) {
     }
     dragCounter++;
     this.classList.add('drag-over');
+    
+    // Show placeholder for empty cells
+    if (draggedBtn && this.children.length === 0 && this.classList.contains('empty-drop-spot')) {
+        // Remove any existing placeholder
+        if (dragPlaceholder && dragPlaceholder.parentNode) {
+            dragPlaceholder.parentNode.removeChild(dragPlaceholder);
+        }
+        
+        // Create a placeholder preview of the dragged button
+        dragPlaceholder = draggedBtn.cloneNode(true);
+        dragPlaceholder.classList.add('drag-placeholder');
+        dragPlaceholder.style.opacity = '0.4';
+        dragPlaceholder.style.pointerEvents = 'none';
+        dragPlaceholder.style.border = '2px dashed #f39c12';
+        this.appendChild(dragPlaceholder);
+    }
 }
 
 function handleDragLeave(e) {
     dragCounter--;
     if (dragCounter === 0) {
         this.classList.remove('drag-over');
+        
+        // Remove placeholder when leaving the cell
+        if (dragPlaceholder && this.contains(dragPlaceholder)) {
+            this.removeChild(dragPlaceholder);
+            dragPlaceholder = null;
+        }
     }
 }
 

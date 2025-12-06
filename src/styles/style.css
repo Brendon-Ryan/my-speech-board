@@ -541,6 +541,14 @@ body.edit-mode td.empty-drop-spot.drag-over {
     box-shadow: inset 0 0 10px rgba(243, 156, 18, 0.3);
 }
 
+/* Drag placeholder styling */
+.drag-placeholder {
+    opacity: 0.4;
+    pointer-events: none;
+    border: 2px dashed #f39c12 !important;
+    background: rgba(243, 156, 18, 0.1) !important;
+}
+
 
 /* Icons Button Styles */
 #icons-btn {
