@@ -1108,21 +1108,22 @@ function loadTilePositions() {
                 buttonMap.set(btn.textContent.trim(), btn);
             });
             
-            // Clear all cells first
+            // Clear all cells first using modern replaceChildren()
             table.querySelectorAll('td').forEach(cell => {
-                while (cell.firstChild) {
-                    cell.removeChild(cell.firstChild);
-                }
+                cell.replaceChildren();
             });
             
             // Place buttons in their saved positions
             tiles.forEach(tileInfo => {
                 const btn = buttonMap.get(tileInfo.text.trim());
-                if (btn && table.rows[tileInfo.row] && table.rows[tileInfo.row].cells[tileInfo.col]) {
-                    const targetCell = table.rows[tileInfo.row].cells[tileInfo.col];
-                    targetCell.appendChild(btn);
-                    if (tileInfo.speechLabel) {
-                        btn.setAttribute('data-speech-label', tileInfo.speechLabel);
+                const row = table.rows[tileInfo.row];
+                if (btn && row) {
+                    const targetCell = row.cells[tileInfo.col];
+                    if (targetCell) {
+                        targetCell.appendChild(btn);
+                        if (tileInfo.speechLabel) {
+                            btn.setAttribute('data-speech-label', tileInfo.speechLabel);
+                        }
                     }
                 }
             });
