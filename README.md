@@ -1,11 +1,11 @@
-# Azure Web App
+# Accessible Speech Board
 
-This project is a basic web application hosted on Azure. Below are the details regarding the structure and usage of the application.
+This project is an accessible communication board designed to support users with disabilities. The application provides an intuitive interface for communication through speech synthesis, customizable word boards, and accessibility-focused features.
 
 ## Project Structure
 
 ```
-azure-web-app
+accessible-speech-board
 ├── src
 │   ├── index.html        # Main HTML document
 │   ├── styles
@@ -26,7 +26,7 @@ azure-web-app
 
 2. Navigate to the project directory:
    ```
-   cd azure-web-app
+   cd accessible-speech-board
    ```
 
 3. Install the dependencies:
@@ -38,9 +38,18 @@ azure-web-app
 
 ## Usage
 
-- Modify the HTML in `src/index.html` to change the content of the web application.
-- Update styles in `src/styles/style.css` to customize the appearance.
-- Add interactivity by editing `src/scripts/app.js`.
+The Accessible Speech Board provides:
+- Customizable word buttons with speech synthesis
+- Multiple themed categories (Core, Food, Feelings, Actions, Places, People, Alphabet & Numbers, Phrases)
+- Configurable activation modes (hover or click)
+- Multiple color schemes including high-contrast and colorblind-friendly options
+- Voice selection for text-to-speech
+- Edit mode for personalizing word boards
+
+To customize:
+- Modify the HTML in `src/index.html` to change the structure
+- Update styles in `src/styles/style.css` to customize the appearance
+- Add interactivity by editing `src/scripts/app.js`
 
 ## Deployment
 
