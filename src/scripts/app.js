@@ -273,7 +273,7 @@ function switchTab(tabId) {
     const btn = document.querySelector('.tab-btn[data-tab="' + tabId + '"]');
     if (btn) btn.classList.add('active');
     const tabPanel = document.getElementById('tab-' + tabId);
-    if (tabPanel) tabPanel.style.display = '';
+    if (tabPanel) tabPanel.style.display = 'block';
     // Re-activate word buttons in the new tab
     updateAllButtonActivation();
     // Re-bind QWERTY keyboard activation if present
@@ -1367,15 +1367,15 @@ function handleTouchEnd(e) {
     const touch = e.changedTouches[0];
     
     // Find the element under the touch point
+    // Find element under touch and clean up clone
+    let elementBelow;
     if (clonedElement) {
         clonedElement.style.display = 'none';
-    }
-    const elementBelow = document.elementFromPoint(touch.clientX, touch.clientY);
-    
-    // Clean up
-    if (clonedElement) {
+        elementBelow = document.elementFromPoint(touch.clientX, touch.clientY);
         document.body.removeChild(clonedElement);
         clonedElement = null;
+    } else {
+        elementBelow = document.elementFromPoint(touch.clientX, touch.clientY);
     }
     
     touchDraggedBtn.classList.remove('dragging');
@@ -1411,7 +1411,13 @@ function handleTouchEnd(e) {
                 hasUnsavedChanges = true;
                 
                 updateAllButtonActivation();
-                enableDragAndDropOnAllTables();
+                
+                // Only re-enable on the specific table for better performance
+                const table = targetCell.closest('.word-table');
+                if (table) {
+                    enableDragAndDropOnTable(table);
+                    enableTouchDragAndDropOnTable(table);
+                }
             }
         }
     }
@@ -1423,17 +1429,19 @@ function enableTouchDragAndDropOnTable(table) {
     if (!table) return;
     
     table.querySelectorAll('.word-btn').forEach(btn => {
-        if (editMode) {
-            btn.removeEventListener('touchstart', handleTouchStart, { passive: false });
-            btn.removeEventListener('touchmove', handleTouchMove, { passive: false });
-            btn.removeEventListener('touchend', handleTouchEnd, { passive: false });
+        // Only modify listeners if needed (avoid redundant operations)
+        const hasListeners = btn.dataset.touchListenersAttached === 'true';
+        
+        if (editMode && !hasListeners) {
             btn.addEventListener('touchstart', handleTouchStart, { passive: false });
             btn.addEventListener('touchmove', handleTouchMove, { passive: false });
             btn.addEventListener('touchend', handleTouchEnd, { passive: false });
-        } else {
+            btn.dataset.touchListenersAttached = 'true';
+        } else if (!editMode && hasListeners) {
             btn.removeEventListener('touchstart', handleTouchStart, { passive: false });
             btn.removeEventListener('touchmove', handleTouchMove, { passive: false });
             btn.removeEventListener('touchend', handleTouchEnd, { passive: false });
+            delete btn.dataset.touchListenersAttached;
         }
     });
 }
