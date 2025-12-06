@@ -403,7 +403,7 @@ saveBtn.id = 'save-btn';
 saveBtn.textContent = 'Save';
 saveBtn.style.position = 'absolute';
 saveBtn.style.top = '20px';
-saveBtn.style.left = '170px';
+saveBtn.style.left = '230px'; // Increased from 170px to avoid overlap with "Disable Edit Mode"
 saveBtn.style.zIndex = '1001';
 saveBtn.disabled = true;
 saveBtn.style.opacity = '0.5';
@@ -1190,24 +1190,20 @@ editModeBtn.addEventListener('click', () => {
                 while (row.cells.length < 10) {
                     const newCell = row.insertCell();
                     newCell.classList.add('empty-drop-spot');
-                    newCell.setAttribute('aria-hidden', 'true');
                 }
             });
             // Add empty-drop-spot class to all empty cells
             table.querySelectorAll('td').forEach(td => {
                 if (td.children.length === 0) {
                     td.classList.add('empty-drop-spot');
-                    td.setAttribute('aria-hidden', 'true'); // Hide from screen readers
                 } else {
                     td.classList.remove('empty-drop-spot');
-                    td.removeAttribute('aria-hidden');
                 }
             });
         } else {
-            // Remove empty-drop-spot class and aria-hidden when leaving edit mode
+            // Remove empty-drop-spot class when leaving edit mode
             table.querySelectorAll('td').forEach(td => {
                 td.classList.remove('empty-drop-spot');
-                td.removeAttribute('aria-hidden');
             });
         }
     });
@@ -1317,13 +1313,11 @@ function handleDrop(e) {
     // If dropping onto an empty cell, just move the button
     if (targetCell.children.length === 0) {
         targetCell.appendChild(draggedBtn);
-        // Remove empty-drop-spot class and aria-hidden since it's no longer empty
+        // Remove empty-drop-spot class since it's no longer empty
         targetCell.classList.remove('empty-drop-spot');
-        targetCell.removeAttribute('aria-hidden');
-        // If source cell is now empty, add empty-drop-spot class and aria-hidden
+        // If source cell is now empty, add empty-drop-spot class
         if (sourceCell.children.length === 0) {
             sourceCell.classList.add('empty-drop-spot');
-            sourceCell.setAttribute('aria-hidden', 'true');
         }
     } else {
         // If dropping onto a cell with a button, swap them
@@ -1454,10 +1448,8 @@ function handleTouchEnd(e) {
                 if (targetCell.children.length === 0) {
                     targetCell.appendChild(touchDraggedBtn);
                     targetCell.classList.remove('empty-drop-spot');
-                    targetCell.removeAttribute('aria-hidden');
                     if (sourceCell.children.length === 0) {
                         sourceCell.classList.add('empty-drop-spot');
-                        sourceCell.setAttribute('aria-hidden', 'true');
                     }
                 } else {
                     // If dropping onto a cell with a button, swap them
