@@ -1,7 +1,7 @@
 {
-  "name": "azure-web-app",
+  "name": "accessible-speech-board",
   "version": "1.0.0",
-  "description": "A basic Azure Web App project",
+  "description": "An accessible communication board for users with disabilities",
   "main": "src/index.html",
   "scripts": {
     "start": "live-server src",
