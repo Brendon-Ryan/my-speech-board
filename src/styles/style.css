@@ -94,14 +94,21 @@ h3 {
 }
 
 .word-btn.dragging {
-    opacity: 0.5;
-    box-shadow: 0 0 12px 2px #1abc9c;
+    opacity: 0.4;
+    box-shadow: 0 0 16px 3px #1abc9c;
+    transform: rotate(3deg) scale(1.05);
+    cursor: grabbing !important;
 }
 
 /* Edit Mode Styles */
 body.edit-mode .word-btn {
     outline: 2px dashed #1abc9c;
     cursor: grab;
+    transition: all 0.2s ease;
+}
+body.edit-mode .word-btn:hover {
+    outline-color: #16a085;
+    transform: scale(1.02);
 }
 body.edit-mode .word-btn:active {
     cursor: grabbing;
@@ -129,11 +136,16 @@ body.edit-mode .word-btn:active {
     border-radius: 5px;
     font-size: 16px;
     cursor: pointer;
-    transition: background 0.3s;
-    margin-left: 30px;
+    transition: all 0.2s ease;
 }
-#save-btn:hover {
+#save-btn:hover:not(:disabled) {
     background: #219150;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(39, 174, 96, 0.3);
+}
+#save-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
 }
 
 /* Input Section */
@@ -506,21 +518,46 @@ body.achromatopsia-scheme .word-btn:hover {
     padding: 10px 0;
 }
 
-.word-table td.drag-over, .drop-zone-cell.drag-over {
-    background: #e0f7fa !important;
-    outline: 2px dashed #1abc9c;
+.word-table td.drag-over {
+    background: #d4f1f4 !important;
+    outline: 3px solid #1abc9c !important;
+    outline-offset: -3px;
+    box-shadow: inset 0 0 10px rgba(26, 188, 156, 0.3);
+    transition: all 0.15s ease;
 }
 
 body.edit-mode td.empty-drop-spot {
-    background: #fffbe6;
+    background: #fffaf0;
     outline: 2px dashed #f39c12;
-    min-height: 40px;
-    transition: background 0.2s, outline 0.2s;
+    outline-offset: -2px;
+    min-height: 50px;
+    transition: all 0.2s ease;
+    position: relative;
 }
+
+body.edit-mode td.empty-drop-spot::before {
+    content: '+';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 24px;
+    color: #f39c12;
+    opacity: 0.3;
+    pointer-events: none;
+}
+
 body.edit-mode td.empty-drop-spot.drag-over {
-    background: #ffe0b2 !important;
-    outline: 2px solid #f39c12;
+    background: #fff3cd !important;
+    outline: 3px solid #f39c12 !important;
+    box-shadow: inset 0 0 10px rgba(243, 156, 18, 0.3);
 }
+
+body.edit-mode td.empty-drop-spot.drag-over::before {
+    opacity: 0.6;
+    transform: translate(-50%, -50%) scale(1.2);
+}
+
 
 /* Icons Button Styles */
 #icons-btn {
