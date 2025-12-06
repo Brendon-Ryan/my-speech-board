@@ -1358,7 +1358,7 @@ function handleDragEnter(e) {
     this.classList.add('drag-over');
     
     // Show placeholder for empty cells
-    if (draggedBtn && this.children.length === 0 && this.classList.contains('empty-drop-spot')) {
+    if (draggedBtn && this.classList.contains('empty-drop-spot')) {
         // Remove any existing placeholder
         if (dragPlaceholder && dragPlaceholder.parentNode) {
             dragPlaceholder.parentNode.removeChild(dragPlaceholder);
@@ -1367,9 +1367,6 @@ function handleDragEnter(e) {
         // Create a placeholder preview of the dragged button
         dragPlaceholder = draggedBtn.cloneNode(true);
         dragPlaceholder.classList.add('drag-placeholder');
-        dragPlaceholder.style.opacity = '0.4';
-        dragPlaceholder.style.pointerEvents = 'none';
-        dragPlaceholder.style.border = '2px dashed #f39c12';
         this.appendChild(dragPlaceholder);
     }
 }
