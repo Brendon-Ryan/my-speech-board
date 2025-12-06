@@ -1085,6 +1085,56 @@ function saveTilePositions() {
     updateSaveButtonState();
 }
 
+// Function to load tile positions from localStorage
+function loadTilePositions() {
+    const savedData = localStorage.getItem('speechBoardTiles');
+    if (!savedData) return;
+    
+    try {
+        const tileData = JSON.parse(savedData);
+        
+        Object.keys(tileData).forEach(tabId => {
+            const tabContent = document.getElementById(tabId);
+            if (!tabContent) return;
+            
+            const table = tabContent.querySelector('.word-table');
+            if (!table) return;
+            
+            const tiles = tileData[tabId];
+            
+            // Create a map of current buttons by their text
+            const buttonMap = new Map();
+            table.querySelectorAll('.word-btn').forEach(btn => {
+                buttonMap.set(btn.textContent.trim(), btn);
+            });
+            
+            // Clear all cells first
+            table.querySelectorAll('td').forEach(cell => {
+                while (cell.firstChild) {
+                    cell.removeChild(cell.firstChild);
+                }
+            });
+            
+            // Place buttons in their saved positions
+            tiles.forEach(tileInfo => {
+                const btn = buttonMap.get(tileInfo.text.trim());
+                if (btn && table.rows[tileInfo.row] && table.rows[tileInfo.row].cells[tileInfo.col]) {
+                    const targetCell = table.rows[tileInfo.row].cells[tileInfo.col];
+                    targetCell.appendChild(btn);
+                    if (tileInfo.speechLabel) {
+                        btn.setAttribute('data-speech-label', tileInfo.speechLabel);
+                    }
+                }
+            });
+        });
+        
+        // Re-activate buttons after loading
+        updateAllButtonActivation();
+    } catch (e) {
+        console.error('Error loading tile positions:', e);
+    }
+}
+
 // Function to update save button state
 function updateSaveButtonState() {
     if (editMode) {
@@ -1451,6 +1501,7 @@ function enableTouchDragAndDropOnAllTables() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+    loadTilePositions(); // Load saved tile positions first
     enableDragAndDropOnAllTables();
     enableTouchDragAndDropOnAllTables();
 });
