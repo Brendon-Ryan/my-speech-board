@@ -276,6 +276,11 @@ function switchTab(tabId) {
     if (tabPanel) tabPanel.style.display = 'block';
     // Re-activate word buttons in the new tab
     updateAllButtonActivation();
+    // Re-apply edit mode styling and empty cells if in edit mode
+    if (editMode) {
+        enableDragAndDropOnAllTables();
+        enableTouchDragAndDropOnAllTables();
+    }
     // Re-bind QWERTY keyboard activation if present
     if (tabId === 'search') {
         bindQwertyKeyboardActivation();
