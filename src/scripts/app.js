@@ -655,7 +655,7 @@ function createSudokuGame(container) {
             if (selectedCell && selectedCell.dataset.fixed === 'false') {
                 selectedCell.textContent = num;
                 selectedCell.style.color = '#3498db';
-                checkSudokuCompletion(grid, puzzle);
+                checkSudokuCompletion(grid);
             }
         };
         
@@ -793,7 +793,7 @@ function generateSimpleSudoku() {
 }
 
 // Check if Sudoku is complete and correct
-function checkSudokuCompletion(grid, originalPuzzle) {
+function checkSudokuCompletion(grid) {
     const cells = grid.querySelectorAll('.sudoku-cell');
     let allFilled = true;
     let isValid = true;
@@ -806,7 +806,7 @@ function checkSudokuCompletion(grid, originalPuzzle) {
     });
     
     if (allFilled) {
-        // Simple validation: check rows, columns, and 3x3 boxes
+        // Full validation: check rows, columns, and 3x3 boxes
         const values = Array.from(cells).map(c => parseInt(c.textContent));
         
         // Check rows
@@ -829,6 +829,26 @@ function checkSudokuCompletion(grid, originalPuzzle) {
                     isValid = false;
                     break;
                 }
+            }
+        }
+        
+        // Check 3x3 boxes
+        if (isValid) {
+            for (let boxRow = 0; boxRow < 3; boxRow++) {
+                for (let boxCol = 0; boxCol < 3; boxCol++) {
+                    const boxValues = [];
+                    for (let row = 0; row < 3; row++) {
+                        for (let col = 0; col < 3; col++) {
+                            const index = (boxRow * 3 + row) * 9 + (boxCol * 3 + col);
+                            boxValues.push(values[index]);
+                        }
+                    }
+                    if (new Set(boxValues).size !== 9) {
+                        isValid = false;
+                        break;
+                    }
+                }
+                if (!isValid) break;
             }
         }
         
