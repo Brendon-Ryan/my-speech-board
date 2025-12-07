@@ -629,6 +629,58 @@ body.edit-mode td.empty-drop-spot.drag-over {
     flex-shrink: 0 !important;
 }
 
+/* Sudoku Game Styles */
+.sudoku-wrapper {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.sudoku-grid {
+    box-shadow: 0 4px 12px rgba(44,62,80,0.15);
+    border-radius: 4px;
+}
+
+.sudoku-cell {
+    margin: 0 !important;
+    padding: 0 !important;
+    border-radius: 0 !important;
+}
+
+.sudoku-cell:hover:not(:disabled) {
+    background: #dfe6e9 !important;
+}
+
+.number-selector {
+    background: #fff;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(44,62,80,0.08);
+}
+
+.sudoku-number {
+    margin: 0 !important;
+}
+
+/* Paint Game Styles */
+.paint-wrapper {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.paint-canvas {
+    display: inline-block;
+    min-width: 300px;
+    min-height: 300px;
+}
+
+.paint-section {
+    transition: fill 0.3s ease, stroke 0.3s ease;
+}
+
+.paint-section:hover {
+    opacity: 0.8;
+}
+
 /* Media queries for smaller screens */
 @media (max-width: 1200px) {
     .tab-bar {
