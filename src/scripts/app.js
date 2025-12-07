@@ -749,21 +749,47 @@ function createSudokuGame(container) {
     container.appendChild(sudokuWrapper);
 }
 
-// Simple Sudoku puzzle generator
+// Simple Sudoku puzzle generator with multiple puzzles
 function generateSimpleSudoku() {
-    // This is a pre-made easy Sudoku puzzle
-    const puzzle = [
-        5,3,0,0,7,0,0,0,0,
-        6,0,0,1,9,5,0,0,0,
-        0,9,8,0,0,0,0,6,0,
-        8,0,0,0,6,0,0,0,3,
-        4,0,0,8,0,3,0,0,1,
-        7,0,0,0,2,0,0,0,6,
-        0,6,0,0,0,0,2,8,0,
-        0,0,0,4,1,9,0,0,5,
-        0,0,0,0,8,0,0,7,9
+    // Array of pre-made easy Sudoku puzzles
+    const puzzles = [
+        [
+            5,3,0,0,7,0,0,0,0,
+            6,0,0,1,9,5,0,0,0,
+            0,9,8,0,0,0,0,6,0,
+            8,0,0,0,6,0,0,0,3,
+            4,0,0,8,0,3,0,0,1,
+            7,0,0,0,2,0,0,0,6,
+            0,6,0,0,0,0,2,8,0,
+            0,0,0,4,1,9,0,0,5,
+            0,0,0,0,8,0,0,7,9
+        ],
+        [
+            0,0,0,2,6,0,7,0,1,
+            6,8,0,0,7,0,0,9,0,
+            1,9,0,0,0,4,5,0,0,
+            8,2,0,1,0,0,0,4,0,
+            0,0,4,6,0,2,9,0,0,
+            0,5,0,0,0,3,0,2,8,
+            0,0,9,3,0,0,0,7,4,
+            0,4,0,0,5,0,0,3,6,
+            7,0,3,0,1,8,0,0,0
+        ],
+        [
+            0,0,0,0,0,0,6,8,0,
+            0,0,0,0,7,3,0,0,9,
+            3,0,9,0,0,0,0,4,5,
+            4,9,0,0,0,0,0,0,0,
+            8,0,3,0,5,0,9,0,2,
+            0,0,0,0,0,0,0,3,6,
+            9,6,0,0,0,0,3,0,8,
+            7,0,0,6,8,0,0,0,0,
+            0,2,8,0,0,0,0,0,0
+        ]
     ];
-    return puzzle;
+    // Select a random puzzle
+    const randomIndex = Math.floor(Math.random() * puzzles.length);
+    return puzzles[randomIndex];
 }
 
 // Check if Sudoku is complete and correct
@@ -808,9 +834,30 @@ function checkSudokuCompletion(grid, originalPuzzle) {
         
         if (isValid) {
             speakWord('Congratulations! You solved the puzzle!');
+            
+            // Create accessible notification
+            const notification = document.createElement('div');
+            notification.style.position = 'fixed';
+            notification.style.top = '50%';
+            notification.style.left = '50%';
+            notification.style.transform = 'translate(-50%, -50%)';
+            notification.style.background = '#27ae60';
+            notification.style.color = 'white';
+            notification.style.padding = '30px 40px';
+            notification.style.borderRadius = '10px';
+            notification.style.fontSize = '24px';
+            notification.style.fontWeight = 'bold';
+            notification.style.zIndex = '10000';
+            notification.style.boxShadow = '0 4px 12px rgba(0,0,0,0.3)';
+            notification.setAttribute('role', 'alert');
+            notification.setAttribute('aria-live', 'assertive');
+            notification.textContent = '🎉 Congratulations! You solved the Sudoku puzzle!';
+            document.body.appendChild(notification);
+            
+            // Remove notification after 5 seconds
             setTimeout(() => {
-                alert('🎉 Congratulations! You solved the Sudoku puzzle!');
-            }, 100);
+                notification.remove();
+            }, 5000);
         }
     }
 }
