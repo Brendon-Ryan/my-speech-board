@@ -25,8 +25,19 @@ let hoverTime = 1000; // default 1 second
 let selectedVoice = null;
 
 // Function to speak a word
-function speakWord(word) {
+function speakWord(word, sourceButton) {
     console.log(`Attempting to speak: ${word}`); // Debugging log
+    
+    // If this is a movie/TV show button, add to recently watched
+    if (sourceButton && sourceButton.hasAttribute && sourceButton.hasAttribute('data-watch-type')) {
+        const watchType = sourceButton.getAttribute('data-watch-type');
+        const watchTitle = sourceButton.getAttribute('data-watch-title');
+        const watchPoster = sourceButton.getAttribute('data-watch-poster');
+        if (watchType && watchTitle && watchPoster) {
+            addToRecentlyWatched(watchTitle, watchType, watchPoster);
+        }
+    }
+    
     if ('speechSynthesis' in window) {
         const utterance = new SpeechSynthesisUtterance(word);
         if (selectedVoice) utterance.voice = selectedVoice;
@@ -80,7 +91,7 @@ function setButtonActivation(button, word) {
         let hoverTimeout;
         newButton.addEventListener('mouseenter', () => {
             hoverTimeout = setTimeout(() => {
-                speakWord(speechLabel);
+                speakWord(speechLabel, newButton);
             }, hoverTime);
         });
         newButton.addEventListener('mouseleave', () => {
@@ -88,7 +99,7 @@ function setButtonActivation(button, word) {
         });
     } else {
         newButton.addEventListener('click', () => {
-            speakWord(speechLabel);
+            speakWord(speechLabel, newButton);
         });
     }
     button.parentNode.replaceChild(newButton, button);
@@ -1854,18 +1865,12 @@ filmBtn.addEventListener('click', () => {
                     btn.appendChild(titleSpan);
                     cell.appendChild(btn);
                     
-                    // Set button activation and add to recently watched when activated
-                    const originalWord = movie.title;
-                    btn.addEventListener('click', () => {
-                        addToRecentlyWatched(movie.title, 'movie', movie.poster);
-                    });
-                    btn.addEventListener('mouseenter', () => {
-                        // Use a short timeout to ensure this runs after setButtonActivation's hover
-                        setTimeout(() => {
-                            addToRecentlyWatched(movie.title, 'movie', movie.poster);
-                        }, hoverTime + 10);
-                    });
-                    setButtonActivation(btn, originalWord);
+                    // Mark button as a movie/TV item with metadata for tracking
+                    btn.setAttribute('data-watch-type', 'movie');
+                    btn.setAttribute('data-watch-title', movie.title);
+                    btn.setAttribute('data-watch-poster', movie.poster);
+                    
+                    setButtonActivation(btn, movie.title);
                 }
             });
             tabPanel.appendChild(moviesTable);
@@ -1951,18 +1956,12 @@ filmBtn.addEventListener('click', () => {
                     btn.appendChild(titleSpan);
                     cell.appendChild(btn);
                     
-                    // Set button activation and add to recently watched when activated  
-                    const originalWord = show.title;
-                    btn.addEventListener('click', () => {
-                        addToRecentlyWatched(show.title, 'tvshow', show.poster);
-                    });
-                    btn.addEventListener('mouseenter', () => {
-                        // Use a short timeout to ensure this runs after setButtonActivation's hover
-                        setTimeout(() => {
-                            addToRecentlyWatched(show.title, 'tvshow', show.poster);
-                        }, hoverTime + 10);
-                    });
-                    setButtonActivation(btn, originalWord);
+                    // Mark button as a movie/TV item with metadata for tracking
+                    btn.setAttribute('data-watch-type', 'tvshow');
+                    btn.setAttribute('data-watch-title', show.title);
+                    btn.setAttribute('data-watch-poster', show.poster);
+                    
+                    setButtonActivation(btn, show.title);
                 }
             });
             tabPanel.appendChild(showsTable);
