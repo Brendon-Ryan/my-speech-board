@@ -273,9 +273,14 @@ function switchTab(tabId) {
     const btn = document.querySelector('.tab-btn[data-tab="' + tabId + '"]');
     if (btn) btn.classList.add('active');
     const tabPanel = document.getElementById('tab-' + tabId);
-    if (tabPanel) tabPanel.style.display = '';
+    if (tabPanel) tabPanel.style.display = 'block';
     // Re-activate word buttons in the new tab
     updateAllButtonActivation();
+    // Re-apply edit mode styling and empty cells if in edit mode
+    if (editMode) {
+        enableDragAndDropOnAllTables();
+        enableTouchDragAndDropOnAllTables();
+    }
     // Re-bind QWERTY keyboard activation if present
     if (tabId === 'search') {
         bindQwertyKeyboardActivation();
@@ -375,6 +380,7 @@ addWordBtn.addEventListener('click', () => {
     setButtonActivation(btn, word); // Ensure new button is interactive
     wordInput.value = '';
     enableDragAndDropOnAllTables(); // Re-enable drag and drop after adding new word
+    enableTouchDragAndDropOnAllTables(); // Re-enable touch drag and drop
 });
 
 // Allow Enter key to add word
@@ -402,8 +408,11 @@ saveBtn.id = 'save-btn';
 saveBtn.textContent = 'Save';
 saveBtn.style.position = 'absolute';
 saveBtn.style.top = '20px';
-saveBtn.style.left = '170px';
+saveBtn.style.left = '230px'; // Increased from 170px to avoid overlap with "Disable Edit Mode"
 saveBtn.style.zIndex = '1001';
+saveBtn.disabled = true;
+saveBtn.style.opacity = '0.5';
+saveBtn.style.cursor = 'not-allowed';
 document.body.appendChild(saveBtn);
 
 const iconsBtn = document.createElement('button');
@@ -1762,8 +1771,129 @@ filmBtn.addEventListener('click', () => {
 });
 
 // --- Save and Edit Mode Functionality ---
+let hasUnsavedChanges = false;
+
+// Function to save tile positions to localStorage
+function saveTilePositions() {
+    const tileData = {};
+    
+    document.querySelectorAll('.tab-content').forEach(tabContent => {
+        const tabId = tabContent.id;
+        const tiles = [];
+        
+        const table = tabContent.querySelector('.word-table');
+        if (table) {
+            table.querySelectorAll('tr').forEach((row, rowIndex) => {
+                Array.from(row.cells).forEach((cell, cellIndex) => {
+                    const btn = cell.querySelector('.word-btn');
+                    if (btn) {
+                        tiles.push({
+                            text: btn.textContent,
+                            row: rowIndex,
+                            col: cellIndex,
+                            speechLabel: btn.getAttribute('data-speech-label') || btn.textContent
+                        });
+                    }
+                });
+            });
+        }
+        
+        if (tiles.length > 0) {
+            tileData[tabId] = tiles;
+        }
+    });
+    
+    localStorage.setItem('speechBoardTiles', JSON.stringify(tileData));
+    hasUnsavedChanges = false;
+    updateSaveButtonState();
+}
+
+// Function to load tile positions from localStorage
+function loadTilePositions() {
+    const savedData = localStorage.getItem('speechBoardTiles');
+    if (!savedData) return;
+    
+    try {
+        const tileData = JSON.parse(savedData);
+        
+        Object.keys(tileData).forEach(tabId => {
+            const tabContent = document.getElementById(tabId);
+            if (!tabContent) return;
+            
+            const table = tabContent.querySelector('.word-table');
+            if (!table) return;
+            
+            const tiles = tileData[tabId];
+            
+            // Create a map of current buttons by their text (store reference before removing from DOM)
+            const buttonMap = new Map();
+            const buttonsToMove = [];
+            table.querySelectorAll('.word-btn').forEach(btn => {
+                buttonMap.set(btn.textContent.trim(), btn);
+                buttonsToMove.push(btn);
+            });
+            
+            // Remove buttons from their current cells (but keep them in memory via buttonMap)
+            buttonsToMove.forEach(btn => btn.remove());
+            
+            // Place buttons in their saved positions
+            tiles.forEach(tileInfo => {
+                const btn = buttonMap.get(tileInfo.text.trim());
+                const row = table.rows[tileInfo.row];
+                if (btn && row) {
+                    const targetCell = row.cells[tileInfo.col];
+                    if (targetCell) {
+                        targetCell.appendChild(btn);
+                        if (tileInfo.speechLabel) {
+                            btn.setAttribute('data-speech-label', tileInfo.speechLabel);
+                        }
+                    }
+                }
+            });
+        });
+        
+        // Re-activate buttons after loading
+        updateAllButtonActivation();
+    } catch (e) {
+        console.error('Error loading tile positions:', e);
+    }
+}
+
+// Function to update save button state
+function updateSaveButtonState() {
+    if (editMode) {
+        saveBtn.disabled = false;
+        saveBtn.style.opacity = '1';
+        saveBtn.style.cursor = 'pointer';
+    } else {
+        saveBtn.disabled = true;
+        saveBtn.style.opacity = '0.5';
+        saveBtn.style.cursor = 'not-allowed';
+    }
+}
+
+// Save button with animation
 saveBtn.addEventListener('click', () => {
-    // Save functionality to be implemented
+    if (!editMode) return;
+    
+    // Save the positions
+    saveTilePositions();
+    
+    // Animate the button
+    saveBtn.style.transform = 'scale(0.95)';
+    saveBtn.style.background = '#229954';
+    
+    // Show a checkmark briefly
+    const originalText = saveBtn.textContent;
+    saveBtn.textContent = '✓ Saved';
+    
+    setTimeout(() => {
+        saveBtn.style.transform = 'scale(1)';
+        saveBtn.style.background = '#27ae60';
+        setTimeout(() => {
+            saveBtn.textContent = originalText;
+        }, 500);
+    }, 200);
 });
 
 editModeBtn.addEventListener('click', () => {
@@ -1772,6 +1902,10 @@ editModeBtn.addEventListener('click', () => {
     document.body.classList.toggle('edit-mode', editMode);
     // Show or hide the Icons button based on edit mode
     iconsBtn.style.display = editMode ? 'block' : 'none';
+    
+    // Update save button state
+    updateSaveButtonState();
+    
     // First, ensure all rows have 10 cells and empty-drop-spot classes are set
     document.querySelectorAll('.word-table').forEach(table => {
         if (editMode) {
@@ -1791,11 +1925,14 @@ editModeBtn.addEventListener('click', () => {
             });
         } else {
             // Remove empty-drop-spot class when leaving edit mode
-            table.querySelectorAll('td').forEach(td => td.classList.remove('empty-drop-spot'));
+            table.querySelectorAll('td').forEach(td => {
+                td.classList.remove('empty-drop-spot');
+            });
         }
     });
     // Now enable drag and drop (must be after cell creation for listeners to attach)
     enableDragAndDropOnAllTables();
+    enableTouchDragAndDropOnAllTables();
 });
 
 // --- Drag and Drop for Word Buttons ---
@@ -1854,27 +1991,60 @@ function enableDragAndDropOnTable(table) {
 }
 
 let draggedBtn = null;
+let dragCounter = 0; // Track drag enter/leave properly
+let dragPlaceholder = null; // Placeholder element to show during drag
+
 function handleDragStart(e) {
     draggedBtn = this;
     setTimeout(() => this.classList.add('dragging'), 0);
     e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/html', this.innerHTML);
 }
+
 function handleDragEnd() {
     this.classList.remove('dragging');
+    // Remove drag-over class from all cells
+    document.querySelectorAll('td.drag-over').forEach(td => {
+        td.classList.remove('drag-over');
+    });
+    // Remove any placeholder
+    if (dragPlaceholder && dragPlaceholder.parentNode) {
+        dragPlaceholder.parentNode.removeChild(dragPlaceholder);
+    }
+    dragPlaceholder = null;
     draggedBtn = null;
+    dragCounter = 0;
 }
+
 function handleDragOver(e) {
-    e.preventDefault();
+    if (e.preventDefault) {
+        e.preventDefault();
+    }
     e.dataTransfer.dropEffect = 'move';
-    this.classList.add('drag-over');
+    return false;
 }
+
 function handleDrop(e) {
+    if (e.stopPropagation) {
+        e.stopPropagation();
+    }
     e.preventDefault();
+    
     this.classList.remove('drag-over');
+    
+    // Remove placeholder before dropping
+    if (dragPlaceholder && dragPlaceholder.parentNode) {
+        dragPlaceholder.parentNode.removeChild(dragPlaceholder);
+        dragPlaceholder = null;
+    }
+    
     if (!draggedBtn) return;
+    
     const targetCell = this;
     const sourceCell = draggedBtn.parentNode;
+    
     if (targetCell === sourceCell) return;
+    
     // If dropping onto an empty cell, just move the button
     if (targetCell.children.length === 0) {
         targetCell.appendChild(draggedBtn);
@@ -1887,26 +2057,210 @@ function handleDrop(e) {
     } else {
         // If dropping onto a cell with a button, swap them
         const targetBtn = targetCell.querySelector('.word-btn');
-        sourceCell.appendChild(targetBtn);
-        targetCell.appendChild(draggedBtn);
+        if (targetBtn) {
+            sourceCell.appendChild(targetBtn);
+            targetCell.appendChild(draggedBtn);
+        }
     }
+    
+    // Mark that we have unsaved changes
+    hasUnsavedChanges = true;
+    
     updateAllButtonActivation();
     enableDragAndDropOnAllTables();
+    enableTouchDragAndDropOnAllTables();
+    
+    return false;
 }
+
 function handleDragEnter(e) {
-    e.preventDefault();
+    if (e.preventDefault) {
+        e.preventDefault();
+    }
+    dragCounter++;
     this.classList.add('drag-over');
+    
+    // Show placeholder for empty cells
+    if (draggedBtn && this.classList.contains('empty-drop-spot')) {
+        // Remove any existing placeholder
+        if (dragPlaceholder && dragPlaceholder.parentNode) {
+            dragPlaceholder.parentNode.removeChild(dragPlaceholder);
+        }
+        
+        // Create a placeholder preview of the dragged button
+        dragPlaceholder = draggedBtn.cloneNode(true);
+        dragPlaceholder.classList.add('drag-placeholder');
+        this.appendChild(dragPlaceholder);
+    }
 }
+
 function handleDragLeave(e) {
-    this.classList.remove('drag-over');
+    dragCounter--;
+    if (dragCounter === 0) {
+        this.classList.remove('drag-over');
+        
+        // Remove placeholder when leaving the cell
+        if (dragPlaceholder && this.contains(dragPlaceholder)) {
+            this.removeChild(dragPlaceholder);
+            dragPlaceholder = null;
+        }
+    }
 }
 
 function enableDragAndDropOnAllTables() {
     document.querySelectorAll('.word-table').forEach(enableDragAndDropOnTable);
 }
 
+// Touch event support for mobile drag-and-drop
+let touchDraggedBtn = null;
+let touchStartX = 0;
+let touchStartY = 0;
+let clonedElement = null;
+
+function handleTouchStart(e) {
+    if (!editMode) return;
+    
+    touchDraggedBtn = this;
+    const touch = e.touches[0];
+    touchStartX = touch.clientX;
+    touchStartY = touch.clientY;
+    
+    // Create a clone for visual feedback
+    clonedElement = this.cloneNode(true);
+    clonedElement.style.position = 'fixed';
+    clonedElement.style.pointerEvents = 'none';
+    clonedElement.style.opacity = '0.7';
+    clonedElement.style.zIndex = '10000';
+    clonedElement.style.transform = 'rotate(3deg) scale(1.05)';
+    clonedElement.style.left = touch.clientX - (this.offsetWidth / 2) + 'px';
+    clonedElement.style.top = touch.clientY - (this.offsetHeight / 2) + 'px';
+    clonedElement.style.width = this.offsetWidth + 'px';
+    document.body.appendChild(clonedElement);
+    
+    this.classList.add('dragging');
+}
+
+function handleTouchMove(e) {
+    if (!touchDraggedBtn || !clonedElement) return;
+    
+    e.preventDefault(); // Prevent scrolling while dragging
+    
+    const touch = e.touches[0];
+    clonedElement.style.left = touch.clientX - (clonedElement.offsetWidth / 2) + 'px';
+    clonedElement.style.top = touch.clientY - (clonedElement.offsetHeight / 2) + 'px';
+    
+    // Find the element under the touch point
+    clonedElement.style.display = 'none';
+    const elementBelow = document.elementFromPoint(touch.clientX, touch.clientY);
+    clonedElement.style.display = '';
+    
+    // Remove drag-over from all cells
+    document.querySelectorAll('td.drag-over').forEach(td => {
+        td.classList.remove('drag-over');
+    });
+    
+    // Add drag-over to the cell under touch
+    if (elementBelow) {
+        const cell = elementBelow.closest('td');
+        if (cell && cell.closest('.word-table')) {
+            cell.classList.add('drag-over');
+        }
+    }
+}
+
+function handleTouchEnd(e) {
+    if (!touchDraggedBtn) return;
+    
+    const touch = e.changedTouches[0];
+    
+    // Find the element under the touch point
+    // Find element under touch and clean up clone
+    let elementBelow;
+    if (clonedElement) {
+        clonedElement.style.display = 'none';
+        elementBelow = document.elementFromPoint(touch.clientX, touch.clientY);
+        document.body.removeChild(clonedElement);
+        clonedElement = null;
+    } else {
+        elementBelow = document.elementFromPoint(touch.clientX, touch.clientY);
+    }
+    
+    touchDraggedBtn.classList.remove('dragging');
+    
+    // Remove drag-over from all cells
+    document.querySelectorAll('td.drag-over').forEach(td => {
+        td.classList.remove('drag-over');
+    });
+    
+    if (elementBelow) {
+        const targetCell = elementBelow.closest('td');
+        if (targetCell && targetCell.closest('.word-table')) {
+            const sourceCell = touchDraggedBtn.parentNode;
+            
+            if (targetCell !== sourceCell) {
+                // If dropping onto an empty cell, just move the button
+                if (targetCell.children.length === 0) {
+                    targetCell.appendChild(touchDraggedBtn);
+                    targetCell.classList.remove('empty-drop-spot');
+                    if (sourceCell.children.length === 0) {
+                        sourceCell.classList.add('empty-drop-spot');
+                    }
+                } else {
+                    // If dropping onto a cell with a button, swap them
+                    const targetBtn = targetCell.querySelector('.word-btn');
+                    if (targetBtn) {
+                        sourceCell.appendChild(targetBtn);
+                        targetCell.appendChild(touchDraggedBtn);
+                    }
+                }
+                
+                // Mark that we have unsaved changes
+                hasUnsavedChanges = true;
+                
+                updateAllButtonActivation();
+                
+                // Only re-enable on the specific table for better performance
+                const table = targetCell.closest('.word-table');
+                if (table) {
+                    enableDragAndDropOnTable(table);
+                    enableTouchDragAndDropOnTable(table);
+                }
+            }
+        }
+    }
+    
+    touchDraggedBtn = null;
+}
+
+function enableTouchDragAndDropOnTable(table) {
+    if (!table) return;
+    
+    table.querySelectorAll('.word-btn').forEach(btn => {
+        // Only modify listeners if needed (avoid redundant operations)
+        const hasListeners = btn.dataset.touchListenersAttached === 'true';
+        
+        if (editMode && !hasListeners) {
+            btn.addEventListener('touchstart', handleTouchStart, { passive: false });
+            btn.addEventListener('touchmove', handleTouchMove, { passive: false });
+            btn.addEventListener('touchend', handleTouchEnd, { passive: false });
+            btn.dataset.touchListenersAttached = 'true';
+        } else if (!editMode && hasListeners) {
+            btn.removeEventListener('touchstart', handleTouchStart, { passive: false });
+            btn.removeEventListener('touchmove', handleTouchMove, { passive: false });
+            btn.removeEventListener('touchend', handleTouchEnd, { passive: false });
+            delete btn.dataset.touchListenersAttached;
+        }
+    });
+}
+
+function enableTouchDragAndDropOnAllTables() {
+    document.querySelectorAll('.word-table').forEach(enableTouchDragAndDropOnTable);
+}
+
 document.addEventListener('DOMContentLoaded', () => {
+    loadTilePositions(); // Load saved tile positions first
     enableDragAndDropOnAllTables();
+    enableTouchDragAndDropOnAllTables();
 });
 
 // When the Icons button is clicked, toggle between icons and text labels for word buttons
@@ -2102,3 +2456,61 @@ if (voiceTestBtn) {
         speakWord('I am your selected voice');
     });
 }
+
+// Update the tabs at the top for TV mode (disabled - tvSearchBtn not defined)
+// This code would need the tvSearchBtn element to be created first
+/*
+tvSearchBtn.addEventListener('click', () => {
+    const tabBar = document.querySelector('.tab-bar');
+    if (tabBar) {
+        // Remove ALL .tab-btn and .tab-content elements from the DOM
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.parentNode && btn.parentNode.removeChild(btn));
+        document.querySelectorAll('.tab-content').forEach(tc => tc.parentNode && tc.parentNode.removeChild(tc));
+        // Clear tabBar
+        tabBar.innerHTML = '';
+        // Add only Movies and TV Shows tabs
+        const tabNames = [
+            { label: 'Movies', id: 'movies' },
+            { label: 'TV Shows', id: 'tvshows' }
+        ];
+        // Add new tab buttons
+        tabNames.forEach((tab, idx) => {
+            const btn = document.createElement('button');
+            btn.className = 'tab-btn';
+            btn.setAttribute('data-tab', tab.id);
+            btn.textContent = tab.label;
+            if (idx === 0) btn.classList.add('active');
+            tabBar.appendChild(btn);
+        });
+        // Add new tab content panels as siblings immediately after the tab bar
+        let nextElem = tabBar.nextSibling;
+        tabNames.forEach((tab, idx) => {
+            const tabPanel = document.createElement('div');
+            tabPanel.className = 'tab-content';
+            tabPanel.id = 'tab-' + tab.id;
+            if (idx !== 0) tabPanel.style.display = 'none';
+            tabBar.parentNode.insertBefore(tabPanel, nextElem);
+        });
+        // Re-activate tab button logic
+        const newTabButtons = tabBar.querySelectorAll('.tab-btn');
+        newTabButtons.forEach(btn => {
+            const tabId = btn.getAttribute('data-tab');
+            if (activationMode === 'hover') {
+                let hoverTimeout;
+                btn.addEventListener('mouseenter', () => {
+                    hoverTimeout = setTimeout(() => {
+                        switchTab(tabId);
+                    }, hoverTime);
+                });
+                btn.addEventListener('mouseleave', () => {
+                    clearTimeout(hoverTimeout);
+                });
+            } else {
+                btn.addEventListener('click', () => {
+                    switchTab(tabId);
+                });
+            }
+        });
+    }
+});
+*/
