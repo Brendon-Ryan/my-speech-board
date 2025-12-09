@@ -1758,14 +1758,19 @@ filmBtn.addEventListener('click', () => {
                         badge.style.alignItems = 'center';
                         badge.style.justifyContent = 'center';
                         badge.style.fontSize = '1em';
+                        badge.setAttribute('aria-label', 'Recently watched');
                         btn.appendChild(badge);
+                        
+                        // Mark button with watch metadata for tracking
+                        btn.setAttribute('data-watch-type', item.type);
+                        btn.setAttribute('data-watch-title', item.title);
+                        btn.setAttribute('data-watch-poster', item.poster);
                         
                         cell.appendChild(btn);
                         
-                        // Rewatch functionality
+                        // Rewatch functionality - just speak the word, tracking happens automatically
                         const rewatchItem = () => {
-                            addToRecentlyWatched(item.title, item.type, item.poster);
-                            speakWord(item.title);
+                            speakWord(item.title, btn);
                         };
                         
                         if (activationMode === 'hover') {
