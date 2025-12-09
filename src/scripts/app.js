@@ -486,14 +486,14 @@ function showGamesMenu() {
         tabBar.innerHTML = '';
     }
 
-    // Define games tabs
-    const gamesTabs = [
-        { label: 'Sudoku', id: 'sudoku' },
-        { label: 'Paint', id: 'paint' }
+    // Define game category tabs
+    const categoryTabs = [
+        { label: 'General', id: 'general' },
+        { label: 'Kids', id: 'kids' }
     ];
     
-    // Add tab buttons
-    gamesTabs.forEach((tab, idx) => {
+    // Add category tab buttons
+    categoryTabs.forEach((tab, idx) => {
         const btn = document.createElement('button');
         btn.className = 'tab-btn';
         btn.setAttribute('data-tab', tab.id);
@@ -502,18 +502,23 @@ function showGamesMenu() {
         tabBar.appendChild(btn);
     });
     
-    // Add tab content panels
+    // Add tab content panels with game tiles
     let nextElem = tabBar.nextSibling;
-    gamesTabs.forEach((tab, idx) => {
+    categoryTabs.forEach((tab, idx) => {
         const tabPanel = document.createElement('div');
         tabPanel.className = 'tab-content';
         tabPanel.id = 'tab-' + tab.id;
         if (idx !== 0) tabPanel.style.display = 'none';
         
-        if (tab.id === 'sudoku') {
-            createSudokuGame(tabPanel);
-        } else if (tab.id === 'paint') {
-            createPaintGame(tabPanel);
+        // Create game tiles for this category
+        if (tab.id === 'general') {
+            createGameTilesView(tabPanel, [
+                { name: 'Sudoku', icon: '🧩', gameId: 'sudoku', description: 'Classic number puzzle' }
+            ]);
+        } else if (tab.id === 'kids') {
+            createGameTilesView(tabPanel, [
+                { name: 'Paint', icon: '🎨', gameId: 'paint', description: 'Color fun pictures' }
+            ]);
         }
         
         tabBar.parentNode.insertBefore(tabPanel, nextElem);
@@ -539,6 +544,138 @@ function showGamesMenu() {
             });
         }
     });
+}
+
+// Create game tiles view similar to movie/TV tiles
+function createGameTilesView(container, games) {
+    const gamesTable = document.createElement('table');
+    gamesTable.className = 'word-table';
+    gamesTable.style.marginTop = '20px';
+    
+    const row = gamesTable.insertRow();
+    games.forEach(game => {
+        const cell = row.insertCell();
+        const btn = document.createElement('button');
+        btn.className = 'game-tile-btn';
+        btn.style.display = 'flex';
+        btn.style.flexDirection = 'column';
+        btn.style.alignItems = 'center';
+        btn.style.justifyContent = 'center';
+        btn.style.padding = '20px';
+        btn.style.width = '200px';
+        btn.style.height = '200px';
+        btn.style.background = '#fff';
+        btn.style.border = '2px solid #e67e22';
+        btn.style.borderRadius = '10px';
+        btn.style.boxShadow = '0 2px 8px rgba(44,62,80,0.08)';
+        btn.style.margin = '8px';
+        btn.style.cursor = 'pointer';
+        btn.style.transition = 'transform 0.2s, box-shadow 0.2s';
+        
+        // Game icon
+        const iconDiv = document.createElement('div');
+        iconDiv.textContent = game.icon;
+        iconDiv.style.fontSize = '4em';
+        iconDiv.style.marginBottom = '10px';
+        iconDiv.style.pointerEvents = 'none'; // Prevent event bubbling
+        btn.appendChild(iconDiv);
+        
+        // Game name
+        const nameDiv = document.createElement('div');
+        nameDiv.textContent = game.name;
+        nameDiv.style.fontSize = '1.3em';
+        nameDiv.style.fontWeight = 'bold';
+        nameDiv.style.color = '#2c3e50';
+        nameDiv.style.marginBottom = '5px';
+        nameDiv.style.pointerEvents = 'none'; // Prevent event bubbling
+        btn.appendChild(nameDiv);
+        
+        // Game description
+        const descDiv = document.createElement('div');
+        descDiv.textContent = game.description;
+        descDiv.style.fontSize = '0.9em';
+        descDiv.style.color = '#7f8c8d';
+        descDiv.style.textAlign = 'center';
+        descDiv.style.pointerEvents = 'none'; // Prevent event bubbling
+        btn.appendChild(descDiv);
+        
+        // Hover effect
+        btn.addEventListener('mouseenter', () => {
+            btn.style.transform = 'translateY(-4px)';
+            btn.style.boxShadow = '0 4px 12px rgba(230,126,34,0.3)';
+        });
+        btn.addEventListener('mouseleave', () => {
+            btn.style.transform = 'translateY(0)';
+            btn.style.boxShadow = '0 2px 8px rgba(44,62,80,0.08)';
+        });
+        
+        // Launch game on click/hover
+        const launchGame = () => {
+            launchSpecificGame(game.gameId);
+        };
+        
+        if (activationMode === 'hover') {
+            let hoverTimeout;
+            btn.addEventListener('mouseenter', () => {
+                hoverTimeout = setTimeout(launchGame, hoverTime);
+            });
+            btn.addEventListener('mouseleave', () => {
+                clearTimeout(hoverTimeout);
+            });
+        } else {
+            btn.addEventListener('click', launchGame);
+        }
+        
+        cell.appendChild(btn);
+    });
+    
+    container.appendChild(gamesTable);
+}
+
+// Launch a specific game
+function launchSpecificGame(gameId) {
+    // Clear current content
+    document.querySelectorAll('.tab-content').forEach(tc => tc.parentNode && tc.parentNode.removeChild(tc));
+    const tabBar = document.querySelector('.tab-bar');
+    if (tabBar) {
+        tabBar.innerHTML = '';
+        
+        // Add back button
+        const backBtn = document.createElement('button');
+        backBtn.className = 'tab-btn';
+        backBtn.textContent = '← Back to Games';
+        backBtn.style.background = '#95a5a6';
+        tabBar.appendChild(backBtn);
+        
+        const backToGames = () => {
+            showGamesMenu();
+        };
+        
+        if (activationMode === 'hover') {
+            let hoverTimeout;
+            backBtn.addEventListener('mouseenter', () => {
+                hoverTimeout = setTimeout(backToGames, hoverTime);
+            });
+            backBtn.addEventListener('mouseleave', () => {
+                clearTimeout(hoverTimeout);
+            });
+        } else {
+            backBtn.addEventListener('click', backToGames);
+        }
+        
+        // Create game panel
+        const gamePanel = document.createElement('div');
+        gamePanel.className = 'tab-content';
+        gamePanel.id = 'game-panel';
+        
+        if (gameId === 'sudoku') {
+            createSudokuGame(gamePanel);
+        } else if (gameId === 'paint') {
+            createPaintGame(gamePanel);
+        }
+        
+        tabBar.parentNode.insertBefore(gamePanel, tabBar.nextSibling);
+    }
 }
 
 // Sudoku game creation

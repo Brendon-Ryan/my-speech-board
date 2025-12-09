@@ -658,6 +658,15 @@ body.edit-mode td.empty-drop-spot.drag-over {
     flex-shrink: 0 !important;
 }
 
+/* Game Tile Styles */
+.game-tile-btn {
+    transition: all 0.3s ease !important;
+}
+
+.game-tile-btn:hover {
+    background: #fef5e7 !important;
+}
+
 /* Sudoku Game Styles */
 .sudoku-wrapper {
     max-width: 600px;
