@@ -25,8 +25,19 @@ let hoverTime = 1000; // default 1 second
 let selectedVoice = null;
 
 // Function to speak a word
-function speakWord(word) {
+function speakWord(word, sourceButton) {
     console.log(`Attempting to speak: ${word}`); // Debugging log
+    
+    // If this is a movie/TV show button, add to recently watched
+    if (sourceButton && sourceButton.hasAttribute && sourceButton.hasAttribute('data-watch-type')) {
+        const watchType = sourceButton.getAttribute('data-watch-type');
+        const watchTitle = sourceButton.getAttribute('data-watch-title');
+        const watchPoster = sourceButton.getAttribute('data-watch-poster');
+        if (watchType && watchTitle && watchPoster) {
+            addToRecentlyWatched(watchTitle, watchType, watchPoster);
+        }
+    }
+    
     if ('speechSynthesis' in window) {
         const utterance = new SpeechSynthesisUtterance(word);
         if (selectedVoice) utterance.voice = selectedVoice;
@@ -80,7 +91,7 @@ function setButtonActivation(button, word) {
         let hoverTimeout;
         newButton.addEventListener('mouseenter', () => {
             hoverTimeout = setTimeout(() => {
-                speakWord(speechLabel);
+                speakWord(speechLabel, newButton);
             }, hoverTime);
         });
         newButton.addEventListener('mouseleave', () => {
@@ -88,7 +99,7 @@ function setButtonActivation(button, word) {
         });
     } else {
         newButton.addEventListener('click', () => {
-            speakWord(speechLabel);
+            speakWord(speechLabel, newButton);
         });
     }
     button.parentNode.replaceChild(newButton, button);
@@ -1282,6 +1293,36 @@ function createPaintGame(container) {
     container.appendChild(paintWrapper);
 }
 
+// --- Recently Watched Tracking ---
+const MAX_RECENT_ITEMS = 24;
+
+function addToRecentlyWatched(title, type, poster) {
+    // Get existing history from localStorage
+    let recentlyWatched = JSON.parse(localStorage.getItem('recentlyWatched') || '[]');
+    
+    // Remove duplicate if already exists (to move it to the front)
+    recentlyWatched = recentlyWatched.filter(item => item.title !== title);
+    
+    // Add new item to the front
+    recentlyWatched.unshift({ title, type, poster, timestamp: Date.now() });
+    
+    // Keep only the last MAX_RECENT_ITEMS items
+    if (recentlyWatched.length > MAX_RECENT_ITEMS) {
+        recentlyWatched = recentlyWatched.slice(0, MAX_RECENT_ITEMS);
+    }
+    
+    // Save back to localStorage
+    localStorage.setItem('recentlyWatched', JSON.stringify(recentlyWatched));
+}
+
+function getRecentlyWatched() {
+    return JSON.parse(localStorage.getItem('recentlyWatched') || '[]');
+}
+
+function clearRecentlyWatched() {
+    localStorage.removeItem('recentlyWatched');
+}
+
 // Restore Film / TV button functionality for static HTML button
 const filmBtn = document.getElementById('film-btn');
 if (filmBtn) {
@@ -1579,7 +1620,7 @@ filmBtn.addEventListener('click', () => {
 
     // Define new tabs
     const newTabs = [
-        { label: 'Popular', id: 'popular' },
+        { label: 'Recent', id: 'recent' },
         { label: 'Movies', id: 'movies' },
         { label: 'TV Shows', id: 'tvshows' },
         { label: 'Genres', id: 'genres' },
@@ -1601,6 +1642,155 @@ filmBtn.addEventListener('click', () => {
         tabPanel.className = 'tab-content';
         tabPanel.id = 'tab-' + tab.id;
         if (idx !== 0) tabPanel.style.display = 'none';
+        
+        // If this is the Recent tab, display recently watched titles
+        if (tab.id === 'recent') {
+            const recentlyWatched = getRecentlyWatched();
+            
+            if (recentlyWatched.length === 0) {
+                const emptyMessage = document.createElement('div');
+                emptyMessage.style.textAlign = 'center';
+                emptyMessage.style.padding = '40px';
+                emptyMessage.style.fontSize = '1.2em';
+                emptyMessage.style.color = '#7f8c8d';
+                emptyMessage.innerHTML = '<p>No recently watched titles yet.</p><p>Select a movie or TV show to get started!</p>';
+                tabPanel.appendChild(emptyMessage);
+            } else {
+                // Add Clear History button
+                const clearHistoryBtn = document.createElement('button');
+                clearHistoryBtn.className = 'word-btn';
+                clearHistoryBtn.textContent = 'Clear History';
+                clearHistoryBtn.style.margin = '10px auto';
+                clearHistoryBtn.style.display = 'block';
+                clearHistoryBtn.style.padding = '10px 20px';
+                clearHistoryBtn.style.background = '#e74c3c';
+                clearHistoryBtn.style.color = '#fff';
+                
+                const clearHistory = () => {
+                    if (confirm('Are you sure you want to clear your watch history?')) {
+                        clearRecentlyWatched();
+                        // Refresh the Film/TV view to update the Recent tab
+                        filmBtn.click();
+                    }
+                };
+                
+                if (activationMode === 'hover') {
+                    let hoverTimeout;
+                    clearHistoryBtn.addEventListener('mouseenter', () => {
+                        hoverTimeout = setTimeout(clearHistory, hoverTime);
+                    });
+                    clearHistoryBtn.addEventListener('mouseleave', () => {
+                        clearTimeout(hoverTimeout);
+                    });
+                } else {
+                    clearHistoryBtn.addEventListener('click', clearHistory);
+                }
+                
+                tabPanel.appendChild(clearHistoryBtn);
+                
+                // Display recently watched items
+                const recentTable = document.createElement('table');
+                recentTable.className = 'word-table';
+                recentTable.style.marginTop = '20px';
+                
+                // Arrange into 3 rows: 8, 8, 8
+                const rowSizes = [8, 8, 8];
+                let itemIdx = 0;
+                rowSizes.forEach(rowSize => {
+                    const row = recentTable.insertRow();
+                    for (let j = 0; j < rowSize && itemIdx < recentlyWatched.length; j++, itemIdx++) {
+                        const item = recentlyWatched[itemIdx];
+                        const cell = row.insertCell();
+                        const btn = document.createElement('button');
+                        btn.className = 'word-btn recent-item-btn';
+                        btn.style.display = 'block';
+                        btn.style.padding = '0';
+                        btn.style.width = '110px';
+                        btn.style.height = '150px';
+                        btn.style.overflow = 'hidden';
+                        btn.style.background = '#fff';
+                        btn.style.border = '2px solid #9b59b6';
+                        btn.style.borderRadius = '10px';
+                        btn.style.boxShadow = '0 2px 8px rgba(44,62,80,0.08)';
+                        btn.style.margin = '8px 2px';
+                        btn.style.position = 'relative';
+                        
+                        // Poster image
+                        const img = document.createElement('img');
+                        img.src = item.poster;
+                        img.alt = item.title + ' poster';
+                        img.style.width = '100%';
+                        img.style.height = '100%';
+                        img.style.objectFit = 'cover';
+                        img.style.borderRadius = '10px';
+                        img.style.display = 'block';
+                        btn.appendChild(img);
+                        
+                        // Title overlay
+                        const titleSpan = document.createElement('span');
+                        titleSpan.textContent = item.title;
+                        titleSpan.style.position = 'absolute';
+                        titleSpan.style.left = '0';
+                        titleSpan.style.right = '0';
+                        titleSpan.style.bottom = '0';
+                        titleSpan.style.background = 'rgba(0,0,0,0.55)';
+                        titleSpan.style.color = '#fff';
+                        titleSpan.style.fontSize = '0.95em';
+                        titleSpan.style.textAlign = 'center';
+                        titleSpan.style.padding = '4px 2px 2px 2px';
+                        titleSpan.style.lineHeight = '1.1';
+                        titleSpan.style.borderRadius = '0 0 10px 10px';
+                        titleSpan.style.display = 'block';
+                        btn.appendChild(titleSpan);
+                        
+                        // Add "Recently Watched" badge
+                        const badge = document.createElement('div');
+                        badge.textContent = '🕐';
+                        badge.style.position = 'absolute';
+                        badge.style.top = '5px';
+                        badge.style.right = '5px';
+                        badge.style.background = 'rgba(155,89,182,0.9)';
+                        badge.style.color = '#fff';
+                        badge.style.borderRadius = '50%';
+                        badge.style.width = '25px';
+                        badge.style.height = '25px';
+                        badge.style.display = 'flex';
+                        badge.style.alignItems = 'center';
+                        badge.style.justifyContent = 'center';
+                        badge.style.fontSize = '1em';
+                        badge.setAttribute('aria-label', 'Recently watched');
+                        btn.appendChild(badge);
+                        
+                        // Mark button with watch metadata for tracking
+                        btn.setAttribute('data-watch-type', item.type);
+                        btn.setAttribute('data-watch-title', item.title);
+                        btn.setAttribute('data-watch-poster', item.poster);
+                        
+                        cell.appendChild(btn);
+                        
+                        // Rewatch functionality - just speak the word, tracking happens automatically
+                        const rewatchItem = () => {
+                            speakWord(item.title, btn);
+                        };
+                        
+                        if (activationMode === 'hover') {
+                            let hoverTimeout;
+                            btn.addEventListener('mouseenter', () => {
+                                hoverTimeout = setTimeout(rewatchItem, hoverTime);
+                            });
+                            btn.addEventListener('mouseleave', () => {
+                                clearTimeout(hoverTimeout);
+                            });
+                        } else {
+                            btn.addEventListener('click', rewatchItem);
+                        }
+                    }
+                });
+                
+                tabPanel.appendChild(recentTable);
+            }
+        }
+        
         // If this is the Movies tab, add popular movie buttons
         if (tab.id === 'movies') {
             const movies = [
@@ -1679,6 +1869,12 @@ filmBtn.addEventListener('click', () => {
                     titleSpan.style.display = 'block';
                     btn.appendChild(titleSpan);
                     cell.appendChild(btn);
+                    
+                    // Mark button as a movie/TV item with metadata for tracking
+                    btn.setAttribute('data-watch-type', 'movie');
+                    btn.setAttribute('data-watch-title', movie.title);
+                    btn.setAttribute('data-watch-poster', movie.poster);
+                    
                     setButtonActivation(btn, movie.title);
                 }
             });
@@ -1764,6 +1960,12 @@ filmBtn.addEventListener('click', () => {
                     titleSpan.style.display = 'block';
                     btn.appendChild(titleSpan);
                     cell.appendChild(btn);
+                    
+                    // Mark button as a movie/TV item with metadata for tracking
+                    btn.setAttribute('data-watch-type', 'tvshow');
+                    btn.setAttribute('data-watch-title', show.title);
+                    btn.setAttribute('data-watch-poster', show.poster);
+                    
                     setButtonActivation(btn, show.title);
                 }
             });
