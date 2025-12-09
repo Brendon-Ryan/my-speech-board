@@ -463,6 +463,12 @@ function showGamesMenu() {
     paramountBtn.style.display = 'none';
     bingeBtn.style.display = 'none';
     
+    // Hide music service buttons if visible
+    musicLabel.style.display = 'none';
+    spotifyBtn.style.display = 'none';
+    appleMusicBtn.style.display = 'none';
+    youtubeMusicBtn.style.display = 'none';
+    
     // Remove all existing tab buttons and tab content panels
     document.querySelectorAll('.tab-btn').forEach(btn => btn.parentNode && btn.parentNode.removeChild(btn));
     document.querySelectorAll('.tab-content').forEach(tc => tc.parentNode && tc.parentNode.removeChild(tc));
@@ -555,6 +561,589 @@ function showGamesMenu() {
             });
         }
     });
+}
+
+// Restore Music button functionality for static HTML button
+const musicBtn = document.getElementById('music-btn');
+if (musicBtn) {
+    musicBtn.addEventListener('mouseenter', () => {
+        musicBtn.style.background = '#f4ecf7';
+    });
+    musicBtn.addEventListener('mouseleave', () => {
+        musicBtn.style.background = '#fff';
+    });
+    musicBtn.addEventListener('click', () => {
+        showMusicMenu();
+    });
+}
+
+// Function to show music menu
+function showMusicMenu() {
+    // Hide streaming buttons if visible
+    streamingLabel.style.display = 'none';
+    netflixBtn.style.display = 'none';
+    stanBtn.style.display = 'none';
+    disneyBtn.style.display = 'none';
+    primeBtn.style.display = 'none';
+    paramountBtn.style.display = 'none';
+    bingeBtn.style.display = 'none';
+    
+    // Show music service buttons and label
+    musicLabel.style.display = 'block';
+    spotifyBtn.style.display = 'flex';
+    appleMusicBtn.style.display = 'flex';
+    youtubeMusicBtn.style.display = 'flex';
+    
+    // Remove all existing tab buttons and tab content panels
+    document.querySelectorAll('.tab-btn').forEach(btn => btn.parentNode && btn.parentNode.removeChild(btn));
+    document.querySelectorAll('.tab-content').forEach(tc => tc.parentNode && tc.parentNode.removeChild(tc));
+
+    // Hide Add New Word UI
+    const addWordBtn = document.getElementById('add-word-btn');
+    if (addWordBtn) addWordBtn.style.display = 'none';
+    const wordInput = document.getElementById('word-input');
+    if (wordInput) wordInput.style.display = 'none';
+
+    // Ensure tab bar exists
+    let tabBar = document.querySelector('.tab-bar');
+    if (!tabBar) {
+        let wordBoard = document.getElementById('word-board');
+        if (!wordBoard) {
+            wordBoard = document.querySelector('.word-board');
+        }
+        tabBar = document.createElement('div');
+        tabBar.className = 'tab-bar';
+        if (wordBoard && wordBoard.parentNode) {
+            if (wordBoard.nextSibling) {
+                wordBoard.parentNode.insertBefore(tabBar, wordBoard.nextSibling);
+            } else {
+                wordBoard.parentNode.appendChild(tabBar);
+            }
+        } else if (document.body.firstChild) {
+            document.body.insertBefore(tabBar, document.body.firstChild);
+        } else {
+            document.body.appendChild(tabBar);
+        }
+    } else {
+        tabBar.innerHTML = '';
+    }
+
+    // Define music tabs
+    const musicTabs = [
+        { label: 'Search', id: 'music-search' },
+        { label: 'Playlists', id: 'playlists' },
+        { label: 'Now Playing', id: 'now-playing' }
+    ];
+    
+    // Add tab buttons
+    musicTabs.forEach((tab, idx) => {
+        const btn = document.createElement('button');
+        btn.className = 'tab-btn';
+        btn.setAttribute('data-tab', tab.id);
+        btn.textContent = tab.label;
+        if (idx === 0) btn.classList.add('active');
+        tabBar.appendChild(btn);
+    });
+    
+    // Add tab content panels
+    let nextElem = tabBar.nextSibling;
+    musicTabs.forEach((tab, idx) => {
+        const tabPanel = document.createElement('div');
+        tabPanel.className = 'tab-content';
+        tabPanel.id = 'tab-' + tab.id;
+        if (idx !== 0) tabPanel.style.display = 'none';
+        
+        // Populate tab content based on tab type
+        if (tab.id === 'music-search') {
+            createMusicSearchTab(tabPanel);
+        } else if (tab.id === 'playlists') {
+            createPlaylistsTab(tabPanel);
+        } else if (tab.id === 'now-playing') {
+            createNowPlayingTab(tabPanel);
+        }
+        
+        tabBar.parentNode.insertBefore(tabPanel, nextElem);
+    });
+    
+    // Re-activate tab button logic
+    const newTabButtons = tabBar.querySelectorAll('.tab-btn');
+    newTabButtons.forEach(btn => {
+        const tabId = btn.getAttribute('data-tab');
+        if (activationMode === 'hover') {
+            let hoverTimeout;
+            btn.addEventListener('mouseenter', () => {
+                hoverTimeout = setTimeout(() => {
+                    switchTab(tabId);
+                }, hoverTime);
+            });
+            btn.addEventListener('mouseleave', () => {
+                clearTimeout(hoverTimeout);
+            });
+        } else {
+            btn.addEventListener('click', () => {
+                switchTab(tabId);
+            });
+        }
+    });
+}
+
+// Create Music Search tab content
+function createMusicSearchTab(container) {
+    const wrapper = document.createElement('div');
+    wrapper.style.padding = '20px';
+    wrapper.style.textAlign = 'center';
+    
+    const title = document.createElement('h2');
+    title.textContent = 'Search for Music';
+    title.style.marginBottom = '20px';
+    wrapper.appendChild(title);
+    
+    // Check if Spotify service is selected
+    const spotifySelected = spotifyBtn.style.opacity !== '0.4';
+    
+    if (!spotifySelected) {
+        const message = document.createElement('p');
+        message.textContent = 'Please select a music service (Spotify, Apple Music, or YouTube Music) to start searching.';
+        message.style.fontSize = '1.2em';
+        message.style.color = '#7f8c8d';
+        message.style.padding = '40px';
+        wrapper.appendChild(message);
+        container.appendChild(wrapper);
+        return;
+    }
+    
+    // Music search input
+    const searchInput = document.createElement('input');
+    searchInput.type = 'text';
+    searchInput.className = 'music-search-input';
+    searchInput.placeholder = 'Search for songs, artists, or albums...';
+    searchInput.style.fontSize = '1.5em';
+    searchInput.style.padding = '15px';
+    searchInput.style.width = '80%';
+    searchInput.style.maxWidth = '600px';
+    searchInput.style.marginBottom = '20px';
+    searchInput.style.borderRadius = '8px';
+    searchInput.style.border = '2px solid #9b59b6';
+    wrapper.appendChild(searchInput);
+    
+    // Search results container
+    const resultsContainer = document.createElement('div');
+    resultsContainer.className = 'music-search-results';
+    resultsContainer.style.marginTop = '30px';
+    wrapper.appendChild(resultsContainer);
+    
+    // QWERTY keyboard for search
+    const keyboardRows = [
+        ['Q','W','E','R','T','Y','U','I','O','P'],
+        ['A','S','D','F','G','H','J','K','L'],
+        ['Z','X','C','V','B','N','M'],
+        ['Space','Backspace','SEARCH']
+    ];
+    
+    const keyboard = document.createElement('div');
+    keyboard.className = 'qwerty-keyboard';
+    keyboard.style.display = 'flex';
+    keyboard.style.flexDirection = 'column';
+    keyboard.style.alignItems = 'center';
+    keyboard.style.marginTop = '20px';
+    
+    keyboardRows.forEach(row => {
+        const rowDiv = document.createElement('div');
+        rowDiv.style.display = 'flex';
+        rowDiv.style.justifyContent = 'center';
+        rowDiv.style.marginBottom = '10px';
+        
+        row.forEach(key => {
+            const keyBtn = document.createElement('button');
+            keyBtn.className = 'word-btn qwerty-key';
+            if (key === 'Space') {
+                keyBtn.textContent = '␣';
+                keyBtn.style.minWidth = '120px';
+            } else if (key === 'Backspace') {
+                keyBtn.textContent = '⌫';
+            } else if (key === 'SEARCH') {
+                keyBtn.textContent = 'SEARCH';
+                keyBtn.addEventListener('click', () => {
+                    performMusicSearch(searchInput.value.trim(), resultsContainer);
+                    searchInput.focus();
+                });
+                keyBtn.style.margin = '0 4px';
+                keyBtn.style.background = '#9b59b6';
+                rowDiv.appendChild(keyBtn);
+                return;
+            } else {
+                keyBtn.textContent = key;
+            }
+            keyBtn.style.margin = '0 4px';
+            
+            const activateKey = () => {
+                if (key === 'Space') {
+                    searchInput.value += ' ';
+                } else if (key === 'Backspace') {
+                    searchInput.value = searchInput.value.slice(0, -1);
+                } else {
+                    searchInput.value += key;
+                }
+                searchInput.focus();
+            };
+            
+            if (activationMode === 'hover') {
+                let hoverTimeout;
+                keyBtn.addEventListener('mouseenter', () => {
+                    hoverTimeout = setTimeout(activateKey, hoverTime);
+                });
+                keyBtn.addEventListener('mouseleave', () => {
+                    clearTimeout(hoverTimeout);
+                });
+            } else {
+                keyBtn.addEventListener('click', activateKey);
+            }
+            
+            rowDiv.appendChild(keyBtn);
+        });
+        keyboard.appendChild(rowDiv);
+    });
+    
+    wrapper.appendChild(keyboard);
+    container.appendChild(wrapper);
+    
+    // Show login prompt if not authenticated
+    if (!isSpotifyAuthenticated()) {
+        showSpotifyLoginPrompt(resultsContainer);
+    }
+}
+
+// Create Playlists tab content
+function createPlaylistsTab(container) {
+    const wrapper = document.createElement('div');
+    wrapper.style.padding = '20px';
+    wrapper.style.textAlign = 'center';
+    
+    const title = document.createElement('h2');
+    title.textContent = 'Your Playlists';
+    title.style.marginBottom = '20px';
+    wrapper.appendChild(title);
+    
+    if (!isSpotifyAuthenticated()) {
+        showSpotifyLoginPrompt(wrapper);
+        container.appendChild(wrapper);
+        return;
+    }
+    
+    const message = document.createElement('p');
+    message.textContent = 'Your playlists will appear here.';
+    message.style.fontSize = '1.2em';
+    message.style.color = '#7f8c8d';
+    message.style.padding = '40px';
+    wrapper.appendChild(message);
+    
+    container.appendChild(wrapper);
+}
+
+// Create Now Playing tab content
+function createNowPlayingTab(container) {
+    const wrapper = document.createElement('div');
+    wrapper.style.padding = '20px';
+    wrapper.style.textAlign = 'center';
+    
+    const title = document.createElement('h2');
+    title.textContent = 'Now Playing';
+    title.style.marginBottom = '20px';
+    wrapper.appendChild(title);
+    
+    const nowPlaying = getNowPlaying();
+    
+    if (!nowPlaying) {
+        const message = document.createElement('p');
+        message.textContent = 'No music is currently playing. Search for a song to start!';
+        message.style.fontSize = '1.2em';
+        message.style.color = '#7f8c8d';
+        message.style.padding = '40px';
+        wrapper.appendChild(message);
+    } else {
+        // Display current track info
+        const trackInfo = document.createElement('div');
+        trackInfo.style.marginBottom = '30px';
+        
+        const trackTitle = document.createElement('h3');
+        trackTitle.textContent = nowPlaying.title;
+        trackTitle.style.fontSize = '2em';
+        trackTitle.style.marginBottom = '10px';
+        trackInfo.appendChild(trackTitle);
+        
+        const trackArtist = document.createElement('p');
+        trackArtist.textContent = nowPlaying.artist;
+        trackArtist.style.fontSize = '1.5em';
+        trackArtist.style.color = '#7f8c8d';
+        trackInfo.appendChild(trackArtist);
+        
+        wrapper.appendChild(trackInfo);
+        
+        // Playback controls
+        const controls = document.createElement('div');
+        controls.style.display = 'flex';
+        controls.style.justifyContent = 'center';
+        controls.style.gap = '15px';
+        controls.style.marginTop = '30px';
+        
+        const prevBtn = createControlButton('⏮️', 'Previous', () => playPrevious());
+        const playPauseBtn = createControlButton(
+            nowPlaying.isPlaying ? '⏸️' : '▶️',
+            nowPlaying.isPlaying ? 'Pause' : 'Play',
+            () => togglePlayPause()
+        );
+        const nextBtn = createControlButton('⏭️', 'Next', () => playNext());
+        
+        controls.appendChild(prevBtn);
+        controls.appendChild(playPauseBtn);
+        controls.appendChild(nextBtn);
+        
+        wrapper.appendChild(controls);
+    }
+    
+    container.appendChild(wrapper);
+}
+
+// Helper function to create control buttons
+function createControlButton(emoji, title, action) {
+    const btn = document.createElement('button');
+    btn.className = 'word-btn';
+    btn.textContent = emoji;
+    btn.title = title;
+    btn.style.fontSize = '2.5em';
+    btn.style.width = '80px';
+    btn.style.height = '80px';
+    btn.style.padding = '0';
+    
+    if (activationMode === 'hover') {
+        let hoverTimeout;
+        btn.addEventListener('mouseenter', () => {
+            hoverTimeout = setTimeout(action, hoverTime);
+        });
+        btn.addEventListener('mouseleave', () => {
+            clearTimeout(hoverTimeout);
+        });
+    } else {
+        btn.addEventListener('click', action);
+    }
+    
+    return btn;
+}
+
+// Spotify authentication check
+function isSpotifyAuthenticated() {
+    return localStorage.getItem('spotify_authenticated') === 'true';
+}
+
+// Show Spotify login prompt
+function showSpotifyLoginPrompt(container) {
+    const loginPrompt = document.createElement('div');
+    loginPrompt.style.padding = '40px';
+    loginPrompt.style.textAlign = 'center';
+    
+    const message = document.createElement('p');
+    message.textContent = 'Please log in to Spotify to access music features.';
+    message.style.fontSize = '1.2em';
+    message.style.marginBottom = '20px';
+    message.style.color = '#7f8c8d';
+    loginPrompt.appendChild(message);
+    
+    const loginBtn = document.createElement('button');
+    loginBtn.className = 'word-btn';
+    loginBtn.textContent = 'Login to Spotify';
+    loginBtn.style.background = '#1DB954';
+    loginBtn.style.fontSize = '1.3em';
+    loginBtn.style.padding = '15px 30px';
+    
+    const performLogin = () => {
+        initiateSpotifyLogin();
+    };
+    
+    if (activationMode === 'hover') {
+        let hoverTimeout;
+        loginBtn.addEventListener('mouseenter', () => {
+            hoverTimeout = setTimeout(performLogin, hoverTime);
+        });
+        loginBtn.addEventListener('mouseleave', () => {
+            clearTimeout(hoverTimeout);
+        });
+    } else {
+        loginBtn.addEventListener('click', performLogin);
+    }
+    
+    loginPrompt.appendChild(loginBtn);
+    container.appendChild(loginPrompt);
+}
+
+// Initiate Spotify login
+function initiateSpotifyLogin() {
+    // For MVP, simulate login with a confirmation
+    const confirmed = confirm('This will open Spotify login in a new window. Continue?');
+    if (confirmed) {
+        // In a real implementation, this would redirect to Spotify OAuth
+        // For now, simulate successful authentication
+        localStorage.setItem('spotify_authenticated', 'true');
+        alert('Successfully logged in to Spotify!');
+        // Refresh the music menu
+        showMusicMenu();
+    }
+}
+
+// Perform music search
+function performMusicSearch(query, resultsContainer) {
+    if (!query) {
+        resultsContainer.innerHTML = '<p style="padding:20px;color:#7f8c8d;">Please enter a search term.</p>';
+        return;
+    }
+    
+    if (!isSpotifyAuthenticated()) {
+        resultsContainer.innerHTML = '';
+        showSpotifyLoginPrompt(resultsContainer);
+        return;
+    }
+    
+    resultsContainer.innerHTML = '<p style="padding:20px;color:#7f8c8d;">Searching...</p>';
+    
+    // Simulate search results (in real implementation, this would call Spotify API)
+    setTimeout(() => {
+        const mockResults = generateMockSearchResults(query);
+        displaySearchResults(mockResults, resultsContainer);
+    }, 500);
+}
+
+// Generate mock search results
+function generateMockSearchResults(query) {
+    const results = [
+        {
+            title: `${query} - Song 1`,
+            artist: 'Artist A',
+            album: 'Album X',
+            duration: '3:45'
+        },
+        {
+            title: `${query} - Song 2`,
+            artist: 'Artist B',
+            album: 'Album Y',
+            duration: '4:12'
+        },
+        {
+            title: `${query} - Song 3`,
+            artist: 'Artist C',
+            album: 'Album Z',
+            duration: '3:28'
+        }
+    ];
+    return results;
+}
+
+// Display search results
+function displaySearchResults(results, container) {
+    container.innerHTML = '';
+    
+    if (results.length === 0) {
+        container.innerHTML = '<p style="padding:20px;color:#7f8c8d;">No results found.</p>';
+        return;
+    }
+    
+    const title = document.createElement('h3');
+    title.textContent = 'Search Results';
+    title.style.marginBottom = '20px';
+    container.appendChild(title);
+    
+    const resultsTable = document.createElement('table');
+    resultsTable.className = 'word-table';
+    resultsTable.style.width = '80%';
+    resultsTable.style.margin = '0 auto';
+    
+    results.forEach(track => {
+        const row = resultsTable.insertRow();
+        const cell = row.insertCell();
+        
+        const trackBtn = document.createElement('button');
+        trackBtn.className = 'word-btn';
+        trackBtn.style.width = '100%';
+        trackBtn.style.textAlign = 'left';
+        trackBtn.style.padding = '15px';
+        trackBtn.style.display = 'block';
+        
+        trackBtn.innerHTML = `
+            <div style="font-weight:bold;font-size:1.1em;margin-bottom:5px;">${track.title}</div>
+            <div style="color:#7f8c8d;font-size:0.9em;">${track.artist} • ${track.album} • ${track.duration}</div>
+        `;
+        
+        const playTrack = () => {
+            playMusicTrack(track);
+        };
+        
+        if (activationMode === 'hover') {
+            let hoverTimeout;
+            trackBtn.addEventListener('mouseenter', () => {
+                hoverTimeout = setTimeout(playTrack, hoverTime);
+            });
+            trackBtn.addEventListener('mouseleave', () => {
+                clearTimeout(hoverTimeout);
+            });
+        } else {
+            trackBtn.addEventListener('click', playTrack);
+        }
+        
+        cell.appendChild(trackBtn);
+    });
+    
+    container.appendChild(resultsTable);
+}
+
+// Play a music track
+function playMusicTrack(track) {
+    // Store current track in localStorage
+    const nowPlaying = {
+        title: track.title,
+        artist: track.artist,
+        album: track.album,
+        duration: track.duration,
+        isPlaying: true
+    };
+    localStorage.setItem('now_playing', JSON.stringify(nowPlaying));
+    
+    // Provide feedback
+    speakWord(`Now playing ${track.title} by ${track.artist}`);
+    
+    // Show success message
+    alert(`Now playing: ${track.title}\nBy: ${track.artist}`);
+}
+
+// Get now playing track
+function getNowPlaying() {
+    const stored = localStorage.getItem('now_playing');
+    return stored ? JSON.parse(stored) : null;
+}
+
+// Toggle play/pause
+function togglePlayPause() {
+    const nowPlaying = getNowPlaying();
+    if (nowPlaying) {
+        nowPlaying.isPlaying = !nowPlaying.isPlaying;
+        localStorage.setItem('now_playing', JSON.stringify(nowPlaying));
+        speakWord(nowPlaying.isPlaying ? 'Playing' : 'Paused');
+        // Refresh the Now Playing tab
+        showMusicMenu();
+        // Switch to Now Playing tab
+        setTimeout(() => switchTab('now-playing'), 100);
+    }
+}
+
+// Play previous track
+function playPrevious() {
+    speakWord('Previous track');
+    // In real implementation, this would call Spotify API
+    alert('Previous track (not implemented in MVP)');
+}
+
+// Play next track
+function playNext() {
+    speakWord('Next track');
+    // In real implementation, this would call Spotify API
+    alert('Next track (not implemented in MVP)');
 }
 
 // Create game tiles view similar to movie/TV tiles
@@ -1573,6 +2162,68 @@ primeBtn.style.right = streamingBtnPositions[3].right + 'px';
 paramountBtn.style.right = streamingBtnPositions[4].right + 'px';
 bingeBtn.style.right = streamingBtnPositions[5].right + 'px';
 
+// Music service label and buttons
+const musicLabel = document.createElement('div');
+musicLabel.textContent = 'Toggle Services';
+musicLabel.style.position = 'absolute';
+musicLabel.style.top = '135px';
+musicLabel.style.right = '30px';
+musicLabel.style.zIndex = '1001';
+musicLabel.style.background = 'none';
+musicLabel.style.padding = '0';
+musicLabel.style.borderRadius = '0';
+musicLabel.style.boxShadow = 'none';
+musicLabel.style.fontWeight = 'normal';
+musicLabel.style.fontSize = '0.95em';
+musicLabel.style.color = '#222';
+musicLabel.style.display = 'none';
+document.body.appendChild(musicLabel);
+
+// Music service buttons (using the same helper function)
+const musicBtnPositions = [
+    { top: 170, right: 30 },   // Spotify (col 1)
+    { top: 170, right: 100 },  // Apple Music (col 2)
+    { top: 240, right: 30 },   // YouTube Music (col 1)
+];
+
+const spotifyBtn = createStreamingBtn({
+    id: 'spotify-btn',
+    title: 'Spotify',
+    top: musicBtnPositions[0].top + 'px',
+    logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/1/19/Spotify_logo_without_text.svg',
+    borderColor: '#1DB954',
+    bgColor: '#191414',
+    hoverBg: '#1DB954',
+    logoAlt: 'Spotify Logo'
+});
+spotifyBtn.style.right = musicBtnPositions[0].right + 'px';
+
+const appleMusicBtn = createStreamingBtn({
+    id: 'apple-music-btn',
+    title: 'Apple Music',
+    top: musicBtnPositions[1].top + 'px',
+    logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/2/2a/Apple_Music_logo.svg',
+    borderColor: '#FA243C',
+    bgColor: '#fff',
+    hoverBg: '#FA243C22',
+    logoAlt: 'Apple Music Logo',
+    fullLogo: true
+});
+appleMusicBtn.style.right = musicBtnPositions[1].right + 'px';
+
+const youtubeMusicBtn = createStreamingBtn({
+    id: 'youtube-music-btn',
+    title: 'YouTube Music',
+    top: musicBtnPositions[2].top + 'px',
+    logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/6/6a/Youtube_Music_icon.svg',
+    borderColor: '#FF0000',
+    bgColor: '#fff',
+    hoverBg: '#FF000022',
+    logoAlt: 'YouTube Music Logo',
+    fullLogo: true
+});
+youtubeMusicBtn.style.right = musicBtnPositions[2].right + 'px';
+
 // Remove all main tabs when Film/TV button is clicked
 filmBtn.addEventListener('click', () => {
     // Show streaming buttons and label when Film/TV is selected
@@ -1583,6 +2234,13 @@ filmBtn.addEventListener('click', () => {
     primeBtn.style.display = 'flex';
     paramountBtn.style.display = 'flex';
     bingeBtn.style.display = 'flex';
+    
+    // Hide music service buttons if visible
+    musicLabel.style.display = 'none';
+    spotifyBtn.style.display = 'none';
+    appleMusicBtn.style.display = 'none';
+    youtubeMusicBtn.style.display = 'none';
+    
     // Remove all existing tab buttons and tab content panels
     document.querySelectorAll('.tab-btn').forEach(btn => btn.parentNode && btn.parentNode.removeChild(btn));
     document.querySelectorAll('.tab-content').forEach(tc => tc.parentNode && tc.parentNode.removeChild(tc));
