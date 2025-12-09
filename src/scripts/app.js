@@ -427,6 +427,861 @@ document.body.appendChild(iconsBtn);
 
 
 
+// Restore Games button functionality for static HTML button
+const gamesBtn = document.getElementById('games-btn');
+if (gamesBtn) {
+    gamesBtn.addEventListener('mouseenter', () => {
+        gamesBtn.style.background = '#fef5e7';
+    });
+    gamesBtn.addEventListener('mouseleave', () => {
+        gamesBtn.style.background = '#fff';
+    });
+    gamesBtn.addEventListener('click', () => {
+        showGamesMenu();
+    });
+}
+
+// Function to show games menu
+function showGamesMenu() {
+    // Hide streaming buttons if visible
+    streamingLabel.style.display = 'none';
+    netflixBtn.style.display = 'none';
+    stanBtn.style.display = 'none';
+    disneyBtn.style.display = 'none';
+    primeBtn.style.display = 'none';
+    paramountBtn.style.display = 'none';
+    bingeBtn.style.display = 'none';
+    
+    // Remove all existing tab buttons and tab content panels
+    document.querySelectorAll('.tab-btn').forEach(btn => btn.parentNode && btn.parentNode.removeChild(btn));
+    document.querySelectorAll('.tab-content').forEach(tc => tc.parentNode && tc.parentNode.removeChild(tc));
+
+    // Hide Add New Word UI
+    const addWordBtn = document.getElementById('add-word-btn');
+    if (addWordBtn) addWordBtn.style.display = 'none';
+    const wordInput = document.getElementById('word-input');
+    if (wordInput) wordInput.style.display = 'none';
+
+    // Ensure tab bar exists
+    let tabBar = document.querySelector('.tab-bar');
+    if (!tabBar) {
+        let wordBoard = document.getElementById('word-board');
+        if (!wordBoard) {
+            wordBoard = document.querySelector('.word-board');
+        }
+        tabBar = document.createElement('div');
+        tabBar.className = 'tab-bar';
+        if (wordBoard && wordBoard.parentNode) {
+            if (wordBoard.nextSibling) {
+                wordBoard.parentNode.insertBefore(tabBar, wordBoard.nextSibling);
+            } else {
+                wordBoard.parentNode.appendChild(tabBar);
+            }
+        } else if (document.body.firstChild) {
+            document.body.insertBefore(tabBar, document.body.firstChild);
+        } else {
+            document.body.appendChild(tabBar);
+        }
+    } else {
+        tabBar.innerHTML = '';
+    }
+
+    // Define game category tabs
+    const categoryTabs = [
+        { label: 'General', id: 'general' },
+        { label: 'Kids', id: 'kids' }
+    ];
+    
+    // Add category tab buttons
+    categoryTabs.forEach((tab, idx) => {
+        const btn = document.createElement('button');
+        btn.className = 'tab-btn';
+        btn.setAttribute('data-tab', tab.id);
+        btn.textContent = tab.label;
+        if (idx === 0) btn.classList.add('active');
+        tabBar.appendChild(btn);
+    });
+    
+    // Add tab content panels with game tiles
+    let nextElem = tabBar.nextSibling;
+    categoryTabs.forEach((tab, idx) => {
+        const tabPanel = document.createElement('div');
+        tabPanel.className = 'tab-content';
+        tabPanel.id = 'tab-' + tab.id;
+        if (idx !== 0) tabPanel.style.display = 'none';
+        
+        // Create game tiles for this category
+        if (tab.id === 'general') {
+            createGameTilesView(tabPanel, [
+                { name: 'Sudoku', icon: '🧩', gameId: 'sudoku', description: 'Classic number puzzle' }
+            ]);
+        } else if (tab.id === 'kids') {
+            createGameTilesView(tabPanel, [
+                { name: 'Paint', icon: '🎨', gameId: 'paint', description: 'Color fun pictures' }
+            ]);
+        }
+        
+        tabBar.parentNode.insertBefore(tabPanel, nextElem);
+    });
+    
+    // Re-activate tab button logic
+    const newTabButtons = tabBar.querySelectorAll('.tab-btn');
+    newTabButtons.forEach(btn => {
+        const tabId = btn.getAttribute('data-tab');
+        if (activationMode === 'hover') {
+            let hoverTimeout;
+            btn.addEventListener('mouseenter', () => {
+                hoverTimeout = setTimeout(() => {
+                    switchTab(tabId);
+                }, hoverTime);
+            });
+            btn.addEventListener('mouseleave', () => {
+                clearTimeout(hoverTimeout);
+            });
+        } else {
+            btn.addEventListener('click', () => {
+                switchTab(tabId);
+            });
+        }
+    });
+}
+
+// Create game tiles view similar to movie/TV tiles
+function createGameTilesView(container, games) {
+    const gamesTable = document.createElement('table');
+    gamesTable.className = 'word-table';
+    gamesTable.style.marginTop = '20px';
+    
+    const row = gamesTable.insertRow();
+    games.forEach(game => {
+        const cell = row.insertCell();
+        const btn = document.createElement('button');
+        btn.className = 'game-tile-btn';
+        btn.style.display = 'flex';
+        btn.style.flexDirection = 'column';
+        btn.style.alignItems = 'center';
+        btn.style.justifyContent = 'center';
+        btn.style.padding = '20px';
+        btn.style.width = '200px';
+        btn.style.height = '200px';
+        btn.style.background = '#fff';
+        btn.style.border = '2px solid #e67e22';
+        btn.style.borderRadius = '10px';
+        btn.style.boxShadow = '0 2px 8px rgba(44,62,80,0.08)';
+        btn.style.margin = '8px';
+        btn.style.cursor = 'pointer';
+        btn.style.transition = 'transform 0.2s, box-shadow 0.2s';
+        
+        // Game icon
+        const iconDiv = document.createElement('div');
+        iconDiv.textContent = game.icon;
+        iconDiv.style.fontSize = '4em';
+        iconDiv.style.marginBottom = '10px';
+        iconDiv.style.pointerEvents = 'none'; // Prevent event bubbling
+        btn.appendChild(iconDiv);
+        
+        // Game name
+        const nameDiv = document.createElement('div');
+        nameDiv.textContent = game.name;
+        nameDiv.style.fontSize = '1.3em';
+        nameDiv.style.fontWeight = 'bold';
+        nameDiv.style.color = '#2c3e50';
+        nameDiv.style.marginBottom = '5px';
+        nameDiv.style.pointerEvents = 'none'; // Prevent event bubbling
+        btn.appendChild(nameDiv);
+        
+        // Game description
+        const descDiv = document.createElement('div');
+        descDiv.textContent = game.description;
+        descDiv.style.fontSize = '0.9em';
+        descDiv.style.color = '#7f8c8d';
+        descDiv.style.textAlign = 'center';
+        descDiv.style.pointerEvents = 'none'; // Prevent event bubbling
+        btn.appendChild(descDiv);
+        
+        // Hover effect
+        btn.addEventListener('mouseenter', () => {
+            btn.style.transform = 'translateY(-4px)';
+            btn.style.boxShadow = '0 4px 12px rgba(230,126,34,0.3)';
+        });
+        btn.addEventListener('mouseleave', () => {
+            btn.style.transform = 'translateY(0)';
+            btn.style.boxShadow = '0 2px 8px rgba(44,62,80,0.08)';
+        });
+        
+        // Launch game on click/hover
+        const launchGame = () => {
+            launchSpecificGame(game.gameId);
+        };
+        
+        if (activationMode === 'hover') {
+            let hoverTimeout;
+            btn.addEventListener('mouseenter', () => {
+                hoverTimeout = setTimeout(launchGame, hoverTime);
+            });
+            btn.addEventListener('mouseleave', () => {
+                clearTimeout(hoverTimeout);
+            });
+        } else {
+            btn.addEventListener('click', launchGame);
+        }
+        
+        cell.appendChild(btn);
+    });
+    
+    container.appendChild(gamesTable);
+}
+
+// Launch a specific game
+function launchSpecificGame(gameId) {
+    // Clear current content
+    document.querySelectorAll('.tab-content').forEach(tc => tc.parentNode && tc.parentNode.removeChild(tc));
+    const tabBar = document.querySelector('.tab-bar');
+    if (tabBar) {
+        tabBar.innerHTML = '';
+        
+        // Add back button
+        const backBtn = document.createElement('button');
+        backBtn.className = 'tab-btn';
+        backBtn.textContent = '← Back to Games';
+        backBtn.style.background = '#95a5a6';
+        tabBar.appendChild(backBtn);
+        
+        const backToGames = () => {
+            showGamesMenu();
+        };
+        
+        if (activationMode === 'hover') {
+            let hoverTimeout;
+            backBtn.addEventListener('mouseenter', () => {
+                hoverTimeout = setTimeout(backToGames, hoverTime);
+            });
+            backBtn.addEventListener('mouseleave', () => {
+                clearTimeout(hoverTimeout);
+            });
+        } else {
+            backBtn.addEventListener('click', backToGames);
+        }
+        
+        // Create game panel
+        const gamePanel = document.createElement('div');
+        gamePanel.className = 'tab-content';
+        gamePanel.id = 'game-panel';
+        
+        if (gameId === 'sudoku') {
+            createSudokuGame(gamePanel);
+        } else if (gameId === 'paint') {
+            createPaintGame(gamePanel);
+        }
+        
+        tabBar.parentNode.insertBefore(gamePanel, tabBar.nextSibling);
+    }
+}
+
+// Sudoku game creation
+function createSudokuGame(container) {
+    const sudokuWrapper = document.createElement('div');
+    sudokuWrapper.className = 'sudoku-wrapper';
+    sudokuWrapper.style.display = 'flex';
+    sudokuWrapper.style.flexDirection = 'column';
+    sudokuWrapper.style.alignItems = 'center';
+    sudokuWrapper.style.padding = '20px';
+    
+    // Title
+    const title = document.createElement('h2');
+    title.textContent = 'Sudoku';
+    title.style.marginBottom = '20px';
+    sudokuWrapper.appendChild(title);
+    
+    // Create grid and number selector
+    const gameContainer = document.createElement('div');
+    gameContainer.style.display = 'flex';
+    gameContainer.style.gap = '30px';
+    gameContainer.style.alignItems = 'flex-start';
+    
+    // Create 9x9 Sudoku grid
+    const grid = document.createElement('div');
+    grid.className = 'sudoku-grid';
+    grid.style.display = 'grid';
+    grid.style.gridTemplateColumns = 'repeat(9, 45px)';
+    grid.style.gridTemplateRows = 'repeat(9, 45px)';
+    grid.style.gap = '0';
+    grid.style.border = '3px solid #2c3e50';
+    grid.style.background = '#fff';
+    
+    // Generate a simple Sudoku puzzle
+    const puzzle = generateSimpleSudoku();
+    let selectedCell = null;
+    
+    // Create cells
+    for (let i = 0; i < 81; i++) {
+        const cell = document.createElement('button');
+        cell.className = 'sudoku-cell word-btn';
+        cell.style.width = '45px';
+        cell.style.height = '45px';
+        cell.style.border = '1px solid #bdc3c7';
+        cell.style.background = '#fff';
+        cell.style.fontSize = '20px';
+        cell.style.fontWeight = 'bold';
+        cell.style.cursor = 'pointer';
+        cell.style.transition = 'background 0.2s';
+        cell.dataset.index = i;
+        
+        // Add thicker borders for 3x3 boxes
+        const row = Math.floor(i / 9);
+        const col = i % 9;
+        if (col % 3 === 0 && col !== 0) cell.style.borderLeft = '2px solid #2c3e50';
+        if (row % 3 === 0 && row !== 0) cell.style.borderTop = '2px solid #2c3e50';
+        
+        if (puzzle[i] !== 0) {
+            cell.textContent = puzzle[i];
+            cell.style.background = '#ecf0f1';
+            cell.style.color = '#2c3e50';
+            cell.disabled = true;
+            cell.dataset.fixed = 'true';
+        } else {
+            cell.textContent = '';
+            cell.dataset.fixed = 'false';
+            
+            // Add activation for cell selection
+            if (activationMode === 'hover') {
+                let hoverTimeout;
+                cell.addEventListener('mouseenter', () => {
+                    hoverTimeout = setTimeout(() => {
+                        if (selectedCell) {
+                            selectedCell.style.background = '#fff';
+                        }
+                        selectedCell = cell;
+                        cell.style.background = '#ffeaa7';
+                    }, hoverTime);
+                });
+                cell.addEventListener('mouseleave', () => {
+                    clearTimeout(hoverTimeout);
+                });
+            } else {
+                cell.addEventListener('click', () => {
+                    if (selectedCell) {
+                        selectedCell.style.background = '#fff';
+                    }
+                    selectedCell = cell;
+                    cell.style.background = '#ffeaa7';
+                });
+            }
+        }
+        
+        grid.appendChild(cell);
+    }
+    
+    gameContainer.appendChild(grid);
+    
+    // Number selector
+    const numberSelector = document.createElement('div');
+    numberSelector.className = 'number-selector';
+    numberSelector.style.display = 'flex';
+    numberSelector.style.flexDirection = 'column';
+    numberSelector.style.gap = '8px';
+    
+    const selectorTitle = document.createElement('h3');
+    selectorTitle.textContent = 'Select Number';
+    selectorTitle.style.fontSize = '18px';
+    selectorTitle.style.marginBottom = '10px';
+    numberSelector.appendChild(selectorTitle);
+    
+    // Numbers 1-9
+    for (let num = 1; num <= 9; num++) {
+        const numBtn = document.createElement('button');
+        numBtn.className = 'word-btn sudoku-number';
+        numBtn.textContent = num;
+        numBtn.style.width = '50px';
+        numBtn.style.height = '50px';
+        numBtn.style.fontSize = '20px';
+        numBtn.style.fontWeight = 'bold';
+        
+        const placeNumber = () => {
+            if (selectedCell && selectedCell.dataset.fixed === 'false') {
+                selectedCell.textContent = num;
+                selectedCell.style.color = '#3498db';
+                checkSudokuCompletion(grid);
+            }
+        };
+        
+        if (activationMode === 'hover') {
+            let hoverTimeout;
+            numBtn.addEventListener('mouseenter', () => {
+                hoverTimeout = setTimeout(placeNumber, hoverTime);
+            });
+            numBtn.addEventListener('mouseleave', () => {
+                clearTimeout(hoverTimeout);
+            });
+        } else {
+            numBtn.addEventListener('click', placeNumber);
+        }
+        
+        numberSelector.appendChild(numBtn);
+    }
+    
+    // Clear button
+    const clearBtn = document.createElement('button');
+    clearBtn.className = 'word-btn';
+    clearBtn.textContent = 'Clear';
+    clearBtn.style.width = '50px';
+    clearBtn.style.marginTop = '10px';
+    
+    const clearCell = () => {
+        if (selectedCell && selectedCell.dataset.fixed === 'false') {
+            selectedCell.textContent = '';
+        }
+    };
+    
+    if (activationMode === 'hover') {
+        let hoverTimeout;
+        clearBtn.addEventListener('mouseenter', () => {
+            hoverTimeout = setTimeout(clearCell, hoverTime);
+        });
+        clearBtn.addEventListener('mouseleave', () => {
+            clearTimeout(hoverTimeout);
+        });
+    } else {
+        clearBtn.addEventListener('click', clearCell);
+    }
+    
+    numberSelector.appendChild(clearBtn);
+    
+    // New Game button
+    const newGameBtn = document.createElement('button');
+    newGameBtn.className = 'word-btn';
+    newGameBtn.textContent = 'New Game';
+    newGameBtn.style.width = '100px';
+    newGameBtn.style.marginTop = '15px';
+    
+    const startNewGame = () => {
+        // Regenerate puzzle
+        const newPuzzle = generateSimpleSudoku();
+        const cells = grid.querySelectorAll('.sudoku-cell');
+        cells.forEach((cell, i) => {
+            if (newPuzzle[i] !== 0) {
+                cell.textContent = newPuzzle[i];
+                cell.style.background = '#ecf0f1';
+                cell.style.color = '#2c3e50';
+                cell.disabled = true;
+                cell.dataset.fixed = 'true';
+            } else {
+                cell.textContent = '';
+                cell.style.background = '#fff';
+                cell.style.color = '#3498db';
+                cell.disabled = false;
+                cell.dataset.fixed = 'false';
+            }
+        });
+        selectedCell = null;
+    };
+    
+    if (activationMode === 'hover') {
+        let hoverTimeout;
+        newGameBtn.addEventListener('mouseenter', () => {
+            hoverTimeout = setTimeout(startNewGame, hoverTime);
+        });
+        newGameBtn.addEventListener('mouseleave', () => {
+            clearTimeout(hoverTimeout);
+        });
+    } else {
+        newGameBtn.addEventListener('click', startNewGame);
+    }
+    
+    numberSelector.appendChild(newGameBtn);
+    
+    gameContainer.appendChild(numberSelector);
+    sudokuWrapper.appendChild(gameContainer);
+    container.appendChild(sudokuWrapper);
+}
+
+// Simple Sudoku puzzle generator with multiple puzzles
+function generateSimpleSudoku() {
+    // Array of pre-made easy Sudoku puzzles
+    const puzzles = [
+        [
+            5,3,0,0,7,0,0,0,0,
+            6,0,0,1,9,5,0,0,0,
+            0,9,8,0,0,0,0,6,0,
+            8,0,0,0,6,0,0,0,3,
+            4,0,0,8,0,3,0,0,1,
+            7,0,0,0,2,0,0,0,6,
+            0,6,0,0,0,0,2,8,0,
+            0,0,0,4,1,9,0,0,5,
+            0,0,0,0,8,0,0,7,9
+        ],
+        [
+            0,0,0,2,6,0,7,0,1,
+            6,8,0,0,7,0,0,9,0,
+            1,9,0,0,0,4,5,0,0,
+            8,2,0,1,0,0,0,4,0,
+            0,0,4,6,0,2,9,0,0,
+            0,5,0,0,0,3,0,2,8,
+            0,0,9,3,0,0,0,7,4,
+            0,4,0,0,5,0,0,3,6,
+            7,0,3,0,1,8,0,0,0
+        ],
+        [
+            0,0,0,0,0,0,6,8,0,
+            0,0,0,0,7,3,0,0,9,
+            3,0,9,0,0,0,0,4,5,
+            4,9,0,0,0,0,0,0,0,
+            8,0,3,0,5,0,9,0,2,
+            0,0,0,0,0,0,0,3,6,
+            9,6,0,0,0,0,3,0,8,
+            7,0,0,6,8,0,0,0,0,
+            0,2,8,0,0,0,0,0,0
+        ]
+    ];
+    // Select a random puzzle
+    const randomIndex = Math.floor(Math.random() * puzzles.length);
+    return puzzles[randomIndex];
+}
+
+// Check if Sudoku is complete and correct
+function checkSudokuCompletion(grid) {
+    const cells = grid.querySelectorAll('.sudoku-cell');
+    let allFilled = true;
+    let isValid = true;
+    
+    // Check if all cells are filled
+    cells.forEach(cell => {
+        if (cell.textContent === '') {
+            allFilled = false;
+        }
+    });
+    
+    if (allFilled) {
+        // Full validation: check rows, columns, and 3x3 boxes
+        const values = Array.from(cells).map(c => parseInt(c.textContent));
+        
+        // Check rows
+        for (let row = 0; row < 9; row++) {
+            const rowValues = values.slice(row * 9, row * 9 + 9);
+            if (new Set(rowValues).size !== 9 || rowValues.some(v => v < 1 || v > 9)) {
+                isValid = false;
+                break;
+            }
+        }
+        
+        // Check columns
+        if (isValid) {
+            for (let col = 0; col < 9; col++) {
+                const colValues = [];
+                for (let row = 0; row < 9; row++) {
+                    colValues.push(values[row * 9 + col]);
+                }
+                if (new Set(colValues).size !== 9) {
+                    isValid = false;
+                    break;
+                }
+            }
+        }
+        
+        // Check 3x3 boxes
+        if (isValid) {
+            for (let boxRow = 0; boxRow < 3; boxRow++) {
+                for (let boxCol = 0; boxCol < 3; boxCol++) {
+                    const boxValues = [];
+                    for (let row = 0; row < 3; row++) {
+                        for (let col = 0; col < 3; col++) {
+                            const index = (boxRow * 3 + row) * 9 + (boxCol * 3 + col);
+                            boxValues.push(values[index]);
+                        }
+                    }
+                    if (new Set(boxValues).size !== 9) {
+                        isValid = false;
+                        break;
+                    }
+                }
+                if (!isValid) break;
+            }
+        }
+        
+        if (isValid) {
+            speakWord('Congratulations! You solved the puzzle!');
+            
+            // Create accessible notification
+            const notification = document.createElement('div');
+            notification.style.position = 'fixed';
+            notification.style.top = '50%';
+            notification.style.left = '50%';
+            notification.style.transform = 'translate(-50%, -50%)';
+            notification.style.background = '#27ae60';
+            notification.style.color = 'white';
+            notification.style.padding = '30px 40px';
+            notification.style.borderRadius = '10px';
+            notification.style.fontSize = '24px';
+            notification.style.fontWeight = 'bold';
+            notification.style.zIndex = '10000';
+            notification.style.boxShadow = '0 4px 12px rgba(0,0,0,0.3)';
+            notification.setAttribute('role', 'alert');
+            notification.setAttribute('aria-live', 'assertive');
+            notification.textContent = '🎉 Congratulations! You solved the Sudoku puzzle!';
+            document.body.appendChild(notification);
+            
+            // Remove notification after 5 seconds
+            setTimeout(() => {
+                notification.remove();
+            }, 5000);
+        }
+    }
+}
+
+// Paint game creation
+function createPaintGame(container) {
+    const paintWrapper = document.createElement('div');
+    paintWrapper.className = 'paint-wrapper';
+    paintWrapper.style.display = 'flex';
+    paintWrapper.style.flexDirection = 'column';
+    paintWrapper.style.alignItems = 'center';
+    paintWrapper.style.padding = '20px';
+    
+    const title = document.createElement('h2');
+    title.textContent = 'Paint Game';
+    title.style.marginBottom = '20px';
+    paintWrapper.appendChild(title);
+    
+    // Child-friendly coloring images (using SVG for safety and simplicity)
+    const coloringImages = [
+        {
+            name: 'Flower',
+            svg: `<svg width="300" height="300" viewBox="0 0 100 100">
+                <circle cx="50" cy="50" r="15" fill="white" stroke="black" stroke-width="2" class="paint-section" data-section="center"/>
+                <circle cx="50" cy="25" r="10" fill="white" stroke="black" stroke-width="2" class="paint-section" data-section="petal1"/>
+                <circle cx="75" cy="50" r="10" fill="white" stroke="black" stroke-width="2" class="paint-section" data-section="petal2"/>
+                <circle cx="50" cy="75" r="10" fill="white" stroke="black" stroke-width="2" class="paint-section" data-section="petal3"/>
+                <circle cx="25" cy="50" r="10" fill="white" stroke="black" stroke-width="2" class="paint-section" data-section="petal4"/>
+                <circle cx="65" cy="35" r="10" fill="white" stroke="black" stroke-width="2" class="paint-section" data-section="petal5"/>
+                <circle cx="65" cy="65" r="10" fill="white" stroke="black" stroke-width="2" class="paint-section" data-section="petal6"/>
+                <circle cx="35" cy="65" r="10" fill="white" stroke="black" stroke-width="2" class="paint-section" data-section="petal7"/>
+                <circle cx="35" cy="35" r="10" fill="white" stroke="black" stroke-width="2" class="paint-section" data-section="petal8"/>
+            </svg>`
+        },
+        {
+            name: 'House',
+            svg: `<svg width="300" height="300" viewBox="0 0 100 100">
+                <polygon points="50,20 80,50 20,50" fill="white" stroke="black" stroke-width="2" class="paint-section" data-section="roof"/>
+                <rect x="25" y="50" width="50" height="40" fill="white" stroke="black" stroke-width="2" class="paint-section" data-section="walls"/>
+                <rect x="40" y="65" width="20" height="25" fill="white" stroke="black" stroke-width="2" class="paint-section" data-section="door"/>
+                <rect x="30" y="55" width="12" height="12" fill="white" stroke="black" stroke-width="2" class="paint-section" data-section="window1"/>
+                <rect x="58" y="55" width="12" height="12" fill="white" stroke="black" stroke-width="2" class="paint-section" data-section="window2"/>
+            </svg>`
+        },
+        {
+            name: 'Sun',
+            svg: `<svg width="300" height="300" viewBox="0 0 100 100">
+                <circle cx="50" cy="50" r="20" fill="white" stroke="black" stroke-width="2" class="paint-section" data-section="circle"/>
+                <line x1="50" y1="10" x2="50" y2="25" stroke="black" stroke-width="3" class="paint-section" data-section="ray1"/>
+                <line x1="50" y1="75" x2="50" y2="90" stroke="black" stroke-width="3" class="paint-section" data-section="ray2"/>
+                <line x1="10" y1="50" x2="25" y2="50" stroke="black" stroke-width="3" class="paint-section" data-section="ray3"/>
+                <line x1="75" y1="50" x2="90" y2="50" stroke="black" stroke-width="3" class="paint-section" data-section="ray4"/>
+                <line x1="20" y1="20" x2="30" y2="30" stroke="black" stroke-width="3" class="paint-section" data-section="ray5"/>
+                <line x1="70" y1="70" x2="80" y2="80" stroke="black" stroke-width="3" class="paint-section" data-section="ray6"/>
+                <line x1="80" y1="20" x2="70" y2="30" stroke="black" stroke-width="3" class="paint-section" data-section="ray7"/>
+                <line x1="30" y1="70" x2="20" y2="80" stroke="black" stroke-width="3" class="paint-section" data-section="ray8"/>
+            </svg>`
+        },
+        {
+            name: 'Tree',
+            svg: `<svg width="300" height="300" viewBox="0 0 100 100">
+                <rect x="42" y="60" width="16" height="30" fill="white" stroke="black" stroke-width="2" class="paint-section" data-section="trunk"/>
+                <circle cx="50" cy="55" r="25" fill="white" stroke="black" stroke-width="2" class="paint-section" data-section="leaves"/>
+            </svg>`
+        },
+        {
+            name: 'Butterfly',
+            svg: `<svg width="300" height="300" viewBox="0 0 100 100">
+                <ellipse cx="35" cy="40" rx="15" ry="20" fill="white" stroke="black" stroke-width="2" class="paint-section" data-section="wing1"/>
+                <ellipse cx="65" cy="40" rx="15" ry="20" fill="white" stroke="black" stroke-width="2" class="paint-section" data-section="wing2"/>
+                <ellipse cx="35" cy="60" rx="12" ry="15" fill="white" stroke="black" stroke-width="2" class="paint-section" data-section="wing3"/>
+                <ellipse cx="65" cy="60" rx="12" ry="15" fill="white" stroke="black" stroke-width="2" class="paint-section" data-section="wing4"/>
+                <line x1="50" y1="30" x2="50" y2="70" stroke="black" stroke-width="3" class="paint-section" data-section="body"/>
+                <line x1="50" y1="30" x2="45" y2="20" stroke="black" stroke-width="2" class="paint-section" data-section="antenna1"/>
+                <line x1="50" y1="30" x2="55" y2="20" stroke="black" stroke-width="2" class="paint-section" data-section="antenna2"/>
+            </svg>`
+        }
+    ];
+    
+    let currentImage = 0;
+    let selectedColor = '#FF0000';
+    
+    // Image selector
+    const imageSelector = document.createElement('div');
+    imageSelector.style.marginBottom = '20px';
+    
+    const imageSelectorTitle = document.createElement('h3');
+    imageSelectorTitle.textContent = 'Choose an Image:';
+    imageSelectorTitle.style.fontSize = '18px';
+    imageSelectorTitle.style.marginBottom = '10px';
+    imageSelector.appendChild(imageSelectorTitle);
+    
+    const imageButtons = document.createElement('div');
+    imageButtons.style.display = 'flex';
+    imageButtons.style.gap = '10px';
+    imageButtons.style.flexWrap = 'wrap';
+    imageButtons.style.justifyContent = 'center';
+    
+    coloringImages.forEach((img, idx) => {
+        const imgBtn = document.createElement('button');
+        imgBtn.className = 'word-btn';
+        imgBtn.textContent = img.name;
+        imgBtn.style.padding = '10px 20px';
+        
+        const selectImage = () => {
+            currentImage = idx;
+            displayImage();
+        };
+        
+        if (activationMode === 'hover') {
+            let hoverTimeout;
+            imgBtn.addEventListener('mouseenter', () => {
+                hoverTimeout = setTimeout(selectImage, hoverTime);
+            });
+            imgBtn.addEventListener('mouseleave', () => {
+                clearTimeout(hoverTimeout);
+            });
+        } else {
+            imgBtn.addEventListener('click', selectImage);
+        }
+        
+        imageButtons.appendChild(imgBtn);
+    });
+    
+    imageSelector.appendChild(imageButtons);
+    paintWrapper.appendChild(imageSelector);
+    
+    // Color picker
+    const colorPicker = document.createElement('div');
+    colorPicker.style.marginBottom = '20px';
+    
+    const colorPickerTitle = document.createElement('h3');
+    colorPickerTitle.textContent = 'Choose a Color:';
+    colorPickerTitle.style.fontSize = '18px';
+    colorPickerTitle.style.marginBottom = '10px';
+    colorPicker.appendChild(colorPickerTitle);
+    
+    const colors = [
+        { name: 'Red', value: '#FF0000' },
+        { name: 'Blue', value: '#0000FF' },
+        { name: 'Green', value: '#00FF00' },
+        { name: 'Yellow', value: '#FFFF00' },
+        { name: 'Orange', value: '#FFA500' },
+        { name: 'Purple', value: '#800080' },
+        { name: 'Pink', value: '#FFC0CB' },
+        { name: 'Brown', value: '#8B4513' }
+    ];
+    
+    const colorButtons = document.createElement('div');
+    colorButtons.style.display = 'flex';
+    colorButtons.style.gap = '10px';
+    colorButtons.style.flexWrap = 'wrap';
+    colorButtons.style.justifyContent = 'center';
+    
+    colors.forEach(color => {
+        const colorBtn = document.createElement('button');
+        colorBtn.className = 'word-btn';
+        colorBtn.style.background = color.value;
+        colorBtn.style.width = '60px';
+        colorBtn.style.height = '40px';
+        colorBtn.style.border = '2px solid #2c3e50';
+        colorBtn.title = color.name;
+        
+        const selectColor = () => {
+            selectedColor = color.value;
+            // Update all color buttons to show selection
+            colorButtons.querySelectorAll('button').forEach(btn => {
+                btn.style.outline = 'none';
+            });
+            colorBtn.style.outline = '3px solid #2c3e50';
+        };
+        
+        if (activationMode === 'hover') {
+            let hoverTimeout;
+            colorBtn.addEventListener('mouseenter', () => {
+                hoverTimeout = setTimeout(selectColor, hoverTime);
+            });
+            colorBtn.addEventListener('mouseleave', () => {
+                clearTimeout(hoverTimeout);
+            });
+        } else {
+            colorBtn.addEventListener('click', selectColor);
+        }
+        
+        colorButtons.appendChild(colorBtn);
+    });
+    
+    colorPicker.appendChild(colorButtons);
+    paintWrapper.appendChild(colorPicker);
+    
+    // Canvas area
+    const canvasArea = document.createElement('div');
+    canvasArea.className = 'paint-canvas';
+    canvasArea.style.border = '3px solid #2c3e50';
+    canvasArea.style.background = '#fff';
+    canvasArea.style.borderRadius = '10px';
+    canvasArea.style.padding = '10px';
+    paintWrapper.appendChild(canvasArea);
+    
+    function displayImage() {
+        canvasArea.innerHTML = coloringImages[currentImage].svg;
+        
+        // Add click/hover handlers to paint sections
+        const sections = canvasArea.querySelectorAll('.paint-section');
+        sections.forEach(section => {
+            section.style.cursor = 'pointer';
+            
+            const paintSection = () => {
+                section.setAttribute('fill', selectedColor);
+                if (section.tagName === 'line') {
+                    section.setAttribute('stroke', selectedColor);
+                }
+            };
+            
+            if (activationMode === 'hover') {
+                let hoverTimeout;
+                section.addEventListener('mouseenter', () => {
+                    hoverTimeout = setTimeout(paintSection, hoverTime);
+                });
+                section.addEventListener('mouseleave', () => {
+                    clearTimeout(hoverTimeout);
+                });
+            } else {
+                section.addEventListener('click', paintSection);
+            }
+        });
+    }
+    
+    // Display first image by default
+    displayImage();
+    
+    // Clear button
+    const clearBtn = document.createElement('button');
+    clearBtn.className = 'word-btn';
+    clearBtn.textContent = 'Clear All';
+    clearBtn.style.marginTop = '20px';
+    clearBtn.style.padding = '10px 20px';
+    
+    const clearCanvas = () => {
+        displayImage();
+    };
+    
+    if (activationMode === 'hover') {
+        let hoverTimeout;
+        clearBtn.addEventListener('mouseenter', () => {
+            hoverTimeout = setTimeout(clearCanvas, hoverTime);
+        });
+        clearBtn.addEventListener('mouseleave', () => {
+            clearTimeout(hoverTimeout);
+        });
+    } else {
+        clearBtn.addEventListener('click', clearCanvas);
+    }
+    
+    paintWrapper.appendChild(clearBtn);
+    container.appendChild(paintWrapper);
+}
+
 // Restore Film / TV button functionality for static HTML button
 const filmBtn = document.getElementById('film-btn');
 if (filmBtn) {
