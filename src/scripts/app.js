@@ -1283,6 +1283,8 @@ function createPaintGame(container) {
 }
 
 // --- Recently Watched Tracking ---
+const MAX_RECENT_ITEMS = 24;
+
 function addToRecentlyWatched(title, type, poster) {
     // Get existing history from localStorage
     let recentlyWatched = JSON.parse(localStorage.getItem('recentlyWatched') || '[]');
@@ -1293,9 +1295,9 @@ function addToRecentlyWatched(title, type, poster) {
     // Add new item to the front
     recentlyWatched.unshift({ title, type, poster, timestamp: Date.now() });
     
-    // Keep only the last 24 items
-    if (recentlyWatched.length > 24) {
-        recentlyWatched = recentlyWatched.slice(0, 24);
+    // Keep only the last MAX_RECENT_ITEMS items
+    if (recentlyWatched.length > MAX_RECENT_ITEMS) {
+        recentlyWatched = recentlyWatched.slice(0, MAX_RECENT_ITEMS);
     }
     
     // Save back to localStorage
@@ -1852,23 +1854,18 @@ filmBtn.addEventListener('click', () => {
                     btn.appendChild(titleSpan);
                     cell.appendChild(btn);
                     
-                    // Add to recently watched when button is activated
-                    const watchMovie = () => {
+                    // Set button activation and add to recently watched when activated
+                    const originalWord = movie.title;
+                    btn.addEventListener('click', () => {
                         addToRecentlyWatched(movie.title, 'movie', movie.poster);
-                        speakWord(movie.title);
-                    };
-                    
-                    if (activationMode === 'hover') {
-                        let hoverTimeout;
-                        btn.addEventListener('mouseenter', () => {
-                            hoverTimeout = setTimeout(watchMovie, hoverTime);
-                        });
-                        btn.addEventListener('mouseleave', () => {
-                            clearTimeout(hoverTimeout);
-                        });
-                    } else {
-                        btn.addEventListener('click', watchMovie);
-                    }
+                    });
+                    btn.addEventListener('mouseenter', () => {
+                        // Use a short timeout to ensure this runs after setButtonActivation's hover
+                        setTimeout(() => {
+                            addToRecentlyWatched(movie.title, 'movie', movie.poster);
+                        }, hoverTime + 10);
+                    });
+                    setButtonActivation(btn, originalWord);
                 }
             });
             tabPanel.appendChild(moviesTable);
@@ -1954,23 +1951,18 @@ filmBtn.addEventListener('click', () => {
                     btn.appendChild(titleSpan);
                     cell.appendChild(btn);
                     
-                    // Add to recently watched when button is activated
-                    const watchShow = () => {
+                    // Set button activation and add to recently watched when activated  
+                    const originalWord = show.title;
+                    btn.addEventListener('click', () => {
                         addToRecentlyWatched(show.title, 'tvshow', show.poster);
-                        speakWord(show.title);
-                    };
-                    
-                    if (activationMode === 'hover') {
-                        let hoverTimeout;
-                        btn.addEventListener('mouseenter', () => {
-                            hoverTimeout = setTimeout(watchShow, hoverTime);
-                        });
-                        btn.addEventListener('mouseleave', () => {
-                            clearTimeout(hoverTimeout);
-                        });
-                    } else {
-                        btn.addEventListener('click', watchShow);
-                    }
+                    });
+                    btn.addEventListener('mouseenter', () => {
+                        // Use a short timeout to ensure this runs after setButtonActivation's hover
+                        setTimeout(() => {
+                            addToRecentlyWatched(show.title, 'tvshow', show.poster);
+                        }, hoverTime + 10);
+                    });
+                    setButtonActivation(btn, originalWord);
                 }
             });
             tabPanel.appendChild(showsTable);
