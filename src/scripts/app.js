@@ -737,7 +737,7 @@ function createMusicSearchTab(container) {
         ['Q','W','E','R','T','Y','U','I','O','P'],
         ['A','S','D','F','G','H','J','K','L'],
         ['Z','X','C','V','B','N','M'],
-        ['Space','Backspace','SEARCH']
+        ['Space','Backspace','Clear','SEARCH']
     ];
     
     const keyboard = document.createElement('div');
@@ -761,6 +761,29 @@ function createMusicSearchTab(container) {
                 keyBtn.style.minWidth = '120px';
             } else if (key === 'Backspace') {
                 keyBtn.textContent = '⌫';
+            } else if (key === 'Clear') {
+                keyBtn.textContent = '✕';
+                keyBtn.style.background = '#e74c3c';
+                keyBtn.style.color = '#fff';
+                const clearSearch = () => {
+                    searchInput.value = '';
+                    resultsContainer.innerHTML = '';
+                    searchInput.focus();
+                };
+                if (activationMode === 'hover') {
+                    let hoverTimeout;
+                    keyBtn.addEventListener('mouseenter', () => {
+                        hoverTimeout = setTimeout(clearSearch, hoverTime);
+                    });
+                    keyBtn.addEventListener('mouseleave', () => {
+                        clearTimeout(hoverTimeout);
+                    });
+                } else {
+                    keyBtn.addEventListener('click', clearSearch);
+                }
+                keyBtn.style.margin = '0 4px';
+                rowDiv.appendChild(keyBtn);
+                return;
             } else if (key === 'SEARCH') {
                 keyBtn.textContent = 'SEARCH';
                 keyBtn.addEventListener('click', () => {
@@ -820,7 +843,7 @@ function createPlaylistsTab(container) {
     wrapper.style.textAlign = 'center';
     
     const title = document.createElement('h2');
-    title.textContent = 'Your Playlists';
+    title.textContent = 'Your Playlist';
     title.style.marginBottom = '20px';
     wrapper.appendChild(title);
     
@@ -830,12 +853,144 @@ function createPlaylistsTab(container) {
         return;
     }
     
-    const message = document.createElement('p');
-    message.textContent = 'Your playlists will appear here.';
-    message.style.fontSize = '1.2em';
-    message.style.color = '#7f8c8d';
-    message.style.padding = '40px';
-    wrapper.appendChild(message);
+    const playlist = JSON.parse(localStorage.getItem('music_playlist') || '[]');
+    
+    if (playlist.length === 0) {
+        const message = document.createElement('p');
+        message.textContent = 'Your playlist is empty. Add songs from the Search tab!';
+        message.style.fontSize = '1.2em';
+        message.style.color = '#7f8c8d';
+        message.style.padding = '40px';
+        wrapper.appendChild(message);
+    } else {
+        // Clear playlist button
+        const clearBtn = document.createElement('button');
+        clearBtn.className = 'word-btn';
+        clearBtn.textContent = 'Clear Playlist';
+        clearBtn.style.background = '#e74c3c';
+        clearBtn.style.color = '#fff';
+        clearBtn.style.marginBottom = '20px';
+        
+        const clearPlaylist = () => {
+            localStorage.removeItem('music_playlist');
+            speakWord('Playlist cleared');
+            showMusicMenu();
+            setTimeout(() => switchTab('playlists'), 100);
+        };
+        
+        if (activationMode === 'hover') {
+            let hoverTimeout;
+            clearBtn.addEventListener('mouseenter', () => {
+                hoverTimeout = setTimeout(clearPlaylist, hoverTime);
+            });
+            clearBtn.addEventListener('mouseleave', () => {
+                clearTimeout(hoverTimeout);
+            });
+        } else {
+            clearBtn.addEventListener('click', clearPlaylist);
+        }
+        
+        wrapper.appendChild(clearBtn);
+        
+        // Display playlist tracks
+        const playlistTable = document.createElement('table');
+        playlistTable.className = 'word-table';
+        playlistTable.style.width = '90%';
+        playlistTable.style.margin = '0 auto';
+        
+        playlist.forEach((track, index) => {
+            const row = playlistTable.insertRow();
+            const cell = row.insertCell();
+            
+            const trackContainer = document.createElement('div');
+            trackContainer.style.display = 'flex';
+            trackContainer.style.alignItems = 'center';
+            trackContainer.style.gap = '10px';
+            trackContainer.style.padding = '10px';
+            trackContainer.style.background = '#fff';
+            trackContainer.style.border = '2px solid #9b59b6';
+            trackContainer.style.borderRadius = '8px';
+            trackContainer.style.margin = '5px 0';
+            
+            // Track number
+            const numberSpan = document.createElement('span');
+            numberSpan.textContent = `${index + 1}.`;
+            numberSpan.style.fontWeight = 'bold';
+            numberSpan.style.fontSize = '1.1em';
+            numberSpan.style.minWidth = '30px';
+            trackContainer.appendChild(numberSpan);
+            
+            // Track info button (plays the track)
+            const trackBtn = document.createElement('button');
+            trackBtn.className = 'word-btn';
+            trackBtn.style.flex = '1';
+            trackBtn.style.textAlign = 'left';
+            trackBtn.style.padding = '15px';
+            trackBtn.style.margin = '0';
+            
+            trackBtn.innerHTML = `
+                <div style="font-weight:bold;font-size:1.1em;margin-bottom:5px;">▶ ${track.title}</div>
+                <div style="color:#7f8c8d;font-size:0.9em;">${track.artist} • ${track.album} • ${track.duration}</div>
+            `;
+            
+            const playTrack = () => {
+                playMusicTrack(track);
+                setTimeout(() => switchTab('now-playing'), 300);
+            };
+            
+            if (activationMode === 'hover') {
+                let hoverTimeout;
+                trackBtn.addEventListener('mouseenter', () => {
+                    hoverTimeout = setTimeout(playTrack, hoverTime);
+                });
+                trackBtn.addEventListener('mouseleave', () => {
+                    clearTimeout(hoverTimeout);
+                });
+            } else {
+                trackBtn.addEventListener('click', playTrack);
+            }
+            
+            trackContainer.appendChild(trackBtn);
+            
+            // Remove button
+            const removeBtn = document.createElement('button');
+            removeBtn.className = 'word-btn';
+            removeBtn.textContent = 'Remove';
+            removeBtn.title = 'Remove from Playlist';
+            removeBtn.style.padding = '10px 15px';
+            removeBtn.style.margin = '0';
+            removeBtn.style.background = '#e74c3c';
+            removeBtn.style.color = '#fff';
+            removeBtn.style.whiteSpace = 'nowrap';
+            
+            const removeFromPlaylist = () => {
+                const updatedPlaylist = JSON.parse(localStorage.getItem('music_playlist') || '[]');
+                updatedPlaylist.splice(index, 1);
+                localStorage.setItem('music_playlist', JSON.stringify(updatedPlaylist));
+                speakWord(`Removed ${track.title} from playlist`);
+                showMusicMenu();
+                setTimeout(() => switchTab('playlists'), 100);
+            };
+            
+            if (activationMode === 'hover') {
+                let hoverTimeout;
+                removeBtn.addEventListener('mouseenter', () => {
+                    hoverTimeout = setTimeout(removeFromPlaylist, hoverTime);
+                });
+                removeBtn.addEventListener('mouseleave', () => {
+                    clearTimeout(hoverTimeout);
+                });
+            } else {
+                removeBtn.addEventListener('click', removeFromPlaylist);
+            }
+            
+            trackContainer.appendChild(removeBtn);
+            
+            cell.appendChild(trackContainer);
+        });
+        
+        wrapper.appendChild(playlistTable);
+    }
     
     container.appendChild(wrapper);
 }
@@ -1052,27 +1207,41 @@ function displaySearchResults(results, container) {
     
     const resultsTable = document.createElement('table');
     resultsTable.className = 'word-table';
-    resultsTable.style.width = '80%';
+    resultsTable.style.width = '90%';
     resultsTable.style.margin = '0 auto';
     
     results.forEach(track => {
         const row = resultsTable.insertRow();
         const cell = row.insertCell();
         
+        // Create container for track info and buttons
+        const trackContainer = document.createElement('div');
+        trackContainer.style.display = 'flex';
+        trackContainer.style.alignItems = 'center';
+        trackContainer.style.gap = '10px';
+        trackContainer.style.padding = '10px';
+        trackContainer.style.background = '#fff';
+        trackContainer.style.border = '2px solid #3498db';
+        trackContainer.style.borderRadius = '8px';
+        trackContainer.style.margin = '5px 0';
+        
+        // Track info button (plays the track)
         const trackBtn = document.createElement('button');
         trackBtn.className = 'word-btn';
-        trackBtn.style.width = '100%';
+        trackBtn.style.flex = '1';
         trackBtn.style.textAlign = 'left';
         trackBtn.style.padding = '15px';
-        trackBtn.style.display = 'block';
+        trackBtn.style.margin = '0';
         
         trackBtn.innerHTML = `
-            <div style="font-weight:bold;font-size:1.1em;margin-bottom:5px;">${track.title}</div>
+            <div style="font-weight:bold;font-size:1.1em;margin-bottom:5px;">▶ ${track.title}</div>
             <div style="color:#7f8c8d;font-size:0.9em;">${track.artist} • ${track.album} • ${track.duration}</div>
         `;
         
         const playTrack = () => {
             playMusicTrack(track);
+            // Auto-switch to Now Playing tab to show what's playing
+            setTimeout(() => switchTab('now-playing'), 300);
         };
         
         if (activationMode === 'hover') {
@@ -1087,7 +1256,77 @@ function displaySearchResults(results, container) {
             trackBtn.addEventListener('click', playTrack);
         }
         
-        cell.appendChild(trackBtn);
+        trackContainer.appendChild(trackBtn);
+        
+        // Add to Queue button
+        const queueBtn = document.createElement('button');
+        queueBtn.className = 'word-btn';
+        queueBtn.textContent = '+ Queue';
+        queueBtn.title = 'Add to Queue';
+        queueBtn.style.padding = '10px 15px';
+        queueBtn.style.margin = '0';
+        queueBtn.style.background = '#3498db';
+        queueBtn.style.whiteSpace = 'nowrap';
+        
+        const addToQueue = () => {
+            const queue = JSON.parse(localStorage.getItem('music_queue') || '[]');
+            queue.push(track);
+            localStorage.setItem('music_queue', JSON.stringify(queue));
+            speakWord(`Added ${track.title} to queue`);
+        };
+        
+        if (activationMode === 'hover') {
+            let hoverTimeout;
+            queueBtn.addEventListener('mouseenter', () => {
+                hoverTimeout = setTimeout(addToQueue, hoverTime);
+            });
+            queueBtn.addEventListener('mouseleave', () => {
+                clearTimeout(hoverTimeout);
+            });
+        } else {
+            queueBtn.addEventListener('click', addToQueue);
+        }
+        
+        trackContainer.appendChild(queueBtn);
+        
+        // Add to Playlist button
+        const playlistBtn = document.createElement('button');
+        playlistBtn.className = 'word-btn';
+        playlistBtn.textContent = '+ Playlist';
+        playlistBtn.title = 'Add to Playlist';
+        playlistBtn.style.padding = '10px 15px';
+        playlistBtn.style.margin = '0';
+        playlistBtn.style.background = '#9b59b6';
+        playlistBtn.style.whiteSpace = 'nowrap';
+        
+        const addToPlaylist = () => {
+            const playlist = JSON.parse(localStorage.getItem('music_playlist') || '[]');
+            // Check if track already exists in playlist
+            const exists = playlist.some(item => item.title === track.title && item.artist === track.artist);
+            if (!exists) {
+                playlist.push(track);
+                localStorage.setItem('music_playlist', JSON.stringify(playlist));
+                speakWord(`Added ${track.title} to playlist`);
+            } else {
+                speakWord(`${track.title} already in playlist`);
+            }
+        };
+        
+        if (activationMode === 'hover') {
+            let hoverTimeout;
+            playlistBtn.addEventListener('mouseenter', () => {
+                hoverTimeout = setTimeout(addToPlaylist, hoverTime);
+            });
+            playlistBtn.addEventListener('mouseleave', () => {
+                clearTimeout(hoverTimeout);
+            });
+        } else {
+            playlistBtn.addEventListener('click', addToPlaylist);
+        }
+        
+        trackContainer.appendChild(playlistBtn);
+        
+        cell.appendChild(trackContainer);
     });
     
     container.appendChild(resultsTable);
@@ -1105,11 +1344,11 @@ function playMusicTrack(track) {
     };
     localStorage.setItem('now_playing', JSON.stringify(nowPlaying));
     
-    // Provide feedback
+    // Provide feedback via speech synthesis
     speakWord(`Now playing ${track.title} by ${track.artist}`);
     
-    // Show success message
-    alert(`Now playing: ${track.title}\nBy: ${track.artist}`);
+    // Note: In production, this would use Spotify Web Playback SDK to actually play audio
+    // For MVP, we're simulating playback with localStorage state
 }
 
 // Get now playing track
