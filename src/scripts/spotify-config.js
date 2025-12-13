@@ -20,9 +20,17 @@
  * 8. Paste it below in the SPOTIFY_CLIENT_ID constant
  * 
  * NOTE: For security, in production you should:
- * - Use environment variables
+ * - Use environment variables for Client ID
  * - Store credentials server-side
  * - Never commit real credentials to git
+ * - Use HTTP-only cookies instead of localStorage for tokens
+ * - Implement proper CSRF protection
+ * - Use HTTPS only
+ * 
+ * NOTE: About port numbers in redirect URIs:
+ * - The default port 8080 is commonly used for development
+ * - If your server uses a different port (e.g., 3000, 5000), update the redirect URI accordingly
+ * - Example: http://localhost:3000 if using npm/node server on port 3000
  */
 
 // Replace this with your Spotify Client ID from the dashboard

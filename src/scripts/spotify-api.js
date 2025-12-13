@@ -3,6 +3,10 @@
  * Handles authentication, search, and playback using Spotify Web API and SDK
  */
 
+// Constants for token management
+const TOKEN_REFRESH_BUFFER_MS = 300000; // 5 minutes in milliseconds
+const PLAYER_INIT_DELAY_MS = 1000; // 1 second delay for player initialization
+
 class SpotifyAPI {
     constructor() {
         this.accessToken = null;
@@ -184,7 +188,7 @@ class SpotifyAPI {
         }
         
         // Check if token is expired (with 5 minute buffer)
-        if (Date.now() >= this.tokenExpiry - 300000) {
+        if (Date.now() >= this.tokenExpiry - TOKEN_REFRESH_BUFFER_MS) {
             return false;
         }
         
@@ -435,7 +439,7 @@ class SpotifyAPI {
                 await this.initializePlayer();
             }
             // Wait a bit for device to be ready
-            await new Promise(resolve => setTimeout(resolve, 1000));
+            await new Promise(resolve => setTimeout(resolve, PLAYER_INIT_DELAY_MS));
         }
 
         if (!this.deviceId) {
