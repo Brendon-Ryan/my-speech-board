@@ -2,3 +2,6 @@ node_modules/
 .DS_Store
 *.log
 .vscode/
+
+# Local Spotify configuration (contains sensitive Client ID)
+src/scripts/spotify-config.local.js
