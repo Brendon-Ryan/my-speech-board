@@ -15,6 +15,18 @@ class SpotifyAPI {
         this.player = null;
         this.deviceId = null;
         this.currentTrack = null;
+        this.configLoaded = false;
+        
+        // Load configuration first, then tokens
+        this.initializeConfig();
+    }
+    
+    /**
+     * Initialize configuration
+     */
+    async initializeConfig() {
+        await loadSpotifyConfig();
+        this.configLoaded = true;
         
         // Load saved tokens
         this.loadTokens();

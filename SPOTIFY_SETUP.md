@@ -2,7 +2,20 @@
 
 This guide explains how to set up real Spotify API integration for the Accessible Speech Board music player.
 
-## Prerequisites
+## Environment-Specific Setup
+
+- **Local Development**: Use `spotify-config.local.js` file (gitignored)
+- **Production (Azure)**: Use Azure Key Vault for secure storage
+
+Choose your setup path:
+- [Local Development Setup](#local-development-setup) - Quick setup for testing
+- [Production Setup (Azure)](#production-setup-azure) - Secure deployment
+
+---
+
+## Local Development Setup
+
+### Prerequisites
 
 - A Spotify account (free or premium)
   - **Note**: Full playback requires Spotify Premium
@@ -10,7 +23,7 @@ This guide explains how to set up real Spotify API integration for the Accessibl
 - A modern web browser with JavaScript enabled
 - Basic understanding of how to edit configuration files
 
-## Step-by-Step Setup Instructions
+### Step-by-Step Instructions
 
 ### 1. Create a Spotify Developer App
 
@@ -57,34 +70,33 @@ This guide explains how to set up real Spotify API integration for the Accessibl
 
 1. On your app's dashboard page, click **"Settings"**
 2. Find the **"Client ID"** field
-3. Click **"View client secret"** (optional, not needed for PKCE flow)
-4. Copy your **Client ID** - you'll need this next
+3. Copy your **Client ID** - you'll need this next
 
-### 3. Configure the Application
+### 3. Configure Local Development
 
-1. **Open the configuration file**
-   - Navigate to: `src/scripts/spotify-config.js`
-   - Open it in any text editor
+1. **Create local configuration file**
+   - Navigate to: `src/scripts/`
+   - Copy `spotify-config.local.js.example` to `spotify-config.local.js`
+   
+   ```bash
+   cd src/scripts
+   cp spotify-config.local.js.example spotify-config.local.js
+   ```
 
 2. **Add your Client ID**
+   - Open `spotify-config.local.js` in any text editor
    - Find this line:
      ```javascript
-     const SPOTIFY_CLIENT_ID = 'YOUR_CLIENT_ID_HERE';
+     clientId: 'YOUR_CLIENT_ID_HERE'
      ```
    - Replace `YOUR_CLIENT_ID_HERE` with your actual Client ID:
      ```javascript
-     const SPOTIFY_CLIENT_ID = 'abc123def456...'; // Your actual ID
+     clientId: 'abc123def456ghi789...' // Your actual Client ID
      ```
 
-3. **Verify Redirect URI**
-   - The default redirect URI should work for local development:
-     ```javascript
-     const SPOTIFY_REDIRECT_URI = window.location.origin + window.location.pathname;
-     ```
-   - This automatically uses the current URL as the redirect
-   - Make sure it matches one of the URIs you added in Step 1.3
-
-4. **Save the file**
+3. **Save the file**
+   - The file is automatically gitignored and won't be committed
+   - Keep it secure on your local machine
 
 ### 4. Test the Integration
 
@@ -258,6 +270,52 @@ If you encounter issues:
 3. Ensure redirect URIs match exactly
 4. Try logging out and logging in again
 5. Clear browser cache and localStorage
+
+---
+
+## Production Setup (Azure)
+
+For production deployment, use Azure Key Vault to securely store your Spotify Client ID.
+
+### Quick Overview
+
+1. **Create Azure Key Vault**
+2. **Store Spotify Client ID in Key Vault**
+3. **Create API endpoint to retrieve Client ID**
+4. **Configure application to use production config**
+
+### Detailed Instructions
+
+See **[AZURE_KEYVAULT_SETUP.md](./AZURE_KEYVAULT_SETUP.md)** for complete step-by-step instructions including:
+
+- Creating and configuring Azure Key Vault
+- Using Managed Identity for secure access
+- Creating backend API endpoint
+- Testing and troubleshooting
+- Security best practices
+
+### Key Differences from Local Setup
+
+| Aspect | Local Development | Production (Azure) |
+|--------|------------------|-------------------|
+| **Config Storage** | `spotify-config.local.js` file | Azure Key Vault |
+| **Access Method** | Direct file include | API endpoint (`/api/config/spotify`) |
+| **Security** | File is gitignored | Managed Identity + Key Vault |
+| **Setup Time** | 2 minutes | 15-30 minutes |
+| **Cost** | Free | ~$0.03 per 10k operations |
+
+### Production Checklist
+
+- [ ] Azure Key Vault created
+- [ ] Spotify Client ID stored in Key Vault as `SPOTIFY-CLIENT-ID`
+- [ ] Managed Identity enabled on App Service
+- [ ] Key Vault access policy configured
+- [ ] API endpoint `/api/config/spotify` implemented
+- [ ] Application tested in production environment
+- [ ] HTTPS enabled on all endpoints
+- [ ] Redirect URIs updated to production domain
+
+---
 
 ## License
 

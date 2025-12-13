@@ -1,0 +1,24 @@
+/**
+ * Local Spotify Configuration (Development Only)
+ * 
+ * INSTRUCTIONS:
+ * 1. Copy this file to: spotify-config.local.js (remove .example)
+ * 2. Add your Spotify Client ID below
+ * 3. Do NOT commit spotify-config.local.js to git (it's in .gitignore)
+ * 
+ * HOW TO GET YOUR CLIENT ID:
+ * 1. Go to: https://developer.spotify.com/dashboard
+ * 2. Create a new app
+ * 3. Copy your Client ID from the app settings
+ * 4. Paste it below
+ * 
+ * Example:
+ * window.SPOTIFY_LOCAL_CONFIG = {
+ *     clientId: 'abc123def456ghi789...'
+ * };
+ */
+
+window.SPOTIFY_LOCAL_CONFIG = {
+    // Replace with your actual Spotify Client ID
+    clientId: 'YOUR_CLIENT_ID_HERE'
+};
