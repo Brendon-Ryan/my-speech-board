@@ -1087,7 +1087,7 @@ function createControlButton(emoji, title, action) {
 
 // Spotify authentication check
 function isSpotifyAuthenticated() {
-    return localStorage.getItem('spotify_authenticated') === 'true';
+    return window.spotifyAPI && window.spotifyAPI.isAuthenticated();
 }
 
 // Show Spotify login prompt
@@ -1095,6 +1095,13 @@ function showSpotifyLoginPrompt(container) {
     const loginPrompt = document.createElement('div');
     loginPrompt.style.padding = '40px';
     loginPrompt.style.textAlign = 'center';
+    
+    // Check if Spotify is configured
+    if (!isSpotifyConfigured()) {
+        loginPrompt.innerHTML = getConfigErrorMessage();
+        container.appendChild(loginPrompt);
+        return;
+    }
     
     const message = document.createElement('p');
     message.textContent = 'Please log in to Spotify to access music features.';
@@ -1131,21 +1138,22 @@ function showSpotifyLoginPrompt(container) {
 }
 
 // Initiate Spotify login
-function initiateSpotifyLogin() {
-    // For MVP, simulate login with a confirmation
-    const confirmed = confirm('This will open Spotify login in a new window. Continue?');
-    if (confirmed) {
-        // In a real implementation, this would redirect to Spotify OAuth
-        // For now, simulate successful authentication
-        localStorage.setItem('spotify_authenticated', 'true');
-        alert('Successfully logged in to Spotify!');
-        // Refresh the music menu
-        showMusicMenu();
+async function initiateSpotifyLogin() {
+    if (!window.spotifyAPI) {
+        alert('Spotify API not loaded. Please refresh the page.');
+        return;
+    }
+    
+    try {
+        await window.spotifyAPI.login();
+    } catch (error) {
+        console.error('Login error:', error);
+        alert('Failed to initiate Spotify login: ' + error.message);
     }
 }
 
 // Perform music search
-function performMusicSearch(query, resultsContainer) {
+async function performMusicSearch(query, resultsContainer) {
     if (!query) {
         resultsContainer.innerHTML = '<p style="padding:20px;color:#7f8c8d;">Please enter a search term.</p>';
         return;
@@ -1157,38 +1165,24 @@ function performMusicSearch(query, resultsContainer) {
         return;
     }
     
-    resultsContainer.innerHTML = '<p style="padding:20px;color:#7f8c8d;">Searching...</p>';
+    resultsContainer.innerHTML = '<p style="padding:20px;color:#7f8c8d;">Searching Spotify...</p>';
     
-    // Simulate search results (in real implementation, this would call Spotify API)
-    setTimeout(() => {
-        const mockResults = generateMockSearchResults(query);
-        displaySearchResults(mockResults, resultsContainer);
-    }, 500);
-}
-
-// Generate mock search results
-function generateMockSearchResults(query) {
-    const results = [
-        {
-            title: `${query} - Song 1`,
-            artist: 'Artist A',
-            album: 'Album X',
-            duration: '3:45'
-        },
-        {
-            title: `${query} - Song 2`,
-            artist: 'Artist B',
-            album: 'Album Y',
-            duration: '4:12'
-        },
-        {
-            title: `${query} - Song 3`,
-            artist: 'Artist C',
-            album: 'Album Z',
-            duration: '3:28'
+    try {
+        const results = await window.spotifyAPI.searchTracks(query, 20);
+        displaySearchResults(results, resultsContainer);
+    } catch (error) {
+        console.error('Search error:', error);
+        resultsContainer.innerHTML = `
+            <p style="padding:20px;color:#e74c3c;">
+                <strong>Search failed:</strong> ${error.message}<br><br>
+                ${error.message.includes('Authentication') ? 'Please log in again.' : 'Please try again.'}
+            </p>
+        `;
+        if (error.message.includes('Authentication')) {
+            window.spotifyAPI.logout();
+            setTimeout(() => showMusicMenu(), 2000);
         }
-    ];
-    return results;
+    }
 }
 
 // Display search results
@@ -1333,56 +1327,122 @@ function displaySearchResults(results, container) {
 }
 
 // Play a music track
-function playMusicTrack(track) {
-    // Store current track in localStorage
-    const nowPlaying = {
-        title: track.title,
-        artist: track.artist,
-        album: track.album,
-        duration: track.duration,
-        isPlaying: true
-    };
-    localStorage.setItem('now_playing', JSON.stringify(nowPlaying));
-    
-    // Provide feedback via speech synthesis
-    speakWord(`Now playing ${track.title} by ${track.artist}`);
-    
-    // Note: In production, this would use Spotify Web Playback SDK to actually play audio
-    // For MVP, we're simulating playback with localStorage state
+async function playMusicTrack(track) {
+    try {
+        // Use Spotify API to play the track
+        if (track.uri && window.spotifyAPI) {
+            speakWord(`Playing ${track.title} by ${track.artist}`);
+            await window.spotifyAPI.playTrack(track.uri);
+            
+            // Store current track in localStorage for UI display
+            const nowPlaying = {
+                title: track.title,
+                artist: track.artist,
+                album: track.album,
+                duration: track.duration,
+                uri: track.uri,
+                isPlaying: true
+            };
+            localStorage.setItem('now_playing', JSON.stringify(nowPlaying));
+        } else {
+            // Fallback: just store track info without playing
+            const nowPlaying = {
+                title: track.title,
+                artist: track.artist,
+                album: track.album,
+                duration: track.duration,
+                isPlaying: true
+            };
+            localStorage.setItem('now_playing', JSON.stringify(nowPlaying));
+            speakWord(`Now playing ${track.title} by ${track.artist}`);
+        }
+    } catch (error) {
+        console.error('Playback error:', error);
+        speakWord(`Error playing track: ${error.message}`);
+        
+        // Show error to user
+        if (error.message.includes('Premium')) {
+            alert('Spotify Premium is required for full playback. Free users can only play 30-second previews.');
+        } else if (error.message.includes('not ready')) {
+            alert('Player is initializing. Please wait a moment and try again.');
+        } else {
+            alert('Failed to play track: ' + error.message);
+        }
+    }
 }
 
 // Get now playing track
 function getNowPlaying() {
+    // First try to get from Spotify player
+    if (window.spotifyAPI && window.spotifyAPI.currentTrack) {
+        return window.spotifyAPI.currentTrack;
+    }
+    // Fallback to localStorage
     const stored = localStorage.getItem('now_playing');
     return stored ? JSON.parse(stored) : null;
 }
 
 // Toggle play/pause
-function togglePlayPause() {
-    const nowPlaying = getNowPlaying();
-    if (nowPlaying) {
-        nowPlaying.isPlaying = !nowPlaying.isPlaying;
-        localStorage.setItem('now_playing', JSON.stringify(nowPlaying));
-        speakWord(nowPlaying.isPlaying ? 'Playing' : 'Paused');
-        // Refresh the Now Playing tab
-        showMusicMenu();
-        // Switch to Now Playing tab
-        setTimeout(() => switchTab('now-playing'), 100);
+async function togglePlayPause() {
+    try {
+        const nowPlaying = getNowPlaying();
+        if (nowPlaying) {
+            if (window.spotifyAPI && window.spotifyAPI.player) {
+                if (nowPlaying.isPlaying) {
+                    await window.spotifyAPI.pause();
+                    speakWord('Paused');
+                } else {
+                    await window.spotifyAPI.resume();
+                    speakWord('Playing');
+                }
+                // Refresh the Now Playing tab
+                setTimeout(() => {
+                    showMusicMenu();
+                    setTimeout(() => switchTab('now-playing'), 100);
+                }, 300);
+            } else {
+                // Fallback for when player isn't available
+                nowPlaying.isPlaying = !nowPlaying.isPlaying;
+                localStorage.setItem('now_playing', JSON.stringify(nowPlaying));
+                speakWord(nowPlaying.isPlaying ? 'Playing' : 'Paused');
+                showMusicMenu();
+                setTimeout(() => switchTab('now-playing'), 100);
+            }
+        }
+    } catch (error) {
+        console.error('Toggle playback error:', error);
+        speakWord('Error controlling playback');
     }
 }
 
 // Play previous track
-function playPrevious() {
-    speakWord('Previous track');
-    // In real implementation, this would call Spotify API
-    alert('Previous track (not implemented in MVP)');
+async function playPrevious() {
+    try {
+        if (window.spotifyAPI && window.spotifyAPI.player) {
+            await window.spotifyAPI.previousTrack();
+            speakWord('Previous track');
+        } else {
+            speakWord('Player not available');
+        }
+    } catch (error) {
+        console.error('Previous track error:', error);
+        speakWord('Error skipping to previous track');
+    }
 }
 
 // Play next track
-function playNext() {
-    speakWord('Next track');
-    // In real implementation, this would call Spotify API
-    alert('Next track (not implemented in MVP)');
+async function playNext() {
+    try {
+        if (window.spotifyAPI && window.spotifyAPI.player) {
+            await window.spotifyAPI.nextTrack();
+            speakWord('Next track');
+        } else {
+            speakWord('Player not available');
+        }
+    } catch (error) {
+        console.error('Next track error:', error);
+        speakWord('Error skipping to next track');
+    }
 }
 
 // Create game tiles view similar to movie/TV tiles
