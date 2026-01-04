@@ -1,0 +1,98 @@
+name: Azure Deployment with Key Vault
+
+# This is an advanced example workflow showing how to integrate Azure Key Vault
+# for managing secrets like API keys. Use this if you need to access secrets
+# during deployment or inject them into your application.
+
+on:
+  push:
+    branches:
+      - master
+      - main
+  pull_request:
+    types: [opened, synchronize, reopened, closed]
+    branches:
+      - master
+      - main
+
+jobs:
+  build_and_deploy_job:
+    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
+    runs-on: ubuntu-latest
+    name: Build and Deploy Job with Key Vault
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: true
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: npm ci
+
+      # Optional: Azure Login for Key Vault access
+      # Uncomment when you need to retrieve secrets from Azure Key Vault
+      # - name: Azure Login
+      #   uses: azure/login@v1
+      #   with:
+      #     creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      # Optional: Retrieve secrets from Azure Key Vault
+      # Uncomment and configure when you have secrets in Key Vault
+      # - name: Get secrets from Key Vault
+      #   uses: azure/get-keyvault-secrets@v1
+      #   with:
+      #     keyvault: "my-speech-board-kv"  # Replace with your Key Vault name
+      #     secrets: 'spotify-client-id, spotify-client-secret'
+      #   id: keyvault
+
+      # Optional: Create environment file with secrets
+      # Uncomment when you need to inject secrets into the application
+      # - name: Create environment file
+      #   run: |
+      #     echo "SPOTIFY_CLIENT_ID=${{ steps.keyvault.outputs.spotify-client-id }}" > src/.env
+      #     echo "SPOTIFY_CLIENT_SECRET=${{ steps.keyvault.outputs.spotify-client-secret }}" >> src/.env
+      #     # Note: For client-side apps, be careful about exposing secrets!
+      #     # Only include secrets that are safe for client-side use.
+
+      # Build step continues on error because this is a static site with no real build process
+      # The npm run build command only echoes a message
+      - name: Build Application
+        run: npm run build
+        continue-on-error: true
+
+      - name: Build and Deploy to Azure Static Web Apps
+        id: builddeploy
+        uses: Azure/static-web-apps-deploy@v1
+        with:
+          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          action: "upload"
+          app_location: "/src"
+          api_location: ""
+          output_location: ""
+        env:
+          # Optional: Pass secrets as environment variables
+          # Uncomment when needed
+          # SPOTIFY_CLIENT_ID: ${{ steps.keyvault.outputs.spotify-client-id }}
+          # Add other environment variables as needed
+
+  close_pull_request_job:
+    if: github.event_name == 'pull_request' && github.event.action == 'closed'
+    runs-on: ubuntu-latest
+    name: Close Pull Request Job
+    permissions:
+      pull-requests: write
+    steps:
+      - name: Close Pull Request
+        id: closepullrequest
+        uses: Azure/static-web-apps-deploy@v1
+        with:
+          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
+          action: "close"
