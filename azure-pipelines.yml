@@ -1,3 +1,10 @@
+# DEPRECATED: This file is no longer used
+# 
+# This project now uses GitHub Actions for deployment to Azure Static Web Apps.
+# See .github/workflows/azure-static-web-apps.yml for the current deployment workflow.
+# 
+# For setup instructions, refer to AZURE_DEPLOYMENT.md
+
 trigger:
 - main
 
