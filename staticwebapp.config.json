@@ -10,6 +10,7 @@
     ".html": "text/html"
   },
   "globalHeaders": {
+    "_comment": "CSP includes 'unsafe-inline' for styles because the existing HTML uses inline styles. Consider refactoring to external styles for stronger security.",
     "content-security-policy": "default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self'; img-src 'self' data: https:; media-src 'self' https:; connect-src 'self' https:; font-src 'self';"
   },
   "routes": [

@@ -29,6 +29,8 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      # Build step continues on error because this is a static site with no real build process
+      # The npm run build command only echoes a message
       - name: Build Application
         run: npm run build
         continue-on-error: true

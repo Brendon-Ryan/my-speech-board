@@ -40,6 +40,7 @@ az login
 az group create --name my-speech-board-rg --location eastus
 
 # Create Static Web App (this will prompt for GitHub authentication)
+# Note: Replace 'master' with 'main' if that's your default branch
 az staticwebapp create \
   --name my-speech-board \
   --resource-group my-speech-board-rg \
