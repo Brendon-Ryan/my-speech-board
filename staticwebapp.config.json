@@ -1,7 +1,7 @@
 {
   "navigationFallback": {
     "rewrite": "/index.html",
-    "exclude": ["/styles/*", "/scripts/*", "*.{css,scss,js,png,gif,ico,jpg,svg}"]
+    "exclude": ["/styles/*", "/scripts/*", "*.{css,scss,js,png,gif,ico,jpg,svg,jpeg}"]
   },
   "mimeTypes": {
     ".json": "application/json",
@@ -10,7 +10,7 @@
     ".html": "text/html"
   },
   "globalHeaders": {
-    "content-security-policy": "default-src 'self' 'unsafe-inline' 'unsafe-eval'; img-src 'self' data: https:; media-src 'self' https:; connect-src 'self' https:"
+    "content-security-policy": "default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self'; img-src 'self' data: https:; media-src 'self' https:; connect-src 'self' https:; font-src 'self';"
   },
   "routes": [
     {
